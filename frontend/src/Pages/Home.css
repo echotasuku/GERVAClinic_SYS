@@ -1,0 +1,10 @@
+/* src/components/Home.css */
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Altura total da viewport */
+    text-align: center;
+    flex-direction: column;
+}

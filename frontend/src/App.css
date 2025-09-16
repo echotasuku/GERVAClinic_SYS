@@ -1,0 +1,11 @@
+/* src/App.css */
+.App {
+  display: flex;
+}
+
+.content {
+  margin-left: 200px;
+  /* Margem para a barra lateral */
+  padding: 20px;
+  flex: 1;
+}

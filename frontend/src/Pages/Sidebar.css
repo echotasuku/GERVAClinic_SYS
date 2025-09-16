@@ -1,0 +1,44 @@
+.sidebar {
+    background-color: #343a40;
+    /* Cor de fundo da sidebar */
+    width: 200px;
+    /* Reduzindo o tamanho da sidebar */
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidebar-item {
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-item:hover {
+    background-color: #495057;
+    /* Cor de fundo do item ao passar o mouse */
+}
+
+.sidebar-item-content {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-icon {
+    margin-right: 10px;
+}
+
+.sidebar-text {
+    flex: 1;
+}
+
+.sidebar-item.logout {
+    cursor: pointer;
+    color: white;
+}
+

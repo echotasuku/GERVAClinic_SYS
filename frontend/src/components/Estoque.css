@@ -1,0 +1,35 @@
+.estoque-container {
+    padding: 20px;
+}
+
+.estoque-container h2 {
+    margin-bottom: 20px;
+}
+
+.estoque-list {
+    list-style: none;
+    padding: 0;
+}
+
+.estoque-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.estoque-info {
+    flex: 1;
+}
+
+.estoque-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.estoque-actions .btn {
+    margin-left: 5px;
+}

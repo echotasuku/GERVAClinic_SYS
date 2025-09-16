@@ -1,0 +1,61 @@
+/* Retiradas.css */
+.retiradas-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.retiradas-container h2 {
+    margin-bottom: 20px;
+}
+
+.retiradas-container .btn-primary {
+    margin-bottom: 20px;
+}
+
+.retiradas-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+    /* Adiciona espaçamento superior à lista */
+}
+
+.retirada-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.retirada-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.retirada-info span {
+    margin-bottom: 5px;
+}
+
+.retirada-actions {
+    display: flex;
+    align-items: center;
+}
+
+.modal-body {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-title {
+    flex: 1;
+    text-align: center;
+}
+
+.btn {
+    margin-right: 5px;
+}

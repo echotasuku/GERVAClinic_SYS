@@ -1,0 +1,62 @@
+/* Categorias.css */
+
+.categorias-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.categorias-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.categorias-header h2 {
+    margin: 0;
+}
+
+.categorias-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.categorias-form input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.categorias-form button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.categorias-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.categoria-item {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.categoria-item p {
+    margin: 0;
+}

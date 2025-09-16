@@ -1,0 +1,11 @@
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    width: 300px;
+    display: flex;
+    justify-content: flex-end;
+}

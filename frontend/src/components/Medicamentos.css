@@ -1,0 +1,162 @@
+.medicamentos-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.btn-add {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-add:hover {
+    background-color: #0056b3;
+}
+
+.medicamentos-table {
+    width: 85%;
+    /* Aumenta a largura percentual da tabela */
+    border-collapse: collapse;
+    margin-top: 20px;
+    max-width: 900px;
+    /* Aumenta a largura máxima da tabela */
+    margin: 20px auto;
+    /* Centraliza a tabela */
+}
+
+.medicamentos-table th,
+.medicamentos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    /* Aumenta o padding das células */
+    text-align: center;
+    font-size: 14px;
+    /* Mantém o tamanho da fonte */
+}
+
+.medicamentos-table th {
+    background-color: #f2f2f2;
+}
+
+.medicamento-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.medicamento-row:hover {
+    background-color: #f1f1f1;
+}
+
+.btn-actions {
+    display: inline-flex;
+    gap: 5px;
+    /* Espaçamento entre os botões */
+}
+
+.btn-edit,
+.btn-delete {
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    /* Ajuste o tamanho da fonte dos botões */
+}
+
+.btn-edit {
+    background-color: #007bff;
+}
+
+.btn-edit:hover {
+    background-color: #0056b3;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    margin-bottom: 5px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.loading,
+.error {
+    text-align: center;
+    margin-top: 20px;
+}

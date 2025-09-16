@@ -1,0 +1,32 @@
+.product-grid-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product-grid {
+    margin-top: 20px;
+}
+
+.produtos-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.search-and-filter {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    width: 200px;
+    margin-right: 5px;
+}
+
+.filter-dropdown {
+    margin-left: 10px;
+}
