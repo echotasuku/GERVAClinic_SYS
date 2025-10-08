@@ -1,136 +1,73 @@
+/* --- Estilos da PÁGINA de Farmacêuticos --- */
 .farmaceuticos-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.header {
+.farmaceuticos-container .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
-.header h1 {
-    margin: 0;
-}
-
-.btn-add {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.btn-add:hover {
-    background-color: #0056b3;
-}
-
-.farmaceuticos-table {
+.farmaceuticos-container .farmaceuticos-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.farmaceuticos-table th,
-.farmaceuticos-table td {
+.farmaceuticos-container .farmaceuticos-table th,
+.farmaceuticos-container .farmaceuticos-table td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px;
     text-align: center;
 }
 
-.farmaceuticos-table th {
+.farmaceuticos-container .farmaceuticos-table th {
     background-color: #f2f2f2;
 }
 
-.btn-edit,
-.btn-delete {
-    background-color: #007bff;
+
+/* --- Estilos ESPECÍFICOS para o MODAL de Farmacêuticos --- */
+
+/* 1. Define a LARGURA da caixa branca do modal */
+.custom-modal-width {
+    max-width: 600px;
+    /* Modal menor, pois tem poucos campos */
+    width: 90%;
+}
+
+/* 2. Aplica o TEMA ESCURO no cabeçalho */
+.farmaceuticos-modal-theme .modal-header {
+    background-color: #212529;
+    /* Fundo preto */
     color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0 5px;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+    /* Remove arredondamento */
 }
 
-.btn-edit:hover {
-    background-color: #0056b3;
-}
-
-.btn-delete {
-    background-color: #dc3545;
-}
-
-.btn-delete:hover {
-    background-color: #c82333;
-}
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 400px;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    margin-bottom: 5px;
-    display: block;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-
-button[type="submit"] {
-    background-color: #007bff;
+/* Garante que o título e o "X" sejam brancos */
+.farmaceuticos-modal-theme .modal-title {
     color: white;
+}
+
+.farmaceuticos-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Garante que o conteúdo do modal não tenha cantos arredondados ou bordas estranhas */
+.farmaceuticos-modal-theme .modal-content {
+    border-radius: 0;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
+    padding-top: 0;
+    /* Remove a "barra branca" de cima */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-.loading,
-.error {
-    text-align: center;
-    margin-top: 20px;
+.farmaceuticos-modal-theme .modal-body {
+    padding: 1.5rem;
+    /* Espaçamento interno do formulário */
 }

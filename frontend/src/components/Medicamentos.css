@@ -29,23 +29,18 @@
 
 .medicamentos-table {
     width: 85%;
-    /* Aumenta a largura percentual da tabela */
     border-collapse: collapse;
     margin-top: 20px;
     max-width: 900px;
-    /* Aumenta a largura máxima da tabela */
     margin: 20px auto;
-    /* Centraliza a tabela */
 }
 
 .medicamentos-table th,
 .medicamentos-table td {
     border: 1px solid #ddd;
     padding: 8px;
-    /* Aumenta o padding das células */
     text-align: center;
     font-size: 14px;
-    /* Mantém o tamanho da fonte */
 }
 
 .medicamentos-table th {
@@ -63,7 +58,6 @@
 .btn-actions {
     display: inline-flex;
     gap: 5px;
-    /* Espaçamento entre os botões */
 }
 
 .btn-edit,
@@ -74,7 +68,6 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 12px;
-    /* Ajuste o tamanho da fonte dos botões */
 }
 
 .btn-edit {
@@ -93,6 +86,7 @@
     background-color: #c82333;
 }
 
+
 .modal {
     position: fixed;
     top: 0;
@@ -107,9 +101,9 @@
 
 .modal-content {
     background: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 400px;
+    padding: 0px;
+    border-radius: 0px;
+    width: 900px;
     position: relative;
 }
 
@@ -159,4 +153,38 @@ button[type="submit"]:hover {
 .error {
     text-align: center;
     margin-top: 20px;
+}
+
+
+
+.custom-modal-widthmed {
+    max-width: 850px !important;
+    width: 90% !important;
+}
+
+.medicamentos-modal-theme .modal-header {
+    background-color: #212529;
+    color: white;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+}
+
+.medicamentos-modal-theme .modal-title {
+    color: white;
+}
+
+.medicamentos-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+
+.medicamentos-modal-theme .modal-content {
+    border-radius: 0;
+    border: none;
+    padding-top: 0;
+
+}
+
+.medicamentos-modal-theme .modal-body {
+    padding: 1.5rem;
 }

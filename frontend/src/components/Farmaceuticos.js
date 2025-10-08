@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Modal, Form } from 'react-bootstrap';
+import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Farmaceuticos.css'
 
@@ -126,53 +126,61 @@ const Farmaceuticos = () => {
     if (loading) return <div className="loading">Carregando...</div>;
     if (error) return <div className="error">Erro: {error}</div>;
 
-    return (
-        <div className="farmaceuticos-container">
-            <header className="header">
-                <h1>Farmacêuticos</h1>
-                <Button variant="primary" onClick={abrirModal}>Adicionar Farmacêutico</Button>
-            </header>
-            <table className="farmaceuticos-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>CRF</th>
-                        <th>Ações</th>
+   return (
+    <div className="farmaceuticos-container">
+        <header className="header">
+            <h1>Farmacêuticos</h1>
+            <Button variant="primary" onClick={abrirModal}>Adicionar Farmacêutico</Button>
+        </header>
+        
+        <table className="farmaceuticos-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>CRF</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {farmaceuticos.map((farmaceutico) => (
+                    <tr key={farmaceutico.id}>
+                        <td>{farmaceutico.id_func}</td>
+                        <td>{farmaceutico.CRF}</td>
+                        <td>
+                            <Button variant="info" onClick={() => handleEditarFarmaceutico(farmaceutico)}>Editar</Button>
+                            <Button variant="danger" onClick={() => abrirModalExcluir(farmaceutico)} className="ms-2">Excluir</Button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {farmaceuticos.map((farmaceutico) => (
-                        <tr key={farmaceutico.id}>
-                            <td>{farmaceutico.id_func}</td>
-                            <td>{farmaceutico.CRF}</td>
-                            <td>
-                                <Button variant="info" onClick={() => handleEditarFarmaceutico(farmaceutico)}>Editar</Button>
-                                <Button variant="danger" onClick={() => abrirModalExcluir(farmaceutico)} className="ms-2">Excluir</Button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                ))}
+            </tbody>
+        </table>
 
-            {/* Modal para adicionar/editar farmacêutico */}
-            <Modal show={showModal} onHide={fecharModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{modoEdicao ? 'Editar Farmacêutico' : 'Adicionar Farmacêutico'}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleFormSubmit}>
-                        <Form.Group controlId="formIdFunc">
-                            <Form.Label>ID</Form.Label>
+        <Modal
+            show={showModal}
+            onHide={fecharModal}
+            centered
+            dialogClassName="custom-modal-width"  
+            className="farmaceuticos-modal-theme" 
+        >
+            <Modal.Header closeButton>
+                <Modal.Title>{modoEdicao ? 'Editar Farmacêutico' : 'Adicionar Farmacêutico'}</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+                <Form onSubmit={handleFormSubmit}>
+                    <Row>
+                        <Form.Group as={Col} md="6" className="mb-3" controlId="formIdFunc">
+                            <Form.Label>ID do Funcionário</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="id_func"
                                 value={novoFarmaceutico.id_func}
                                 onChange={handleInputChange}
                                 required
-                                disabled={modoEdicao} // Disable ID input during editing
+                                disabled={modoEdicao}
                             />
                         </Form.Group>
-                        <Form.Group controlId="formCRF">
+                        <Form.Group as={Col} md="6" className="mb-3" controlId="formCRF">
                             <Form.Label>CRF</Form.Label>
                             <Form.Control
                                 type="text"
@@ -182,26 +190,31 @@ const Farmaceuticos = () => {
                                 required
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit">{modoEdicao ? 'Salvar Alterações' : 'Salvar'}</Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+                    </Row>
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="success" onClick={handleFormSubmit}>
+                    {modoEdicao ? 'Salvar Alterações' : 'Salvar'}
+                </Button>
+            </Modal.Footer>
+        </Modal>
 
-            {/* Modal de confirmação de exclusão */}
-            <Modal show={showDeleteModal} onHide={fecharModalExcluir}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmar Exclusão</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>Tem certeza de que deseja excluir este farmacêutico?</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={fecharModalExcluir}>Cancelar</Button>
-                    <Button variant="danger" onClick={handleExcluirFarmaceutico}>Excluir</Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    );
+        {/* Modal de confirmação de exclusão (sem alteração de estilo) */}
+        <Modal show={showDeleteModal} onHide={fecharModalExcluir} centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Confirmar Exclusão</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>Tem certeza de que deseja excluir o farmacêutico **{farmaceuticoParaExcluir?.id_func}**?</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={fecharModalExcluir}>Cancelar</Button>
+                <Button variant="danger" onClick={handleExcluirFarmaceutico}>Excluir</Button>
+            </Modal.Footer>
+        </Modal>
+    </div>
+);
 };
 
 export default Farmaceuticos;

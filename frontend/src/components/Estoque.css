@@ -1,35 +1,89 @@
+/* --- Estilos da PÁGINA de Estoque --- */
 .estoque-container {
     padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .estoque-container h2 {
     margin-bottom: 20px;
 }
 
-.estoque-list {
-    list-style: none;
-    padding: 0;
+
+/* --- ESTILOS PARA A NOVA TABELA --- */
+.estoque-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-.estoque-item {
+.estoque-table th,
+.estoque-table td {
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    /* Alinha o conteúdo verticalmente */
 }
 
-.estoque-info {
-    flex: 1;
+.estoque-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
 }
 
-.estoque-actions {
-    display: flex;
-    gap: 10px;
+.estoque-row:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.estoque-actions .btn {
-    margin-left: 5px;
+.estoque-row:hover {
+    background-color: #f1f1f1;
+}
+
+.estoque-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+    /* Impede que os botões quebrem a linha */
+}
+
+
+/* --- Estilos ESPECÍFICOS para o MODAL de Estoque --- */
+
+/* 1. Define a LARGURA da caixa branca do modal */
+.custom-modal-width {
+    max-width: 700px;
+    /* Um pouco menor, já que são menos campos */
+    width: 90%;
+}
+
+/* 2. Aplica o TEMA ESCURO no cabeçalho */
+.estoque-modal-theme .modal-header {
+    background-color: #212529;
+    /* Fundo preto */
+    color: white;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+    /* Remove arredondamento */
+}
+
+/* Garante que o título e o "X" sejam brancos */
+.estoque-modal-theme .modal-title {
+    color: white;
+}
+
+.estoque-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Garante que o conteúdo do modal não tenha cantos arredondados ou bordas estranhas */
+.estoque-modal-theme .modal-content {
+    border-radius: 0;
+    border: none;
+    padding-top: 0;
+    /* Remove a "barra branca" de cima */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.estoque-modal-theme .modal-body {
+    padding: 1.5rem;
+    /* Espaçamento interno do formulário */
 }

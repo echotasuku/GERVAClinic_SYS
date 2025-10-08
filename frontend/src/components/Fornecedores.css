@@ -1,4 +1,4 @@
-/* Fornecedores.css */
+/* --- Estilos da PÁGINA de Fornecedores --- */
 .fornecedores-container {
     max-width: 800px;
     margin: 0 auto;
@@ -13,11 +13,11 @@
     margin-bottom: 20px;
 }
 
+
 .fornecedores-list {
     list-style-type: none;
     padding: 0;
     margin-top: 20px;
-    /* Adiciona espaçamento superior à lista */
 }
 
 .fornecedor-item {
@@ -46,16 +46,72 @@
     align-items: center;
 }
 
-.modal-body {
-    display: flex;
-    justify-content: center;
-}
-
-.modal-title {
-    flex: 1;
-    text-align: center;
-}
-
 .btn {
     margin-right: 5px;
+}
+
+
+.custom-modal-width {
+    max-width: 800px;
+    width: 90%;
+}
+
+.fornecedores-modal-theme .modal-header {
+    background-color: #212529;
+    color: white;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+}
+
+.fornecedores-modal-theme .modal-title {
+    color: white;
+}
+
+.fornecedores-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.fornecedores-modal-theme .modal-content {
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: none;
+    padding-top: 0;
+}
+
+.fornecedores-modal-theme .modal-body {
+    padding: 1.5rem;
+}
+
+/* --- ADIÇÃO: Estilos para a NOVA TABELA de Fornecedores --- */
+
+.fornecedores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.fornecedores-table th,
+.fornecedores-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.fornecedores-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.fornecedores-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.fornecedores-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.fornecedores-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
 }
