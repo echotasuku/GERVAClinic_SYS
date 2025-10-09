@@ -1,4 +1,4 @@
-/* --- Estilos da PÁGINA de Fornecedores --- */
+
 .fornecedores-container {
     max-width: 800px;
     margin: 0 auto;
@@ -49,8 +49,6 @@
 .btn {
     margin-right: 5px;
 }
-
-
 .custom-modal-width {
     max-width: 800px;
     width: 90%;
@@ -81,8 +79,6 @@
 .fornecedores-modal-theme .modal-body {
     padding: 1.5rem;
 }
-
-/* --- ADIÇÃO: Estilos para a NOVA TABELA de Fornecedores --- */
 
 .fornecedores-table {
     width: 100%;

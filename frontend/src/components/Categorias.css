@@ -60,14 +60,12 @@
     margin: 0;
 }
 
-/* --- Estilos da PÁGINA de Categorias --- */
+
 .categorias-page.container {
     max-width: 800px;
-    /* Define uma largura máxima para o conteúdo da página */
+    
 }
 
-
-/* --- ESTILOS PARA A NOVA TABELA DE CATEGORIAS --- */
 .categorias-table {
     width: 100%;
     border-collapse: collapse;
@@ -99,27 +97,17 @@
     text-align: center;
     white-space: nowrap;
 }
-
-
-/* --- Estilos ESPECÍFICOS para o MODAL de Categorias --- */
-
-/* 1. Define a LARGURA da caixa branca do modal */
 .custom-modal-width {
     max-width: 700px;
     width: 90%;
 }
-
-/* 2. Aplica o TEMA ESCURO no cabeçalho */
 .categorias-modal-theme .modal-header {
     background-color: #212529;
-    /* Fundo preto */
     color: white;
     border-bottom: 1px solid #000;
     border-radius: 0;
-    /* Remove arredondamento */
 }
 
-/* Garante que o título e o "X" sejam brancos */
 .categorias-modal-theme .modal-title {
     color: white;
 }
@@ -128,16 +116,14 @@
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* Garante que o conteúdo do modal não tenha cantos arredondados ou bordas estranhas */
 .categorias-modal-theme .modal-content {
     border-radius: 0;
     border: none;
     padding-top: 0;
-    /* Remove a "barra branca" de cima */
+    
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .categorias-modal-theme .modal-body {
     padding: 1.5rem;
-    /* Espaçamento interno do formulário */
 }

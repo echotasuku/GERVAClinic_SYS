@@ -23,7 +23,7 @@ class FarmaceuticoController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_func' => 'required|integer',
-            'CRF' => 'required|string|max:6', // Validar o campo CRF
+            'CRF' => 'required|string|max:12', // Validar o campo CRF
         ]);
 
         if ($validator->fails()) {
@@ -50,7 +50,7 @@ class FarmaceuticoController extends Controller
 
         $validator = Validator::make($request->all(), [
             'id_func' => 'required|integer',
-            'CRF' => 'required|string|max:6',
+            'CRF' => 'required|string|max:12',
         ]);
 
         if ($validator->fails()) {

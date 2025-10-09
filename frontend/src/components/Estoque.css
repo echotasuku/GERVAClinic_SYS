@@ -1,4 +1,4 @@
-/* --- Estilos da PÁGINA de Estoque --- */
+
 .estoque-container {
     padding: 20px;
     max-width: 900px;
@@ -8,9 +8,6 @@
 .estoque-container h2 {
     margin-bottom: 20px;
 }
-
-
-/* --- ESTILOS PARA A NOVA TABELA --- */
 .estoque-table {
     width: 100%;
     border-collapse: collapse;
@@ -23,7 +20,6 @@
     padding: 12px;
     text-align: left;
     vertical-align: middle;
-    /* Alinha o conteúdo verticalmente */
 }
 
 .estoque-table th {
@@ -42,30 +38,20 @@
 .estoque-table .actions-cell {
     text-align: center;
     white-space: nowrap;
-    /* Impede que os botões quebrem a linha */
+    
 }
-
-
-/* --- Estilos ESPECÍFICOS para o MODAL de Estoque --- */
-
-/* 1. Define a LARGURA da caixa branca do modal */
 .custom-modal-width {
     max-width: 700px;
-    /* Um pouco menor, já que são menos campos */
     width: 90%;
 }
 
-/* 2. Aplica o TEMA ESCURO no cabeçalho */
 .estoque-modal-theme .modal-header {
     background-color: #212529;
-    /* Fundo preto */
     color: white;
     border-bottom: 1px solid #000;
     border-radius: 0;
-    /* Remove arredondamento */
 }
 
-/* Garante que o título e o "X" sejam brancos */
 .estoque-modal-theme .modal-title {
     color: white;
 }
@@ -74,16 +60,14 @@
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* Garante que o conteúdo do modal não tenha cantos arredondados ou bordas estranhas */
 .estoque-modal-theme .modal-content {
     border-radius: 0;
     border: none;
     padding-top: 0;
-    /* Remove a "barra branca" de cima */
+    
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .estoque-modal-theme .modal-body {
     padding: 1.5rem;
-    /* Espaçamento interno do formulário */
 }

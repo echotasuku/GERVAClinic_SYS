@@ -5,198 +5,217 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Retirada.css';
 
 const Retiradas = () => {
-    // ... (toda a sua lógica de state, useEffect e funções handle... continua a mesma)
-    // NENHUMA ALTERAÇÃO NECESSÁRIA AQUI EM CIMA
-  const [retiradas, setRetiradas] = useState([]);
-  const [novaRetirada, setNovaRetirada] = useState({
-    data: '', medicamento_id: '', farmaceutico_id: '', quantidade: '', receita: null
-  });
-  const [showModal, setShowModal] = useState(false);
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [retiradaParaEdicao, setRetiradaParaEdicao] = useState(null);
-  const [medicamentos, setMedicamentos] = useState([]);
-  const [farmaceuticos, setFarmaceuticos] = useState([]);
+    const [retiradas, setRetiradas] = useState([]);
+    const [novaRetirada, setNovaRetirada] = useState({
+        data: '', medicamento_id: '', farmaceutico_id: '', quantidade: '', receita: null
+    });
+    const [showModal, setShowModal] = useState(false);
+    const [modoEdicao, setModoEdicao] = useState(false);
+    const [retiradaParaEdicao, setRetiradaParaEdicao] = useState(null);
+    const [medicamentos, setMedicamentos] = useState([]);
+    const [farmaceuticos, setFarmaceuticos] = useState([]);
+    const [errors, setErrors] = useState({}); 
 
-  useEffect(() => {
-    fetchRetiradas();
-    fetchMedicamentos();
-    fetchFarmaceuticos();
-  }, []);
+    useEffect(() => {
+        fetchRetiradas();
+        fetchMedicamentos();
+        fetchFarmaceuticos();
+    }, []);
 
-  const fetchRetiradas = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get('http://127.0.0.1:8080/api/retiradas', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setRetiradas(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar retiradas:', error);
-    }
-  };
 
-  const fetchMedicamentos = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get('http://127.0.0.1:8080/api/medicamentos-list', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setMedicamentos(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar medicamentos:', error);
-    }
-  };
+    const fetchRetiradas = async () => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            const response = await axios.get('http://127.0.0.1:8080/api/retiradas', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setRetiradas(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar retiradas:', error);
+        }
+    };
+    const fetchMedicamentos = async () => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            const response = await axios.get('http://127.0.0.1:8080/api/medicamentos-list', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setMedicamentos(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar medicamentos:', error);
+        }
+    };
+    const fetchFarmaceuticos = async () => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            const response = await axios.get('http://127.0.0.1:8080/api/farmaceuticos-list', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setFarmaceuticos(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar farmacêuticos:', error);
+        }
+    };
 
-  const fetchFarmaceuticos = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get('http://127.0.0.1:8080/api/farmaceuticos-list', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setFarmaceuticos(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar farmacêuticos:', error);
-    }
-  };
+    const handleInputChange = (e) => {
+        const { name, value, type, files } = e.target;
+        setNovaRetirada({
+            ...novaRetirada,
+            [name]: type === 'file' ? files[0] : value
+        });
+        if (!!errors[name]) {
+            setErrors(prevErrors => ({ ...prevErrors, [name]: null }));
+        }
+    };
 
-  const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setNovaRetirada({
-      ...novaRetirada,
-      [name]: type === 'file' ? files[0] : value
-    });
-  };
+    
+    const validateForm = () => {
+        const { data, medicamento_id, farmaceutico_id, quantidade } = novaRetirada;
+        const newErrors = {};
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    for (const key in novaRetirada) {
-      if (novaRetirada[key] !== null) {
-        formData.append(key, novaRetirada[key]);
-      }
-    }
+        if (!medicamento_id) newErrors.medicamento_id = 'Selecione um medicamento.';
+        if (!quantidade || parseFloat(quantidade) <= 0) {
+            newErrors.quantidade = 'A quantidade deve ser maior que zero.';
+        }
+        if (!farmaceutico_id) newErrors.farmaceutico_id = 'Selecione um farmacêutico.';
+        if (!data) newErrors.data = 'A data da retirada é obrigatória.';
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-    try {
-      const token = localStorage.getItem('auth_token');
-      const headers = { 
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`
-      };
-      if (modoEdicao && retiradaParaEdicao) {
-        formData.append('_method', 'PUT');
-        await axios.post(`http://127.0.0.1:8080/api/retiradas/${retiradaParaEdicao.id}`, formData, { headers });
-      } else {
-        await axios.post('http://127.0.0.1:8080/api/retiradas', formData, { headers });
-      }
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            return;
+        }
 
-      fetchRetiradas();
-      fecharModal();
-    } catch (error) {
-      console.error('Erro ao criar/editar retirada:', error);
-    }
-  };
+        const formData = new FormData();
+        for (const key in novaRetirada) {
+            if (novaRetirada[key] !== null) {
+                formData.append(key, novaRetirada[key]);
+            }
+        }
 
-  const abrirModal = () => {
-    setShowModal(true);
-    setModoEdicao(false);
-    setNovaRetirada({ data: '', medicamento_id: '', farmaceutico_id: '', quantidade: '', receita: null });
-  };
+        try {
+            const token = localStorage.getItem('auth_token');
+            const headers = { 
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`
+            };
+            if (modoEdicao && retiradaParaEdicao) {
+                formData.append('_method', 'PUT');
+                await axios.post(`http://127.0.0.1:8080/api/retiradas/${retiradaParaEdicao.id}`, formData, { headers });
+            } else {
+                await axios.post('http://127.0.0.1:8080/api/retiradas', formData, { headers });
+            }
 
-  const fecharModal = () => {
-    setShowModal(false);
-    setModoEdicao(false);
-    setRetiradaParaEdicao(null);
-    setNovaRetirada({ data: '', medicamento_id: '', farmaceutico_id: '', quantidade: '', receita: null });
-  };
+            fetchRetiradas();
+            fecharModal();
+        } catch (error) {
+            console.error('Erro ao criar/editar retirada:', error);
+        }
+    };
 
-  const handleEditarRetirada = (retirada) => {
-    const dataFormatada = retirada.data ? new Date(retirada.data).toISOString().split('T')[0] : '';
-    setNovaRetirada({ ...retirada, data: dataFormatada, receita: null });
-    setRetiradaParaEdicao(retirada);
-    setModoEdicao(true);
-    setShowModal(true);
-  };
+    const abrirModal = () => {
+        setShowModal(true);
+        setModoEdicao(false);
+        setNovaRetirada({ data: '', medicamento_id: '', farmaceutico_id: '', quantidade: '', receita: null });
+    };
 
-  const handleExcluirRetirada = async (id) => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      await axios.delete(`http://127.0.0.1:8080/api/retiradas/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchRetiradas();
-    } catch (error) {
-      console.error('Erro ao excluir retirada:', error);
-    }
-  };
+    const fecharModal = () => {
+        setShowModal(false);
+        setModoEdicao(false);
+        setRetiradaParaEdicao(null);
+        setNovaRetirada({ data: '', medicamento_id: '', farmaceutico_id: '', quantidade: '', receita: null });
+        setErrors({}); 
+    };
+
+    const handleEditarRetirada = (retirada) => {
+        const dataFormatada = retirada.data ? new Date(retirada.data).toISOString().split('T')[0] : '';
+        setNovaRetirada({ ...retirada, data: dataFormatada, receita: null });
+        setRetiradaParaEdicao(retirada);
+        setModoEdicao(true);
+        setShowModal(true);
+    };
+
+    const handleExcluirRetirada = async (id) => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            await axios.delete(`http://127.0.0.1:8080/api/retiradas/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchRetiradas();
+        } catch (error) {
+            console.error('Erro ao excluir retirada:', error);
+        }
+    };
 
     return (
         <div className="retiradas-container">
+                 <div className="d-flex justify-content-between align-items-center mb-4">
             <h2>Retiradas</h2>
             <Button variant="primary" onClick={abrirModal}>Adicionar Retirada</Button>
-
-            <Modal
-                show={showModal}
-                onHide={fecharModal}
-                centered
-                dialogClassName="custom-modal-width"
-                className="retiradas-modal-theme"   
-            >
+        </div>
+            <Modal show={showModal} onHide={fecharModal} centered dialogClassName="custom-modal-width" className="retiradas-modal-theme">
                 <Modal.Header closeButton>
                     <Modal.Title>{modoEdicao ? 'Editar Retirada' : 'Adicionar Retirada'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleFormSubmit}>
+                    <Form noValidate onSubmit={handleFormSubmit}>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="8" controlId="formMedicamento">
                                 <Form.Label>Medicamento</Form.Label>
-                                <Form.Select name="medicamento_id" value={novaRetirada.medicamento_id} onChange={handleInputChange} required>
+                                <Form.Select name="medicamento_id" value={novaRetirada.medicamento_id} onChange={handleInputChange} isInvalid={!!errors.medicamento_id} required>
                                     <option value="">Selecione um medicamento</option>
                                     {medicamentos.map((medicamento) => (
                                         <option key={medicamento.id} value={medicamento.id}>{medicamento.nome}</option>
                                     ))}
                                 </Form.Select>
+                                <Form.Control.Feedback type="invalid">{errors.medicamento_id}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="formQuantidade">
                                 <Form.Label>Quantidade</Form.Label>
-                                <Form.Control type="number" name="quantidade" placeholder="Qtd." value={novaRetirada.quantidade} onChange={handleInputChange} required />
+                                <Form.Control type="number" name="quantidade" placeholder="Qtd." value={novaRetirada.quantidade} onChange={handleInputChange} isInvalid={!!errors.quantidade} required />
+                                <Form.Control.Feedback type="invalid">{errors.quantidade}</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="8" controlId="formFarmaceutico">
                                 <Form.Label>Farmacêutico Responsável</Form.Label>
-                                <Form.Select name="farmaceutico_id" value={novaRetirada.farmaceutico_id} onChange={handleInputChange} required>
+                                <Form.Select name="farmaceutico_id" value={novaRetirada.farmaceutico_id} onChange={handleInputChange} isInvalid={!!errors.farmaceutico_id} required>
                                     <option value="">Selecione um farmacêutico</option>
                                     {farmaceuticos.map((farmaceutico) => (
                                         <option key={farmaceutico.id} value={farmaceutico.id}>{farmaceutico.id_func} - {farmaceutico.CRF}</option>
                                     ))}
                                 </Form.Select>
+                                <Form.Control.Feedback type="invalid">{errors.farmaceutico_id}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="formData">
                                 <Form.Label>Data da Retirada</Form.Label>
-                                <Form.Control type="date" name="data" value={novaRetirada.data} onChange={handleInputChange} required />
+                                <Form.Control type="date" name="data" value={novaRetirada.data} onChange={handleInputChange} isInvalid={!!errors.data} required />
+                                <Form.Control.Feedback type="invalid">{errors.data}</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Form.Group controlId="formReceita" className="mb-3">
-                            <Form.Label>Anexar Receita (Opcional)</Form.Label>
+                            <Form.Label>Anexar Receita</Form.Label>
                             <Form.Control type="file" name="receita" onChange={handleInputChange} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={fecharModal}>Cancelar</Button>
-                    <Button variant="primary" onClick={handleFormSubmit}>
+                    <Button variant="success" onClick={handleFormSubmit}>
                         {modoEdicao ? 'Salvar Alterações' : 'Salvar'}
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-            {/* AQUI ESTÁ A MUDANÇA: de Lista (ul) para Tabela (table) */}
+            
             <table className="retiradas-table">
                 <thead>
                     <tr>
                         <th>Data</th>
                         <th>Medicamento</th>
-                        <th>Qtd.</th>
+                        <th>Quantidade</th>
                         <th>Farmacêutico</th>
                         <th>Receita</th>
                         <th className="text-center">Ações</th>

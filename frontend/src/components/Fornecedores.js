@@ -1,134 +1,157 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
+import InputMask from 'react-input-mask'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Fornecedores.css'; // Arquivo CSS para estilização específica
+import './Fornecedores.css';
 
 const Fornecedores = () => {
-    // ... (toda a sua lógica de state, useEffect e funções handle... continua a mesma)
-    // NENHUMA ALTERAÇÃO NECESSÁRIA AQUI EM CIMA
-  const [fornecedores, setFornecedores] = useState([]);
-  const [novoFornecedor, setNovoFornecedor] = useState({
-    nome: '', logradouro: '', bairro: '', cidade: '', uf: '', contato: '', cep: ''
-  });
-  const [showModal, setShowModal] = useState(false);
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [fornecedorParaEdicao, setFornecedorParaEdicao] = useState(null);
+    const [fornecedores, setFornecedores] = useState([]);
+    const [novoFornecedor, setNovoFornecedor] = useState({
+        nome: '', logradouro: '', bairro: '', cidade: '', uf: '', contato: '', cep: ''
+    });
+    const [showModal, setShowModal] = useState(false);
+    const [modoEdicao, setModoEdicao] = useState(false);
+    const [fornecedorParaEdicao, setFornecedorParaEdicao] = useState(null);
+    const [errors, setErrors] = useState({}); 
 
-  useEffect(() => {
-    fetchFornecedores();
-  }, []);
+    useEffect(() => {
+        fetchFornecedores();
+    }, []);
 
-  const fetchFornecedores = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get('http://127.0.0.1:8080/api/fornecedores', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setFornecedores(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar fornecedores:', error);
-    }
-  };
+    const fetchFornecedores = async () => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            const response = await axios.get('http://127.0.0.1:8080/api/fornecedores', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setFornecedores(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar fornecedores:', error);
+        }
+    };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNovoFornecedor(prevState => ({ ...prevState, [name]: value }));
-  };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNovoFornecedor(prevState => ({ ...prevState, [name]: value }));
+        if (!!errors[name]) {
+            setErrors(prevErrors => ({ ...prevErrors, [name]: null }));
+        }
+    };
 
-  const handleCepChange = async (e) => {
-    const cep = e.target.value.replace(/\D/g, ''); // Remove não-números
-    setNovoFornecedor(prevState => ({ ...prevState, cep }));
+    const handleCepChange = async (e) => {
+        const cep = e.target.value.replace(/\D/g, '');
+        setNovoFornecedor(prevState => ({ ...prevState, cep }));
+        if (!!errors.cep) {
+            setErrors(prevErrors => ({ ...prevErrors, cep: null }));
+        }
 
-    if (cep.length === 8) {
-      try {
-        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-        const { logradouro, bairro, localidade, uf } = response.data;
-        setNovoFornecedor(prevState => ({ ...prevState, logradouro, bairro, cidade: localidade, uf }));
-      } catch (error) {
-        console.error('Erro ao buscar endereço:', error);
-      }
-    }
-  };
+        if (cep.length === 8) {
+            try {
+                const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+                const { logradouro, bairro, localidade, uf } = response.data;
+                setNovoFornecedor(prevState => ({ ...prevState, logradouro, bairro, cidade: localidade, uf }));
+            } catch (error) {
+                console.error('Erro ao buscar endereço:', error);
+            }
+        }
+    };
+    
+    const validateForm = () => {
+        const newErrors = {};
+        if (!novoFornecedor.nome || novoFornecedor.nome.trim() === '') newErrors.nome = 'O nome do fornecedor é obrigatório.';
+        if (!novoFornecedor.cep || novoFornecedor.cep.replace(/\D/g, '').length !== 8) newErrors.cep = 'O CEP é obrigatório e deve ter 8 dígitos.';
+        if (!novoFornecedor.contato || novoFornecedor.contato.replace(/\D/g, '').length < 10) newErrors.contato = 'O contato é obrigatório.';
+        if (novoFornecedor.uf && novoFornecedor.uf.length !== 2) {
+            newErrors.uf = 'A UF deve ter 2 caracteres.';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('auth_token');
-      const headers = { Authorization: `Bearer ${token}` };
-      if (modoEdicao && fornecedorParaEdicao) {
-        await axios.put(`http://127.0.0.1:8080/api/fornecedores/${fornecedorParaEdicao.id}`, novoFornecedor, { headers });
-      } else {
-        await axios.post('http://127.0.0.1:8080/api/fornecedores', novoFornecedor, { headers });
-      }
-      fetchFornecedores();
-      fecharModal();
-    } catch (error) {
-      console.error('Erro ao criar/editar fornecedor:', error);
-    }
-  };
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            return;
+        }
 
-  const abrirModal = () => {
-    setShowModal(true);
-    setModoEdicao(false);
-    setFornecedorParaEdicao(null);
-  };
+        try {
+            const token = localStorage.getItem('auth_token');
+            const headers = { Authorization: `Bearer ${token}` };
+            if (modoEdicao && fornecedorParaEdicao) {
+                await axios.put(`http://127.0.0.1:8080/api/fornecedores/${fornecedorParaEdicao.id}`, novoFornecedor, { headers });
+            } else {
+                await axios.post('http://127.0.0.1:8080/api/fornecedores', novoFornecedor, { headers });
+            }
+            fetchFornecedores();
+            fecharModal();
+        } catch (error) {
+            console.error('Erro ao criar/editar fornecedor:', error);
+        }
+    };
 
-  const fecharModal = () => {
-    setShowModal(false);
-    setModoEdicao(false);
-    setFornecedorParaEdicao(null);
-    setNovoFornecedor({
-      nome: '', logradouro: '', bairro: '', cidade: '', uf: '', contato: '', cep: ''
-    });
-  };
+    const abrirModal = () => {
+        setShowModal(true);
+        setModoEdicao(false);
+        setFornecedorParaEdicao(null);
+    };
 
-  const handleEditarFornecedor = (fornecedor) => {
-    setNovoFornecedor(fornecedor);
-    setFornecedorParaEdicao(fornecedor);
-    setModoEdicao(true);
-    setShowModal(true);
-  };
+    const fecharModal = () => {
+        setShowModal(false);
+        setModoEdicao(false);
+        setFornecedorParaEdicao(null);
+        setNovoFornecedor({
+            nome: '', logradouro: '', bairro: '', cidade: '', uf: '', contato: '', cep: ''
+        });
+        setErrors({});
+    };
 
-  const handleExcluirFornecedor = async (fornecedor) => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      await axios.delete(`http://127.0.0.1:8080/api/fornecedores/${fornecedor.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchFornecedores();
-    } catch (error) {
-      console.error('Erro ao excluir fornecedor:', error);
-    }
-  };
+    const handleEditarFornecedor = (fornecedor) => {
+        setNovoFornecedor(fornecedor);
+        setFornecedorParaEdicao(fornecedor);
+        setModoEdicao(true);
+        setShowModal(true);
+    };
 
-    // A MUDANÇA ESTÁ APENAS NO FINAL DO BLOCO `return` ABAIXO
+    const handleExcluirFornecedor = async (fornecedor) => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            await axios.delete(`http://127.0.0.1:8080/api/fornecedores/${fornecedor.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchFornecedores();
+        } catch (error) {
+            console.error('Erro ao excluir fornecedor:', error);
+        }
+    };
+
     return (
         <div className="fornecedores-container">
+     <div className="d-flex justify-content-between align-items-center mb-4">
             <h2>Fornecedores</h2>
             <Button variant="primary" onClick={abrirModal}>Adicionar Fornecedor</Button>
-
-            <Modal 
-                show={showModal} 
-                onHide={fecharModal} 
-                centered 
-                dialogClassName="custom-modal-width"
-                className="fornecedores-modal-theme" 
-            >
+        </div>
+            <Modal show={showModal} onHide={fecharModal} centered dialogClassName="custom-modal-width" className="fornecedores-modal-theme">
                 <Modal.Header closeButton>
                     <Modal.Title>{modoEdicao ? 'Editar Fornecedor' : 'Adicionar Fornecedor'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleFormSubmit}>
-                        {/* Seu formulário organizado com Row e Col já está ótimo! */}
+                    <Form noValidate onSubmit={handleFormSubmit}>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="8" controlId="formNome">
                                 <Form.Label>Nome</Form.Label>
-                                <Form.Control type="text" name="nome" placeholder="Nome do Fornecedor" value={novoFornecedor.nome} onChange={handleInputChange} required />
+                                <Form.Control type="text" name="nome" placeholder="Nome do Fornecedor" value={novoFornecedor.nome} onChange={handleInputChange} isInvalid={!!errors.nome} required />
+                                <Form.Control.Feedback type="invalid">{errors.nome}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="formCep">
                                 <Form.Label>CEP</Form.Label>
-                                <Form.Control type="text" name="cep" placeholder="Apenas números" value={novoFornecedor.cep} onChange={handleCepChange} required />
+                                <InputMask mask="99999-999" value={novoFornecedor.cep} onChange={handleCepChange} name="cep">
+                                    {(inputProps) => (
+                                        <Form.Control {...inputProps} type="text" isInvalid={!!errors.cep} required />
+                                    )}
+                                </InputMask>
+                                <Form.Control.Feedback type="invalid">{errors.cep}</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Form.Group as={Row} className="mb-3" controlId="formLogradouro">
@@ -148,33 +171,38 @@ const Fornecedores = () => {
                             </Form.Group>
                             <Form.Group as={Col} md="2" controlId="formUf">
                                 <Form.Label>UF</Form.Label>
-                                <Form.Control type="text" name="uf" placeholder="UF" value={novoFornecedor.uf} onChange={handleInputChange} />
+                                <Form.Control type="text" name="uf" placeholder="UF" value={novoFornecedor.uf} onChange={handleInputChange} isInvalid={!!errors.uf} maxLength={2} />
+                                <Form.Control.Feedback type="invalid">{errors.uf}</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Form.Group as={Row} controlId="formContato">
                             <Form.Label column sm={2}>Contato</Form.Label>
                             <Col sm={10}>
-                                <Form.Control type="text" name="contato" placeholder="Telefone ou E-mail" value={novoFornecedor.contato} onChange={handleInputChange} required />
+                                <InputMask mask="(99) 99999-9999" value={novoFornecedor.contato} onChange={handleInputChange} name="contato">
+                                    {(inputProps) => (
+                                        <Form.Control {...inputProps} type="tel" placeholder="(99) 99999-9999" isInvalid={!!errors.contato} required />
+                                    )}
+                                </InputMask>
+                                <Form.Control.Feedback type="invalid">{errors.contato}</Form.Control.Feedback>
                             </Col>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={fecharModal}>Fechar</Button>
-                    <Button variant="primary" onClick={handleFormSubmit}>
+                    <Button variant="success" onClick={handleFormSubmit}>
                         {modoEdicao ? 'Salvar Alterações' : 'Salvar'}
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-            {/* AQUI ESTÁ A MUDANÇA: de Lista (ul) para Tabela (table) */}
+            
             <table className="fornecedores-table">
                 <thead>
                     <tr>
                         <th>Nome</th>
                         <th>Cidade/UF</th>
                         <th>Contato</th>
-                        <th>Ações</th>
+                        <th className="text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -5,83 +5,107 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Categorias.css';
 
 const Categorias = () => {
-    // ... (toda a sua lógica de state, useEffect e funções handle... continua a mesma)
-    // NENHUMA ALTERAÇÃO NECESSÁRIA AQUI EM CIMA
-  const [categorias, setCategorias] = useState([]);
-  const [novaCategoria, setNovaCategoria] = useState({ nome: '', descricao: '' });
-  const [showModal, setShowModal] = useState(false);
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [categoriaParaEdicao, setCategoriaParaEdicao] = useState(null);
+    const [categorias, setCategorias] = useState([]);
+    const [novaCategoria, setNovaCategoria] = useState({ nome: '', descricao: '' });
+    const [showModal, setShowModal] = useState(false);
+    const [modoEdicao, setModoEdicao] = useState(false);
+    const [categoriaParaEdicao, setCategoriaParaEdicao] = useState(null);
+    const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    fetchCategorias();
-  }, []);
+    useEffect(() => {
+        fetchCategorias();
+    }, []);
 
-  const fetchCategorias = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get('http://127.0.0.1:8080/api/categorias', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCategorias(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
-    }
-  };
+    const fetchCategorias = async () => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            const response = await axios.get('http://127.0.0.1:8080/api/categorias', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setCategorias(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar categorias:', error);
+        }
+    };
 
-  const handleInputChange = (e) => {
-    setNovaCategoria({ ...novaCategoria, [e.target.name]: e.target.value });
-  };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNovaCategoria({ ...novaCategoria, [name]: value });
+        
+        if (!!errors[name]) {
+            setErrors(prevErrors => ({ ...prevErrors, [name]: null }));
+        }
+    };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('auth_token');
-      const headers = { Authorization: `Bearer ${token}` };
-      if (modoEdicao && categoriaParaEdicao) {
-        await axios.put(`http://127.0.0.1:8080/api/categorias/${categoriaParaEdicao.id}`, novaCategoria, { headers });
-      } else {
-        await axios.post('http://127.0.0.1:8080/api/categorias', novaCategoria, { headers });
-      }
-      fetchCategorias();
-      fecharModal();
-    } catch (error) {
-      console.error('Erro ao criar/editar categoria:', error);
-    }
-  };
+    
+    const validateForm = () => {
+        const newErrors = {};
+        if (!novaCategoria.nome || novaCategoria.nome.trim() === '') {
+            newErrors.nome = 'O nome da categoria é obrigatório.';
+        }
+        if (!novaCategoria.descricao || novaCategoria.descricao.trim() === '') {
+            newErrors.descricao = 'A descrição é obrigatória.';
+        }
 
-  const handleEditarCategoria = (categoria) => {
-    setNovaCategoria({ nome: categoria.nome, descricao: categoria.descricao });
-    setCategoriaParaEdicao(categoria);
-    setModoEdicao(true);
-    setShowModal(true);
-  };
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-  const handleExcluirCategoria = async (categoria) => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      await axios.delete(`http://127.0.0.1:8080/api/categorias/${categoria.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchCategorias();
-    } catch (error) {
-      console.error('Erro ao excluir categoria:', error);
-    }
-  };
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+    
+        if (!validateForm()) {
+            return; 
+        }
 
-  const abrirModal = () => {
-    setShowModal(true);
-    setModoEdicao(false);
-    setNovaCategoria({ nome: '', descricao: ''});
-    setCategoriaParaEdicao(null);
-  };
+        try {
+            const token = localStorage.getItem('auth_token');
+            const headers = { Authorization: `Bearer ${token}` };
+            if (modoEdicao && categoriaParaEdicao) {
+                await axios.put(`http://127.0.0.1:8080/api/categorias/${categoriaParaEdicao.id}`, novaCategoria, { headers });
+            } else {
+                await axios.post('http://127.0.0.1:8080/api/categorias', novaCategoria, { headers });
+            }
+            fetchCategorias();
+            fecharModal();
+        } catch (error) {
+            console.error('Erro ao criar/editar categoria:', error);
+        }
+    };
 
-  const fecharModal = () => {
-    setShowModal(false);
-    setModoEdicao(false);
-    setCategoriaParaEdicao(null);
-    setNovaCategoria({ nome: '', descricao: '' });
-  };
+    const handleEditarCategoria = (categoria) => {
+        setNovaCategoria({ nome: categoria.nome, descricao: categoria.descricao });
+        setCategoriaParaEdicao(categoria);
+        setModoEdicao(true);
+        setShowModal(true);
+    };
+
+    const handleExcluirCategoria = async (categoria) => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            await axios.delete(`http://127.0.0.1:8080/api/categorias/${categoria.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchCategorias();
+        } catch (error) {
+            console.error('Erro ao excluir categoria:', error);
+        }
+    };
+
+    const abrirModal = () => {
+        setShowModal(true);
+        setModoEdicao(false);
+        setNovaCategoria({ nome: '', descricao: '' });
+        setCategoriaParaEdicao(null);
+    };
+
+    const fecharModal = () => {
+        setShowModal(false);
+        setModoEdicao(false);
+        setCategoriaParaEdicao(null);
+        setNovaCategoria({ nome: '', descricao: '' });
+        setErrors({}); 
+    };
 
     return (
         <div className="container py-4 categorias-page">
@@ -90,40 +114,56 @@ const Categorias = () => {
                 <Button variant="primary" onClick={abrirModal}>Adicionar Categoria</Button>
             </div>
 
-            {/* O Modal já está correto, sem alterações */}
-            <Modal
-                show={showModal}
-                onHide={fecharModal}
-                centered
-                dialogClassName="custom-modal-width"
-                className="categorias-modal-theme"
-            >
+            <Modal show={showModal} onHide={fecharModal} centered dialogClassName="custom-modal-width" className="categorias-modal-theme">
                 <Modal.Header closeButton>
                     <Modal.Title>{modoEdicao ? 'Editar Categoria' : 'Adicionar Nova Categoria'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleFormSubmit}>
+                
+                    <Form noValidate onSubmit={handleFormSubmit}>
                         <Row>
                             <Form.Group as={Col} md="6" className="mb-3" controlId="formNome">
                                 <Form.Label>Nome da Categoria</Form.Label>
-                                <Form.Control type="text" name="nome" placeholder="Ex: Analgésicos" value={novaCategoria.nome} onChange={handleInputChange} required />
+                                <Form.Control
+                                    type="text"
+                                    name="nome"
+                                    placeholder="Ex: Analgésicos"
+                                    value={novaCategoria.nome}
+                                    onChange={handleInputChange}
+                                    isInvalid={!!errors.nome} 
+                                    required
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.nome}
+                                </Form.Control.Feedback>
                             </Form.Group>
+
                             <Form.Group as={Col} md="6" className="mb-3" controlId="formDescricao">
                                 <Form.Label>Descrição</Form.Label>
-                                <Form.Control type="text" name="descricao" placeholder="Para que serve a categoria" value={novaCategoria.descricao} onChange={handleInputChange} required />
+                                <Form.Control
+                                    type="text"
+                                    name="descricao"
+                                    placeholder="Para que serve a categoria"
+                                    value={novaCategoria.descricao}
+                                    onChange={handleInputChange}
+                                    isInvalid={!!errors.descricao} 
+                                    required
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.descricao}
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={fecharModal}>Cancelar</Button>
-                    <Button variant="primary" onClick={handleFormSubmit}>
+                
+                    <Button variant="success" onClick={handleFormSubmit}>
                         {modoEdicao ? 'Salvar Alterações' : 'Adicionar'}
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-            {/* AQUI ESTÁ A MUDANÇA: de Lista (ul) para Tabela (table) */}
             <table className="categorias-table">
                 <thead>
                     <tr>
