@@ -1,0 +1,33 @@
+
+.login-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #5e6064;
+}
+
+.login-screen h2 {
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+}
+
+
+.login-screen p {
+    margin-top: 0;
+    margin-bottom: 32px;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+}
+
+/* Faz o botão do Google ficar arredondado */
+.login-screen>div {
+    border-radius: 50px !important;
+    overflow: hidden !important;
+}

@@ -61,8 +61,8 @@ const App = () => {
         <div className="App">
           {authenticated ? (
             <>
-              {/* Passa a função de logout para o componente Sidebar */}
-              <Sidebar onLogout={handleLogout} />
+              
+              <Sidebar onLogout={handleLogout} userRole={userRole} />
               <div className="content">
                 <Routes>
                   <Route path="/" element={<Navigate to="/home" />} />
