@@ -9,7 +9,7 @@ Siga os passos abaixo para instalar e executar cada uma delas.
 
 - **React**: Versão mínima `19.x.x`
 - **PHP**: Versão mínima `8.2`
-- Ambos são a versão que estou
+- Ambos são a versão que estou utilizando
 
 ---
 
