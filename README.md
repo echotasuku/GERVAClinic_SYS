@@ -56,6 +56,3 @@ Siga os passos abaixo para instalar e executar cada uma delas.
 
 - Certifique-se de que você possui as versões mínimas do **React** (`19.x.x`) e do **PHP** (`8.2`) instaladas no seu sistema.
 - O frontend estará disponível em `http://localhost:3000` e o backend em `http://localhost:8080`.
-6. Crie o link simbólico para o diretório de armazenamento:
-
-    php artisan storage:link
