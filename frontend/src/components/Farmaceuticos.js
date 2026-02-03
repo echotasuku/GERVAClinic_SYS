@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import InputMask from 'react-input-mask'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Farmaceuticos.css'
+import './Farmaceuticos.css';
 
 const Farmaceuticos = () => {
     const [farmaceuticos, setFarmaceuticos] = useState([]);
@@ -14,8 +14,14 @@ const Farmaceuticos = () => {
     const [modoEdicao, setModoEdicao] = useState(false);
     const [farmaceuticoParaEdicao, setFarmaceuticoParaEdicao] = useState(null);
     const [farmaceuticoParaExcluir, setFarmaceuticoParaExcluir] = useState(null);
-    const [novoFarmaceutico, setNovoFarmaceutico] = useState({ id_func: '', CRF: '' });
-    const [errors, setErrors] = useState({}); 
+
+    const [novoFarmaceutico, setNovoFarmaceutico] = useState({
+        id_func: '',
+        nome: '',
+        CRF: ''
+    });
+
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         fetchFarmaceuticos();
@@ -37,17 +43,19 @@ const Farmaceuticos = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setNovoFarmaceutico({ ...novoFarmaceutico, [name]: value });
-        if (!!errors[name]) {
-            setErrors(prevErrors => ({ ...prevErrors, [name]: null }));
+        setNovoFarmaceutico(prev => ({ ...prev, [name]: value }));
+
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
         }
     };
 
     const validateForm = () => {
-        const { id_func, CRF } = novoFarmaceutico;
+        const { id_func, nome, CRF } = novoFarmaceutico;
         const newErrors = {};
 
         if (!id_func) newErrors.id_func = 'O ID do funcionário é obrigatório.';
+        if (!nome) newErrors.nome = 'O nome é obrigatório.';
         if (!CRF || CRF.replace(/\D/g, '').length === 0) {
             newErrors.CRF = 'O CRF é obrigatório.';
         }
@@ -58,22 +66,30 @@ const Farmaceuticos = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) {
-            return;
-        }
-        
+        if (!validateForm()) return;
+
         try {
             const token = localStorage.getItem('auth_token');
             const headers = { Authorization: `Bearer ${token}` };
+
             if (modoEdicao && farmaceuticoParaEdicao) {
-                await axios.put(`http://127.0.0.1:8080/api/farmaceuticos/${farmaceuticoParaEdicao.id}`, novoFarmaceutico, { headers });
+                await axios.put(
+                    `http://127.0.0.1:8080/api/farmaceuticos/${farmaceuticoParaEdicao.id}`,
+                    novoFarmaceutico,
+                    { headers }
+                );
             } else {
-                await axios.post('http://127.0.0.1:8080/api/farmaceuticos', novoFarmaceutico, { headers });
+                await axios.post(
+                    'http://127.0.0.1:8080/api/farmaceuticos',
+                    novoFarmaceutico,
+                    { headers }
+                );
             }
+
             fetchFarmaceuticos();
             fecharModal();
         } catch (error) {
-            console.error('Erro ao criar/editar farmacêutico:', error);
+            console.error('Erro ao salvar farmacêutico:', error);
         }
     };
 
@@ -81,19 +97,23 @@ const Farmaceuticos = () => {
         setShowModal(true);
         setModoEdicao(false);
         setFarmaceuticoParaEdicao(null);
-        setNovoFarmaceutico({ id_func: '', CRF: '' }); 
+        setNovoFarmaceutico({ id_func: '', nome: '', CRF: '' });
     };
 
     const fecharModal = () => {
         setShowModal(false);
         setModoEdicao(false);
         setFarmaceuticoParaEdicao(null);
-        setNovoFarmaceutico({ id_func: '', CRF: '' });
-        setErrors({}); 
+        setNovoFarmaceutico({ id_func: '', nome: '', CRF: '' });
+        setErrors({});
     };
 
     const handleEditarFarmaceutico = (farmaceutico) => {
-        setNovoFarmaceutico({ id_func: farmaceutico.id_func, CRF: farmaceutico.CRF });
+        setNovoFarmaceutico({
+            id_func: farmaceutico.id_func,
+            nome: farmaceutico.nome,
+            CRF: farmaceutico.CRF
+        });
         setFarmaceuticoParaEdicao(farmaceutico);
         setModoEdicao(true);
         setShowModal(true);
@@ -112,16 +132,14 @@ const Farmaceuticos = () => {
     const handleExcluirFarmaceutico = async () => {
         try {
             const token = localStorage.getItem('auth_token');
-            if (farmaceuticoParaExcluir) {
-                await axios.delete(`http://127.0.0.1:8080/api/farmaceuticos/${farmaceuticoParaExcluir.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                fetchFarmaceuticos();
-                fecharModalExcluir();
-            }
+            await axios.delete(
+                `http://127.0.0.1:8080/api/farmaceuticos/${farmaceuticoParaExcluir.id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            fetchFarmaceuticos();
+            fecharModalExcluir();
         } catch (error) {
-            console.error('Erro ao excluir farmacêutico:', error);
-            setError('Erro ao excluir farmacêutico. Por favor, tente novamente.');
+            setError('Erro ao excluir farmacêutico.');
         }
     };
 
@@ -132,90 +150,121 @@ const Farmaceuticos = () => {
         <div className="farmaceuticos-container">
             <header className="header">
                 <h1>Farmacêuticos</h1>
-                <Button variant="primary" onClick={abrirModal}>Adicionar Farmacêutico</Button>
+                <Button variant="primary" onClick={abrirModal}>
+                    Adicionar Farmacêutico
+                </Button>
             </header>
-            
+
             <table className="farmaceuticos-table">
                 <thead>
                     <tr>
                         <th>ID do Funcionário</th>
+                        <th>Nome</th>
                         <th>CRF</th>
                         <th className="text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {farmaceuticos.map((farmaceutico) => (
-                        <tr key={farmaceutico.id}>
-                            <td>{farmaceutico.id_func}</td>
-                            <td>{farmaceutico.CRF}</td>
+                    {farmaceuticos.map(f => (
+                        <tr key={f.id}>
+                            <td>{f.id_func}</td>
+                            <td>{f.nome}</td>
+                            <td>{f.CRF}</td>
                             <td className="actions-cell">
-                                <Button variant="info" size="sm" onClick={() => handleEditarFarmaceutico(farmaceutico)}>Editar</Button>
-                                <Button variant="danger" size="sm" onClick={() => abrirModalExcluir(farmaceutico)} className="ms-2">Excluir</Button>
+                                <Button size="sm" variant="info" onClick={() => handleEditarFarmaceutico(f)}>
+                                    Editar
+                                </Button>
+                                <Button size="sm" variant="danger" className="ms-2" onClick={() => abrirModalExcluir(f)}>
+                                    Excluir
+                                </Button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            
-            <Modal show={showModal} onHide={fecharModal} centered dialogClassName="custom-modal-width" className="farmaceuticos-modal-theme">
+            {/* MODAL CADASTRO / EDIÇÃO */}
+            <Modal show={showModal} onHide={fecharModal} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>{modoEdicao ? 'Editar Farmacêutico' : 'Adicionar Farmacêutico'}</Modal.Title>
+                    <Modal.Title>
+                        {modoEdicao ? 'Editar Farmacêutico' : 'Adicionar Farmacêutico'}
+                    </Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
-                    <Form noValidate onSubmit={handleFormSubmit}>
+                    <Form onSubmit={handleFormSubmit} noValidate>
                         <Row>
-                            <Form.Group as={Col} md="6" className="mb-3" controlId="formIdFunc">
-                                <Form.Label>ID do Funcionário</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="id_func"
-                                    value={novoFarmaceutico.id_func}
-                                    onChange={handleInputChange}
-                                    isInvalid={!!errors.id_func}
-                                    required
-                                    disabled={modoEdicao}
-                                />
-                                <Form.Control.Feedback type="invalid">{errors.id_func}</Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="6" className="mb-3" controlId="formCRF">
-                                <Form.Label>CRF</Form.Label>
-                                <InputMask
-                                    mask="999999-aa/aa"
-                                    value={novoFarmaceutico.CRF}
-                                    onChange={handleInputChange}
-                                    name="CRF"
-                                >
-                                    {(inputProps) => (
-                                        <Form.Control
-                                            {...inputProps}
-                                            type="text"
-                                            isInvalid={!!errors.CRF}
-                                            placeholder="Ex: 123456-SP/RJ"
-                                            required
-                                        />
-                                    )}
-                                </InputMask>
-                                <Form.Control.Feedback type="invalid">{errors.CRF}</Form.Control.Feedback>
-                            </Form.Group>
+                            <Col md={4}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>ID do Funcionário</Form.Label>
+                                    <Form.Control
+                                        name="id_func"
+                                        value={novoFarmaceutico.id_func}
+                                        onChange={handleInputChange}
+                                        isInvalid={!!errors.id_func}
+                                        disabled={modoEdicao}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.id_func}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+
+                            <Col md={4}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Nome</Form.Label>
+                                    <Form.Control
+                                        name="nome"
+                                        value={novoFarmaceutico.nome}
+                                        onChange={handleInputChange}
+                                        isInvalid={!!errors.nome}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.nome}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+
+                            <Col md={4}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>CRF</Form.Label>
+                                    <InputMask
+                                        mask="999999-aa/aa"
+                                        name="CRF"
+                                        value={novoFarmaceutico.CRF}
+                                        onChange={handleInputChange}
+                                    >
+                                        {(inputProps) => (
+                                            <Form.Control
+                                                {...inputProps}
+                                                isInvalid={!!errors.CRF}
+                                            />
+                                        )}
+                                    </InputMask>
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.CRF}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
                         </Row>
                     </Form>
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button variant="secondary" onClick={fecharModal}>Cancelar</Button>
                     <Button variant="success" onClick={handleFormSubmit}>
-                        {modoEdicao ? 'Salvar Alterações' : 'Salvar'}
+                        Salvar
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-        
+            {/* MODAL EXCLUSÃO */}
             <Modal show={showDeleteModal} onHide={fecharModalExcluir} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Exclusão</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Tem certeza de que deseja excluir o farmacêutico **{farmaceuticoParaExcluir?.id_func}**?</p>
+                    Tem certeza que deseja excluir o farmacêutico <strong>{farmaceuticoParaExcluir?.nome}</strong>?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={fecharModalExcluir}>Cancelar</Button>

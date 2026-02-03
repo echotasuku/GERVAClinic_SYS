@@ -21,7 +21,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <h1>Gerenciamento de estoque de medicamentos </h1>
+      <h1>ALMOX - UBS </h1>
       <p>Bem Vindo</p>
     </div>
   );

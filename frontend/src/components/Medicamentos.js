@@ -10,7 +10,7 @@ const Medicamentos = () => {
     const [fornecedores, setFornecedores] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [novoMedicamento, setNovoMedicamento] = useState({
-        nome: '', descricao: '', fornecedor_id: '', categoria_id: '', tarja: '',
+        nome: '', indicacao: '', fornecedor_id: '', categoria_id: '', tarja: '',
         generico: false, laboratorio: '', dosagem: '', via_administracao: ''
     });
     const [showModal, setShowModal] = useState(false);
@@ -72,11 +72,11 @@ const Medicamentos = () => {
     };
 
     const validateForm = () => {
-        const { nome, descricao, fornecedor_id, categoria_id, tarja, laboratorio, dosagem, via_administracao } = novoMedicamento;
+        const { nome, indicacao, fornecedor_id, categoria_id, tarja, laboratorio, dosagem, via_administracao } = novoMedicamento;
         const newErrors = {};
 
         if (!nome) newErrors.nome = 'O nome é obrigatório.';
-        if (!descricao) newErrors.descricao = 'A descrição é obrigatória.';
+        if (!indicacao) newErrors.indicacao = 'A indicação é obrigatória.';
         if (!fornecedor_id) newErrors.fornecedor_id = 'Selecione um fornecedor.';
         if (!categoria_id) newErrors.categoria_id = 'Selecione uma categoria.';
         if (!laboratorio) newErrors.laboratorio = 'O laboratório é obrigatório.';
@@ -120,7 +120,7 @@ const Medicamentos = () => {
         setModoEdicao(false);
         setMedicamentoParaEdicao(null);
         setNovoMedicamento({
-            nome: '', descricao: '', fornecedor_id: '', categoria_id: '', tarja: '',
+            nome: '', indicacao: '', fornecedor_id: '', categoria_id: '', tarja: '',
             generico: false, laboratorio: '', dosagem: '', via_administracao: ''
         });
         setErrors({});
@@ -164,10 +164,10 @@ const Medicamentos = () => {
                                 <Form.Control type="text" name="nome" placeholder="Nome do Medicamento" value={novoMedicamento.nome} onChange={handleInputChange} isInvalid={!!errors.nome} required />
                                 <Form.Control.Feedback type="invalid">{errors.nome}</Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="6" controlId="formDescricao">
-                                <Form.Label>Descrição</Form.Label>
-                                <Form.Control type="text" name="descricao" placeholder="Ex: Analgésico, 30mg" value={novoMedicamento.descricao} onChange={handleInputChange} isInvalid={!!errors.descricao} required />
-                                <Form.Control.Feedback type="invalid">{errors.descricao}</Form.Control.Feedback>
+                            <Form.Group as={Col} md="6" controlId="formIndicacao">
+                                <Form.Label>Indicação</Form.Label>
+                                <Form.Control type="text" name="indicacao" placeholder="Ex: Analgésico, 30mg" value={novoMedicamento.indicacao} onChange={handleInputChange} isInvalid={!!errors.indicacao} required />
+                                <Form.Control.Feedback type="invalid">{errors.indicacao}</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
@@ -239,7 +239,7 @@ const Medicamentos = () => {
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Descrição</th>
+                        <th>Indicação</th>
                         <th>Fornecedor</th>
                         <th>Categoria</th>
                         <th>Tarja</th>
@@ -254,7 +254,7 @@ const Medicamentos = () => {
                     {medicamentos.map((medicamento) => (
                         <tr key={medicamento.id} className="medicamento-row">
                             <td>{medicamento.nome}</td>
-                            <td>{medicamento.descricao}</td>
+                            <td>{medicamento.indicacao}</td>
                             <td>
                                 {fornecedores.find(f => f.id === medicamento.fornecedor_id)?.nome || 'N/A'}
                             </td>

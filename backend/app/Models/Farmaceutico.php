@@ -11,6 +11,7 @@ class Farmaceutico extends Model
     protected $fillable = [
         'id_func',
         'CRF',
+        'nome',
     ];
 
     public function user()
@@ -23,4 +24,3 @@ class Farmaceutico extends Model
         return $this->hasMany(Retirada::class);
     }
 }
-

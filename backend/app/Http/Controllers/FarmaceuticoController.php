@@ -16,7 +16,7 @@ class FarmaceuticoController extends Controller
     public function list()
     {
         // Retorna apenas o id_func e CRF dos farmacêuticos
-        return Farmaceutico::select('id', 'id_func', 'CRF')->get();
+        return Farmaceutico::select('id', 'id_func', 'CRF', 'nome')->get();
     }
 
     public function store(Request $request)
@@ -24,6 +24,7 @@ class FarmaceuticoController extends Controller
         $validator = Validator::make($request->all(), [
             'id_func' => 'required|integer',
             'CRF' => 'required|string|max:12', // Validar o campo CRF
+            'nome' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -34,6 +35,7 @@ class FarmaceuticoController extends Controller
         $farmaceutico = Farmaceutico::create([
             'id_func' => $request->id_func,
             'CRF' => $request->CRF,
+            'nome' => $request->nome,
         ]);
 
         return $farmaceutico;
@@ -51,6 +53,7 @@ class FarmaceuticoController extends Controller
         $validator = Validator::make($request->all(), [
             'id_func' => 'required|integer',
             'CRF' => 'required|string|max:12',
+            'nome' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -61,6 +64,7 @@ class FarmaceuticoController extends Controller
         $farmaceutico->update([
             'id_func' => $request->id_func,
             'CRF' => $request->CRF,
+            'nome' => $request->nome,
         ]);
 
         return $farmaceutico;

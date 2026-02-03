@@ -8,7 +8,7 @@ class Medicamento extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'descricao', 'fornecedor_id', 'categoria_id', 
+    protected $fillable = ['nome', 'indicacao', 'fornecedor_id', 'categoria_id', 
 'tarja', 'generico', 'laboratorio', 'dosagem', 'via_administracao'];
 
     public function fornecedor()

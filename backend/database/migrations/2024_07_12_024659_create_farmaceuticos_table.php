@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_func');
             $table->string('CRF');
+            $table->string('nome');
             $table->timestamps();
         });
     }

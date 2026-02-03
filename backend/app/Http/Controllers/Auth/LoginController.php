@@ -48,11 +48,11 @@ class LoginController extends Controller
         // Cria um token de autenticação
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Retorna o token e o papel do usuário
+        
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'role' => $user->role, // Retorna o papel do usuário
+            'role' => $user->role,
         ]);
     }
 }

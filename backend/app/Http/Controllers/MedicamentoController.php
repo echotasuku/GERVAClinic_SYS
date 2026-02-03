@@ -23,7 +23,7 @@ class MedicamentoController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nome' => 'required|string',
-            'descricao' => 'required|string',
+            'indicacao' => 'required|string',
             'fornecedor_id' => 'required|exists:fornecedores,id',
             'categoria_id' => 'required|exists:categorias,id',
             'tarja' => 'required|string',
@@ -51,7 +51,7 @@ class MedicamentoController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nome' => 'required|string',
-            'descricao' => 'required|string',
+            'indicacao' => 'required|string',
             'fornecedor_id' => 'required|exists:fornecedores,id',
             'categoria_id' => 'required|exists:categorias,id',
             'tarja' => 'required|string',

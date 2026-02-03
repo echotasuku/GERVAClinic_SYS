@@ -186,7 +186,7 @@ const Retiradas = () => {
                                 <Form.Select name="farmaceutico_id" value={novaRetirada.farmaceutico_id} onChange={handleInputChange} isInvalid={!!errors.farmaceutico_id} required>
                                     <option value="">Selecione um farmacêutico</option>
                                     {farmaceuticos.map((farmaceutico) => (
-                                        <option key={farmaceutico.id} value={farmaceutico.id}>{farmaceutico.id_func} - {farmaceutico.CRF}</option>
+                                        <option key={farmaceutico.id} value={farmaceutico.id}>{farmaceutico.id_func} - {farmaceutico.CRF} - {farmaceutico.nome}</option>
                                     ))}
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">{errors.farmaceutico_id}</Form.Control.Feedback>
@@ -227,7 +227,7 @@ const Retiradas = () => {
                             <td>{new Date(retirada.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                             <td>{retirada.medicamento ? retirada.medicamento.nome : 'Desconhecido'}</td>
                             <td>{retirada.quantidade}</td>
-                            <td>{retirada.farmaceutico ? retirada.farmaceutico.CRF : 'Desconhecido'}</td>
+                            <td>{retirada.farmaceutico ? retirada.farmaceutico.nome : 'Desconhecido'}</td>
                             <td>
                                 {retirada.receita ? (
                                     <a href={`http://127.0.0.1:8080/storage/${retirada.receita}`} target="_blank" rel="noopener noreferrer">Visualizar</a>
