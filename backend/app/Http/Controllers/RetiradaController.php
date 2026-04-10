@@ -30,6 +30,9 @@ class RetiradaController extends Controller
             'farmaceutico_id' => 'required|exists:farmaceuticos,id',
             'quantidade' => 'required|integer|min:1',
             'receita' => 'nullable|file|mimes:pdf,jpeg,png,jpg|max:2048',
+            'nome_paciente' => 'required|string|max:255',
+            'cns' => 'required|string|max:255',
+            'hora' => 'required|date_format:H:i',
         ]);
 
         if ($validator->fails()) {
@@ -93,6 +96,9 @@ class RetiradaController extends Controller
             'farmaceutico_id' => 'required|exists:farmaceuticos,id',
             'quantidade' => 'required|integer|min:1',
             'receita' => 'nullable|file|mimes:pdf,jpeg,png,jpg|max:2048',
+            'nome_paciente' => 'required|string|max:255',
+            'cns' => 'required|string|max:255',
+            'hora' => 'required|date_format:H:i',
         ]);
 
         if ($validator->fails()) {

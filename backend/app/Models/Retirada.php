@@ -13,6 +13,9 @@ class Retirada extends Model
         'farmaceutico_id',
         'receita',
         'quantidade',
+        'nome_paciente',
+        'cns',
+        'hora',
     ];
 
     // Relacionamento com o modelo Medicamento
