@@ -10,6 +10,9 @@ use App\Http\Controllers\FarmaceuticoController;
 use App\Http\Controllers\MedicamentosMaisProcuradosController;
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\NotificacaoController;
+use Illuminate\Support\Facades\Broadcast;
+
 
 // Rota para obter informações do usuário autenticado
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -52,3 +55,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('medicamentos-list', [MedicamentoController::class, 'list']);
     Route::get('farmaceuticos-list', [FarmaceuticoController::class, 'list']);
 });
+
+// Rotas para notificações
+Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+Route::get('/notificacoes-nao-lidas', [NotificacaoController::class, 'naoLidas']);
+Route::post('/notificacoes/{id}/ler', [NotificacaoController::class, 'marcarComoLida']);
+Route::post('/notificacoes/marcar-todas-lidas', [NotificacaoController::class, 'marcarTodasComoLidas']);
+    Route::delete('/notificacoes/{id}', [NotificacaoController::class, 'destroy']);
+    Route::delete('/notificacoes', [NotificacaoController::class, 'destroyAll']);
+
+Route::get('/alertas', [EstoqueController::class, 'verificarAlertas']);
+
+//rota braodcast
+Route::post('/broadcasting/auth', function (Request $request) {
+    return Broadcast::auth($request);
+})->middleware('auth:sanctum');
+
+// Rota para   testar o Pusher
+Route::post('/teste-pusher', [EstoqueController::class, 'dispararEventoTeste'])
+    ->middleware('auth:sanctum');

@@ -10,6 +10,8 @@ import Retiradas from './components/Retiradas';
 import Farmaceuticos from './components/Farmaceuticos';
 import Medicamentos from './components/Medicamentos';
 import Estoque from './components/Estoque';
+import Notificacoes from './components/Notificacoes';
+
 import GoogleLoginComponent from './components/GoogleLoginComponent';
 import './App.css';
 
@@ -79,6 +81,7 @@ const App = () => {
                       <Route path="/farmaceuticos" element={<Farmaceuticos />} />
                       <Route path="/medicamentos" element={<Medicamentos />} />
                       <Route path="/estoque" element={<Estoque />} />
+                      <Route path="/notificacoes" element={<Notificacoes />} />
                     </>
                   )}
                 </Routes>

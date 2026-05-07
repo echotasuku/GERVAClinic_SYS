@@ -16,7 +16,6 @@ class Estoque extends Model
         'lote',
         'data_validade',
         'quantidade_estoque',
-        'preco',
         'medicamento_id',
     ];
 

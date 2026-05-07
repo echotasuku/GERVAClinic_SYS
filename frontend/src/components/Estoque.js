@@ -8,7 +8,7 @@ const Estoque = () => {
     const [estoque, setEstoque] = useState([]);
     const [medicamentos, setMedicamentos] = useState([]);
     const [novoEstoque, setNovoEstoque] = useState({
-        lote: '', data_validade: '', quantidade_estoque: '', preco: '', medicamento_id: ''
+        lote: '', data_validade: '', quantidade_estoque: '', medicamento_id: ''
     });
     const [showModal, setShowModal] = useState(false);
     const [modoEdicao, setModoEdicao] = useState(false);
@@ -53,7 +53,7 @@ const Estoque = () => {
     };
 
     const validateForm = () => {
-        const { lote, data_validade, quantidade_estoque, preco, medicamento_id } = novoEstoque;
+        const { lote, data_validade, quantidade_estoque, medicamento_id } = novoEstoque;
         const newErrors = {};
 
         if (!medicamento_id) newErrors.medicamento_id = 'Selecione um medicamento.';
@@ -62,10 +62,7 @@ const Estoque = () => {
         if (!quantidade_estoque || parseFloat(quantidade_estoque) <= 0) {
             newErrors.quantidade_estoque = 'A quantidade deve ser maior que zero.';
         }
-        if (!preco || parseFloat(preco) <= 0) {
-            newErrors.preco = 'O preço deve ser maior que zero.';
-        }
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -102,7 +99,7 @@ const Estoque = () => {
         setModoEdicao(false);
         setEstoqueParaEdicao(null);
         setNovoEstoque({
-            lote: '', data_validade: '', quantidade_estoque: '', preco: '', medicamento_id: ''
+            lote: '', data_validade: '', quantidade_estoque: '',  medicamento_id: ''
         });
         setErrors({}); 
     };
@@ -168,11 +165,7 @@ const Estoque = () => {
                                 <Form.Control type="number" name="quantidade_estoque" placeholder="Ex: 100" value={novoEstoque.quantidade_estoque} onChange={handleInputChange} isInvalid={!!errors.quantidade_estoque} required />
                                 <Form.Control.Feedback type="invalid">{errors.quantidade_estoque}</Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="6" controlId="formPreco">
-                                <Form.Label>Preço (R$)</Form.Label>
-                                <Form.Control type="number" step="0.01" name="preco" placeholder="Ex: 25.50" value={novoEstoque.preco} onChange={handleInputChange} isInvalid={!!errors.preco} required />
-                                <Form.Control.Feedback type="invalid">{errors.preco}</Form.Control.Feedback>
-                            </Form.Group>
+                
                         </Row>
                     </Form>
                 </Modal.Body>
@@ -190,7 +183,6 @@ const Estoque = () => {
                         <th>Lote</th>
                         <th>Data de Validade</th>
                         <th>Quantidade</th>
-                        <th>Preço</th>
                         <th className="text-center">Ações</th>
                     </tr>
                 </thead>
@@ -201,7 +193,6 @@ const Estoque = () => {
                             <td>{item.lote}</td>
                             <td>{new Date(item.data_validade).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                             <td>{item.quantidade_estoque}</td>
-                            <td>R$ {parseFloat(item.preco).toFixed(2).replace('.', ',')}</td>
                             <td className="actions-cell">
                                 <Button variant="info" size="sm" onClick={() => handleEditarEstoque(item)}>Editar</Button>
                                 <Button variant="danger" size="sm" onClick={() => handleExcluirEstoque(item)} className="ms-2">Excluir</Button>
