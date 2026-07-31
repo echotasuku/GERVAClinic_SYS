@@ -1,24 +1,29 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Farmaceutico extends Model
+class Paciente extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'id_func',
-        'CRF',
         'nome',
+        'cpf',
+        'data_nascimento',
+        'sexo',
+        'telefone',
+        'email',
+        'logradouro',
+        'bairro',
+        'cidade',
+        'uf',
+        'cep'
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
+    
     public function retiradas()
     {
         return $this->hasMany(Retirada::class);

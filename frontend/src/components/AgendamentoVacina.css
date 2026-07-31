@@ -1,0 +1,114 @@
+.agendamento-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.agendamento-container h2 {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #212529;
+}
+
+/* Tabela */
+.agendamento-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.agendamento-table th,
+.agendamento-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.agendamento-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.agendamento-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.agendamento-row:hover {
+    background-color: #f1f1f1;
+}
+
+.agendamento-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Modal */
+.custom-modal-width {
+    max-width: 650px;
+    width: 90%;
+}
+
+.agendamento-modal-theme .modal-header {
+    background-color: #212529;
+    color: white;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+}
+
+.agendamento-modal-theme .modal-title {
+    color: white;
+}
+
+.agendamento-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.agendamento-modal-theme .modal-content {
+    border-radius: 0;
+    border: none;
+    padding-top: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.agendamento-modal-theme .modal-body {
+    padding: 1.2rem;
+}
+
+/* Campos compactos */
+.agendamento-modal-theme .form-control,
+.agendamento-modal-theme .form-select,
+.agendamento-modal-theme textarea {
+    max-width: 250px;
+    font-size: 14px;
+    padding: 6px 10px;
+    display: inline-block;
+}
+
+/* Observações ocupa mais espaço */
+.agendamento-modal-theme textarea {
+    max-width: 100%;
+    min-height: 80px;
+}
+
+/* Status destacado na tabela */
+.agendamento-table td:nth-child(3) {
+    text-align: center;
+    font-weight: 600;
+}
+
+.agendamento-table td:nth-child(3):contains("pendente") {
+    color: #ffc107;
+    /* amarelo */
+}
+
+.agendamento-table td:nth-child(3):contains("aplicada") {
+    color: #198754;
+    /* verde */
+}
+
+.agendamento-table td:nth-child(3):contains("atrasada") {
+    color: #dc3545;
+    /* vermelho */
+}

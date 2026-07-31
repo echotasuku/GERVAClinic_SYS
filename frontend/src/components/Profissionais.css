@@ -1,0 +1,66 @@
+/* ===== CONTAINER PRINCIPAL ===== */
+.profissionais-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ===== HEADER ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+/* ===== TABELA ===== */
+.profissionais-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.profissionais-table th,
+.profissionais-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.profissionais-table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+.profissionais-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.profissionais-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* ===== AÇÕES ===== */
+.actions-cell {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ===== LOADING E ERROR ===== */
+.loading,
+.error {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.error {
+    color: #dc3545;
+}

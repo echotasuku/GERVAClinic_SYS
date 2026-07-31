@@ -1,5 +1,4 @@
-
-.categorias-container {
+.tipos-vacinas-container {
     max-width: 600px;
     margin: auto;
     padding: 20px;
@@ -8,24 +7,24 @@
     background-color: #f9f9f9;
 }
 
-.categorias-header {
+.tipos-vacinas-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.categorias-header h2 {
+.tipos-vacinas-header h2 {
     margin: 0;
 }
 
-.categorias-form {
+.tipos-vacinas-form {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
 
-.categorias-form input {
+.tipos-vacinas-form input {
     padding: 8px;
     font-size: 14px;
     border: 1px solid #ccc;
@@ -33,7 +32,7 @@
     width: 200px;
 }
 
-.categorias-form button {
+.tipos-vacinas-form button {
     padding: 8px 16px;
     background-color: #007bff;
     color: white;
@@ -43,12 +42,12 @@
     font-size: 14px;
 }
 
-.categorias-list {
+.tipos-vacinas-list {
     list-style-type: none;
     padding: 0;
 }
 
-.categoria-item {
+.tipo-vacina-item {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -56,74 +55,73 @@
     margin-bottom: 10px;
 }
 
-.categoria-item p {
+.tipo-vacina-item p {
     margin: 0;
 }
 
-
-.categorias-page.container {
+.tipos-vacinas-page.container {
     max-width: 800px;
-    
 }
 
-.categorias-table {
+.tipos-vacinas-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.categorias-table th,
-.categorias-table td {
+.tipos-vacinas-table th,
+.tipos-vacinas-table td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: left;
     vertical-align: middle;
 }
 
-.categorias-table th {
+.tipos-vacinas-table th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
 
-.categorias-table tr:nth-child(even) {
+.tipos-vacinas-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.categorias-table tr:hover {
+.tipos-vacinas-table tr:hover {
     background-color: #f1f1f1;
 }
 
-.categorias-table .actions-cell {
+.tipos-vacinas-table .actions-cell {
     text-align: center;
     white-space: nowrap;
 }
+
 .custom-modal-width {
     max-width: 700px;
     width: 90%;
 }
-.categorias-modal-theme .modal-header {
+
+.tipos-vacinas-modal-theme .modal-header {
     background-color: #212529;
     color: white;
     border-bottom: 1px solid #000;
     border-radius: 0;
 }
 
-.categorias-modal-theme .modal-title {
+.tipos-vacinas-modal-theme .modal-title {
     color: white;
 }
 
-.categorias-modal-theme .btn-close {
+.tipos-vacinas-modal-theme .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-.categorias-modal-theme .modal-content {
+.tipos-vacinas-modal-theme .modal-content {
     border-radius: 0;
     border: none;
     padding-top: 0;
-    
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.categorias-modal-theme .modal-body {
+.tipos-vacinas-modal-theme .modal-body {
     padding: 1.5rem;
 }

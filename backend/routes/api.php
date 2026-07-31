@@ -2,13 +2,17 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MedicamentoController;
-use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\VacinaController;
+use App\Http\Controllers\EsquemaVacinalController;
+use App\Http\Controllers\TipoVacinaController;
 use App\Http\Controllers\FornecedorController;
-use App\Http\Controllers\RetiradaController;
-use App\Http\Controllers\FarmaceuticoController;
+use App\Http\Controllers\AplicacaoController;
+use App\Http\Controllers\ProfissionalController;
+use App\Http\Controllers\AgendamentoVacinaController;
+use App\Http\Controllers\RecomendacaoVacinaController;
 use App\Http\Controllers\MedicamentosMaisProcuradosController;
 use App\Http\Controllers\EstoqueController;
+use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificacaoController;
 use Illuminate\Support\Facades\Broadcast;
@@ -21,16 +25,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Rotas acessíveis para todos os usuários autenticados (usuários comuns e administradores)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('retiradas', RetiradaController::class);  // Acessível para todos
+    Route::apiResource('aplicacoes', AplicacaoController::class);  // Acessível para todos
+    Route::apiResource('esquema-vacinal', EsquemaVacinalController::class);
+    Route::apiResource('recomendacoes-vacinas', RecomendacaoVacinaController::class);
+    Route::get('/recomendacoes-vacinas/gerar-automaticas/{pacienteId}', [RecomendacaoVacinaController::class, 'gerarAutomaticas']);
+    Route::apiResource('agendamentos-vacinas', AgendamentoVacinaController::class);
+      // Acessível para todos
 });
 
 // Rotas que apenas administradores podem acessar
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::apiResource('categorias', CategoriaController::class);
+    Route::apiResource('tipos-vacinas', TipoVacinaController::class);
     Route::apiResource('fornecedores', FornecedorController::class);
-    Route::apiResource('medicamentos', MedicamentoController::class);
-    Route::apiResource('farmaceuticos', FarmaceuticoController::class);
+    Route::apiResource('vacinas', VacinaController::class);
+    Route::apiResource('profissionais', ProfissionalController::class);
     Route::apiResource('estoque', EstoqueController::class);
+    Route::apiResource('pacientes', PacienteController::class);
 });
 
 // Rota de login com Google
@@ -39,9 +49,8 @@ Route::any('/auth/google/callback', [LoginController::class, 'handleGoogleCallba
 
 // Rota para consultar CEP via API
 Route::get('/consultar-cep/{cep}', [FornecedorController::class, 'consultarCep']);
+Route::get('/pacientes/consultar-cep/{cep}', [PacienteController::class, 'consultarCep']);
 
-// Rota para obter medicamentos mais procurados
-Route::get('/medicamentos-mais-procurados', [MedicamentosMaisProcuradosController::class, 'index']);
 
 
 Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
@@ -52,8 +61,6 @@ Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
 
 // Rotas para usuários comuns verem medicamentos e farmacêuticos para retiradas
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('medicamentos-list', [MedicamentoController::class, 'list']);
-    Route::get('farmaceuticos-list', [FarmaceuticoController::class, 'list']);
 });
 
 // Rotas para notificações

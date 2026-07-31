@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('tipos_vacinas', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->text('descricao');
+            $table->string('nome');       
+            $table->text('descricao');    
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('tipos_vacinas');
     }
 };

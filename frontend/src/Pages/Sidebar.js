@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
-  FaHome, FaTags, FaTruck, FaBoxOpen, FaUserMd, FaWarehouse, 
-  FaSignOutAlt, FaBell, FaTimes, FaExclamationTriangle, FaCalendarAlt 
+  FaHome, FaTags, FaTruck, FaUserMd, FaWarehouse, 
+  FaSignOutAlt, FaBell, FaTimes, FaExclamationTriangle, FaCalendarAlt, 
+  FaUsers, FaSyringe, FaClipboardCheck, FaBriefcaseMedical, FaCalendarCheck
 } from 'react-icons/fa';
-import { RiMedicineBottleFill } from 'react-icons/ri';
 import axios from 'axios';
 import echo from '../echo';
 import { ignorarNotificacao, isNotificacaoIgnorada } from '../utils/notificacoesUtils';
@@ -194,19 +194,36 @@ const Sidebar = ({ onLogout, userRole }) => {
         </div>
       </NavLink>
 
-      <NavLink to="/retiradas" className="sidebar-item">
+      <NavLink to="/aplicacoes" className="sidebar-item">
         <div className="sidebar-item-content">
-          <FaBoxOpen className="sidebar-icon" />
-          <span className="sidebar-text">Retiradas</span>
+          <FaClipboardCheck className="sidebar-icon" />
+          <span className="sidebar-text">Aplicações</span>
         </div>
       </NavLink>
 
+         <NavLink to="/agendamento-vacina" className="sidebar-item">
+        <div className="sidebar-item-content">
+          <FaCalendarCheck className="sidebar-icon" />
+          <span className="sidebar-text">Agendamento de Vacinas</span>
+        </div>
+      </NavLink>
+
+        <NavLink to="/recomendacao-vacina" className="sidebar-item">
+        <div className="sidebar-item-content">
+          <FaCalendarCheck className="sidebar-icon" />
+          <span className="sidebar-text">Recomendação de Vacinas</span>
+        </div>
+      </NavLink>
+
+
+
+
       {userRole === 'admin' && (
         <>
-          <NavLink to="/medicamentos" className="sidebar-item">
+          <NavLink to="/vacinas" className="sidebar-item">
             <div className="sidebar-item-content">
-              <RiMedicineBottleFill className="sidebar-icon" />
-              <span className="sidebar-text">Medicamentos</span>
+              <FaSyringe className="sidebar-icon" />
+              <span className="sidebar-text">Vacinas</span>
             </div>
           </NavLink>
 
@@ -217,10 +234,10 @@ const Sidebar = ({ onLogout, userRole }) => {
             </div>
           </NavLink>
 
-          <NavLink to="/categorias" className="sidebar-item">
+          <NavLink to="/Tipo Vacina" className="sidebar-item">
             <div className="sidebar-item-content">
               <FaTags className="sidebar-icon" />
-              <span className="sidebar-text">Categorias</span>
+              <span className="sidebar-text">Tipo de Vacina</span>
             </div>
           </NavLink>
 
@@ -231,10 +248,17 @@ const Sidebar = ({ onLogout, userRole }) => {
             </div>
           </NavLink>
 
-          <NavLink to="/farmaceuticos" className="sidebar-item">
+           <NavLink to="/pacientes" className="sidebar-item">
             <div className="sidebar-item-content">
-              <FaUserMd className="sidebar-icon" />
-              <span className="sidebar-text">Farmaceuticos</span>
+              <FaUsers className="sidebar-icon" />
+              <span className="sidebar-text">Pacientes</span>
+            </div>
+          </NavLink>
+
+          <NavLink to="/profissionais" className="sidebar-item">
+            <div className="sidebar-item-content">
+              <FaBriefcaseMedical className="sidebar-icon" />
+              <span className="sidebar-text">Profissionais</span>
             </div>
           </NavLink>
         </>

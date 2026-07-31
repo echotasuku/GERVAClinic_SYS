@@ -1,0 +1,203 @@
+/* ===== CONTAINER PRINCIPAL ===== */
+.aplicacoes-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.aplicacoes-container h2 {
+    margin-bottom: 20px;
+    color: #212529;
+    /* ← Garantindo texto escuro */
+}
+
+.aplicacoes-container .btn-primary {
+    margin-bottom: 20px;
+}
+
+/* ===== TABELA ===== */
+.aplicacoes-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.aplicacoes-table th,
+.aplicacoes-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    color: #212529;
+    /* ← Garantindo texto escuro nas células */
+}
+
+.aplicacoes-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #212529;
+    /* ← Garantindo texto escuro no cabeçalho */
+}
+
+.aplicacoes-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.aplicacoes-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.aplicacoes-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ===== MODAL ===== */
+.custom-modal-width {
+    max-width: 700px;
+    width: 90%;
+}
+
+.aplicacoes-modal-theme .modal-header {
+    background-color: #212529;
+    color: white;
+    /* ← Mantém o título branco no header escuro */
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+}
+
+.aplicacoes-modal-theme .modal-title {
+    color: white;
+    /* ← Título do modal em branco (header escuro) */
+}
+
+.aplicacoes-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.aplicacoes-modal-theme .modal-content {
+    border-radius: 0;
+    border: none;
+    padding-top: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    /* ← Fundo branco garantido */
+}
+
+.aplicacoes-modal-theme .modal-body {
+    padding: 1.5rem;
+    color: #212529;
+    /* ← Texto escuro no corpo do modal */
+}
+
+/* ===== CORREÇÃO PARA OS LABELS E INPUTS DO MODAL ===== */
+.aplicacoes-modal-theme .modal-body .form-label {
+    color: #212529;
+    /* ← Labels em escuro */
+    font-weight: 500;
+}
+
+.aplicacoes-modal-theme .modal-body .form-control,
+.aplicacoes-modal-theme .modal-body .form-select {
+    color: #212529;
+    /* ← Texto dos inputs em escuro */
+    background-color: #ffffff;
+    /* ← Fundo branco nos inputs */
+    border-color: #ced4da;
+}
+
+.aplicacoes-modal-theme .modal-body .form-control:focus,
+.aplicacoes-modal-theme .modal-body .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.aplicacoes-modal-theme .modal-body .form-control::placeholder {
+    color: #6c757d;
+    /* ← Placeholder cinza */
+}
+
+/* ===== CORREÇÃO PARA OS BOTÕES DO MODAL ===== */
+.aplicacoes-modal-theme .modal-footer .btn {
+    font-weight: 500;
+}
+
+.aplicacoes-modal-theme .modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.aplicacoes-modal-theme .modal-footer .btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #565e64;
+}
+
+.aplicacoes-modal-theme .modal-footer .btn-success {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+}
+
+.aplicacoes-modal-theme .modal-footer .btn-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+/* ===== MENSAGENS DE VALIDAÇÃO ===== */
+.aplicacoes-modal-theme .invalid-feedback {
+    color: #dc3545;
+    /* ← Mensagens de erro em vermelho */
+    font-size: 0.875em;
+}
+
+.aplicacoes-modal-theme .is-invalid {
+    border-color: #dc3545;
+}
+
+/* ===== LOADING E ERROR ===== */
+.loading,
+.error {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #212529;
+}
+
+.error {
+    color: #dc3545;
+}
+
+/* ===== NOTIFICAÇÕES (se tiver) ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

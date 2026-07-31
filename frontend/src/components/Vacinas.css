@@ -1,9 +1,11 @@
-.medicamentos-container {
+/* ===== CONTAINER PRINCIPAL ===== */
+.vacinas-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* ===== HEADER ===== */
 .header {
     display: flex;
     justify-content: space-between;
@@ -27,7 +29,8 @@
     background-color: #0056b3;
 }
 
-.medicamentos-table {
+/* ===== TABELA ===== */
+.vacinas-table {
     width: 85%;
     border-collapse: collapse;
     margin-top: 20px;
@@ -35,26 +38,27 @@
     margin: 20px auto;
 }
 
-.medicamentos-table th,
-.medicamentos-table td {
+.vacinas-table th,
+.vacinas-table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
     font-size: 14px;
 }
 
-.medicamentos-table th {
+.vacinas-table th {
     background-color: #f2f2f2;
 }
 
-.medicamento-row:nth-child(even) {
+.vacina-row:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.medicamento-row:hover {
+.vacina-row:hover {
     background-color: #f1f1f1;
 }
 
+/* ===== BOTÕES DE AÇÃO ===== */
 .btn-actions {
     display: inline-flex;
     gap: 5px;
@@ -86,7 +90,7 @@
     background-color: #c82333;
 }
 
-
+/* ===== MODAL ===== */
 .modal {
     position: fixed;
     top: 0;
@@ -115,6 +119,7 @@
     cursor: pointer;
 }
 
+/* ===== FORMULÁRIO ===== */
 form {
     display: flex;
     flex-direction: column;
@@ -155,36 +160,35 @@ button[type="submit"]:hover {
     margin-top: 20px;
 }
 
-
-
-.custom-modal-widthmed {
+/* ===== CONFIGURAÇÕES DO MODAL (Bootstrap) ===== */
+.custom-modal-widthvac {
+    /* ← MUDOU de widthmed para widthvac */
     max-width: 850px !important;
     width: 90% !important;
 }
 
-.medicamentos-modal-theme .modal-header {
+.vacinas-modal-theme .modal-header {
+    /* ← MUDOU de medicamentos-modal-theme */
     background-color: #212529;
     color: white;
     border-bottom: 1px solid #000;
     border-radius: 0;
 }
 
-.medicamentos-modal-theme .modal-title {
+.vacinas-modal-theme .modal-title {
     color: white;
 }
 
-.medicamentos-modal-theme .btn-close {
+.vacinas-modal-theme .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-
-.medicamentos-modal-theme .modal-content {
+.vacinas-modal-theme .modal-content {
     border-radius: 0;
     border: none;
     padding-top: 0;
-
 }
 
-.medicamentos-modal-theme .modal-body {
+.vacinas-modal-theme .modal-body {
     padding: 1.5rem;
 }

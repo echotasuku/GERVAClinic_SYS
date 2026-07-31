@@ -4,13 +4,16 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import axios from 'axios';
 import Sidebar from './Pages/Sidebar';
 import Home from './Pages/Home';
-import Categorias from './components/Categorias';
+import TipoVacina from './components/TipoVacina';
 import Fornecedores from './components/Fornecedores';
-import Retiradas from './components/Retiradas';
-import Farmaceuticos from './components/Farmaceuticos';
-import Medicamentos from './components/Medicamentos';
+import Profissionais from './components/Profissionais';
+import Vacinas from './components/Vacinas';
 import Estoque from './components/Estoque';
 import Notificacoes from './components/Notificacoes';
+import Pacientes from './components/Pacientes';
+import Aplicacoes from './components/Aplicacoes';
+import AgendamentoVacina from './components/AgendamentoVacina';
+import RecomendacaoVacina from './components/RecomendacaoVacina';
 
 import GoogleLoginComponent from './components/GoogleLoginComponent';
 import './App.css';
@@ -71,17 +74,21 @@ const App = () => {
                   <Route path="/home" element={<Home />} />
 
                   {/* Rotas acessíveis para todos os usuários */}
-                  <Route path="/retiradas" element={<Retiradas />} />
+                  <Route path="/agendamento-vacina" element={<AgendamentoVacina />} />
+                  <Route path="/recomendacao-vacina" element={<RecomendacaoVacina />} />
+                  
 
                   {/* Rotas acessíveis para administradores */}
                   {userRole === 'admin' && (
                     <>
-                      <Route path="/categorias" element={<Categorias />} />
+                      <Route path="/Tipo Vacina" element={<TipoVacina />} />
                       <Route path="/fornecedores" element={<Fornecedores />} />
-                      <Route path="/farmaceuticos" element={<Farmaceuticos />} />
-                      <Route path="/medicamentos" element={<Medicamentos />} />
+                      <Route path="/aplicacoes" element={<Aplicacoes />} />
+                      <Route path="/profissionais" element={<Profissionais />} />
+                      <Route path="/vacinas" element={<Vacinas />} />
                       <Route path="/estoque" element={<Estoque />} />
                       <Route path="/notificacoes" element={<Notificacoes />} />
+                        <Route path="/pacientes" element={<Pacientes />} />
                     </>
                   )}
                 </Routes>

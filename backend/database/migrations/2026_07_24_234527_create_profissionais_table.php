@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('farmaceuticos', function (Blueprint $table) {
+        Schema::create('profissionais', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_func');
-            $table->string('CRF');
-            $table->string('nome');
+
+            // Campos da tabela
+            $table->string('id_func')->unique();              // identificador funcional
+            $table->string('registro_profissional')->unique(); // registro do conselho profissional
+            $table->string('nome');                           // nome do profissional
+
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('farmaceuticos');
+        Schema::dropIfExists('profissionais');
     }
 };

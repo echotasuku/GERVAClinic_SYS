@@ -3,37 +3,37 @@ import axios from 'axios';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import InputMask from 'react-input-mask'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Farmaceuticos.css';
+import './Profissionais.css'; // ← Renomeado
 
-const Farmaceuticos = () => {
-    const [farmaceuticos, setFarmaceuticos] = useState([]);
+const Profissionais = () => {
+    const [profissionais, setProfissionais] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [modoEdicao, setModoEdicao] = useState(false);
-    const [farmaceuticoParaEdicao, setFarmaceuticoParaEdicao] = useState(null);
-    const [farmaceuticoParaExcluir, setFarmaceuticoParaExcluir] = useState(null);
+    const [profissionalParaEdicao, setProfissionalParaEdicao] = useState(null);
+    const [profissionalParaExcluir, setProfissionalParaExcluir] = useState(null);
 
-    const [novoFarmaceutico, setNovoFarmaceutico] = useState({
+    const [novoProfissional, setNovoProfissional] = useState({
         id_func: '',
         nome: '',
-        CRF: ''
+        registro_profissional: '' // ← Mudou de CRF para registro_profissional
     });
 
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        fetchFarmaceuticos();
+        fetchProfissionais();
     }, []);
 
-    const fetchFarmaceuticos = async () => {
+    const fetchProfissionais = async () => {
         try {
             const token = localStorage.getItem('auth_token');
-            const response = await axios.get('http://127.0.0.1:8080/api/farmaceuticos', {
+            const response = await axios.get('http://127.0.0.1:8080/api/profissionais', {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setFarmaceuticos(response.data);
+            setProfissionais(response.data);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -43,7 +43,7 @@ const Farmaceuticos = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setNovoFarmaceutico(prev => ({ ...prev, [name]: value }));
+        setNovoProfissional(prev => ({ ...prev, [name]: value }));
 
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: null }));
@@ -51,13 +51,13 @@ const Farmaceuticos = () => {
     };
 
     const validateForm = () => {
-        const { id_func, nome, CRF } = novoFarmaceutico;
+        const { id_func, nome, registro_profissional } = novoProfissional;
         const newErrors = {};
 
         if (!id_func) newErrors.id_func = 'O ID do funcionário é obrigatório.';
         if (!nome) newErrors.nome = 'O nome é obrigatório.';
-        if (!CRF || CRF.replace(/\D/g, '').length === 0) {
-            newErrors.CRF = 'O CRF é obrigatório.';
+        if (!registro_profissional || registro_profissional.replace(/\D/g, '').length === 0) {
+            newErrors.registro_profissional = 'O registro profissional é obrigatório.'; // ← Mudou a mensagem
         }
 
         setErrors(newErrors);
@@ -72,74 +72,85 @@ const Farmaceuticos = () => {
             const token = localStorage.getItem('auth_token');
             const headers = { Authorization: `Bearer ${token}` };
 
-            if (modoEdicao && farmaceuticoParaEdicao) {
+            if (modoEdicao && profissionalParaEdicao) {
                 await axios.put(
-                    `http://127.0.0.1:8080/api/farmaceuticos/${farmaceuticoParaEdicao.id}`,
-                    novoFarmaceutico,
+                    `http://127.0.0.1:8080/api/profissionais/${profissionalParaEdicao.id}`,
+                    novoProfissional,
                     { headers }
                 );
             } else {
                 await axios.post(
-                    'http://127.0.0.1:8080/api/farmaceuticos',
-                    novoFarmaceutico,
+                    'http://127.0.0.1:8080/api/profissionais',
+                    novoProfissional,
                     { headers }
                 );
             }
 
-            fetchFarmaceuticos();
+            fetchProfissionais();
             fecharModal();
         } catch (error) {
-            console.error('Erro ao salvar farmacêutico:', error);
+            console.error('Erro ao salvar profissional:', error);
+            // Tratando erro de duplicidade
+            if (error.response?.status === 422) {
+                const serverErrors = error.response.data.errors;
+                const newErrors = {};
+                if (serverErrors.id_func) newErrors.id_func = serverErrors.id_func[0];
+                if (serverErrors.registro_profissional) newErrors.registro_profissional = serverErrors.registro_profissional[0];
+                if (serverErrors.nome) newErrors.nome = serverErrors.nome[0];
+                setErrors(newErrors);
+            }
         }
     };
 
     const abrirModal = () => {
         setShowModal(true);
         setModoEdicao(false);
-        setFarmaceuticoParaEdicao(null);
-        setNovoFarmaceutico({ id_func: '', nome: '', CRF: '' });
+        setProfissionalParaEdicao(null);
+        setNovoProfissional({ id_func: '', nome: '', registro_profissional: '' });
+        setErrors({});
     };
 
     const fecharModal = () => {
         setShowModal(false);
         setModoEdicao(false);
-        setFarmaceuticoParaEdicao(null);
-        setNovoFarmaceutico({ id_func: '', nome: '', CRF: '' });
+        setProfissionalParaEdicao(null);
+        setNovoProfissional({ id_func: '', nome: '', registro_profissional: '' });
         setErrors({});
     };
 
-    const handleEditarFarmaceutico = (farmaceutico) => {
-        setNovoFarmaceutico({
-            id_func: farmaceutico.id_func,
-            nome: farmaceutico.nome,
-            CRF: farmaceutico.CRF
+    const handleEditarProfissional = (profissional) => {
+        setNovoProfissional({
+            id_func: profissional.id_func,
+            nome: profissional.nome,
+            registro_profissional: profissional.registro_profissional
         });
-        setFarmaceuticoParaEdicao(farmaceutico);
+        setProfissionalParaEdicao(profissional);
         setModoEdicao(true);
         setShowModal(true);
+        setErrors({});
     };
 
-    const abrirModalExcluir = (farmaceutico) => {
-        setFarmaceuticoParaExcluir(farmaceutico);
+    const abrirModalExcluir = (profissional) => {
+        setProfissionalParaExcluir(profissional);
         setShowDeleteModal(true);
     };
 
     const fecharModalExcluir = () => {
         setShowDeleteModal(false);
-        setFarmaceuticoParaExcluir(null);
+        setProfissionalParaExcluir(null);
     };
 
-    const handleExcluirFarmaceutico = async () => {
+    const handleExcluirProfissional = async () => {
         try {
             const token = localStorage.getItem('auth_token');
             await axios.delete(
-                `http://127.0.0.1:8080/api/farmaceuticos/${farmaceuticoParaExcluir.id}`,
+                `http://127.0.0.1:8080/api/profissionais/${profissionalParaExcluir.id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            fetchFarmaceuticos();
+            fetchProfissionais();
             fecharModalExcluir();
         } catch (error) {
-            setError('Erro ao excluir farmacêutico.');
+            setError('Erro ao excluir profissional.');
         }
     };
 
@@ -147,34 +158,43 @@ const Farmaceuticos = () => {
     if (error) return <div className="error">Erro: {error}</div>;
 
     return (
-        <div className="farmaceuticos-container">
+        <div className="profissionais-container"> {/* ← Classe renomeada */}
             <header className="header">
-                <h1>Farmacêuticos</h1>
+                <h1>Profissionais</h1> {/* ← Título alterado */}
                 <Button variant="primary" onClick={abrirModal}>
-                    Adicionar Farmacêutico
+                    Adicionar Profissional {/* ← Texto alterado */}
                 </Button>
             </header>
 
-            <table className="farmaceuticos-table">
+            <table className="profissionais-table"> {/* ← Classe renomeada */}
                 <thead>
                     <tr>
                         <th>ID do Funcionário</th>
                         <th>Nome</th>
-                        <th>CRF</th>
+                        <th>Registro Profissional</th> {/* ← Mudou de CRF */}
                         <th className="text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {farmaceuticos.map(f => (
-                        <tr key={f.id}>
-                            <td>{f.id_func}</td>
-                            <td>{f.nome}</td>
-                            <td>{f.CRF}</td>
+                    {profissionais.map(profissional => (
+                        <tr key={profissional.id}>
+                            <td>{profissional.id_func}</td>
+                            <td>{profissional.nome}</td>
+                            <td>{profissional.registro_profissional}</td> {/* ← Mudou de CRF */}
                             <td className="actions-cell">
-                                <Button size="sm" variant="info" onClick={() => handleEditarFarmaceutico(f)}>
+                                <Button 
+                                    size="sm" 
+                                    variant="info" 
+                                    onClick={() => handleEditarProfissional(profissional)}
+                                >
                                     Editar
                                 </Button>
-                                <Button size="sm" variant="danger" className="ms-2" onClick={() => abrirModalExcluir(f)}>
+                                <Button 
+                                    size="sm" 
+                                    variant="danger" 
+                                    className="ms-2" 
+                                    onClick={() => abrirModalExcluir(profissional)}
+                                >
                                     Excluir
                                 </Button>
                             </td>
@@ -183,11 +203,11 @@ const Farmaceuticos = () => {
                 </tbody>
             </table>
 
-            {/* MODAL CADASTRO / EDIÇÃO */}
+            {/* ===== MODAL CADASTRO / EDIÇÃO ===== */}
             <Modal show={showModal} onHide={fecharModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {modoEdicao ? 'Editar Farmacêutico' : 'Adicionar Farmacêutico'}
+                        {modoEdicao ? 'Editar Profissional' : 'Adicionar Profissional'}
                     </Modal.Title>
                 </Modal.Header>
 
@@ -199,10 +219,11 @@ const Farmaceuticos = () => {
                                     <Form.Label>ID do Funcionário</Form.Label>
                                     <Form.Control
                                         name="id_func"
-                                        value={novoFarmaceutico.id_func}
+                                        value={novoProfissional.id_func}
                                         onChange={handleInputChange}
                                         isInvalid={!!errors.id_func}
                                         disabled={modoEdicao}
+                                        placeholder="Ex: FUNC001"
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {errors.id_func}
@@ -215,9 +236,10 @@ const Farmaceuticos = () => {
                                     <Form.Label>Nome</Form.Label>
                                     <Form.Control
                                         name="nome"
-                                        value={novoFarmaceutico.nome}
+                                        value={novoProfissional.nome}
                                         onChange={handleInputChange}
                                         isInvalid={!!errors.nome}
+                                        placeholder="Nome completo"
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {errors.nome}
@@ -227,22 +249,23 @@ const Farmaceuticos = () => {
 
                             <Col md={4}>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>CRF</Form.Label>
+                                    <Form.Label>Registro Profissional</Form.Label> {/* ← Mudou de CRF */}
                                     <InputMask
-                                        mask="999999-aa/aa"
-                                        name="CRF"
-                                        value={novoFarmaceutico.CRF}
+                                        mask="999999-aa/aa" // ← Mantive a mesma máscara, mas você pode ajustar
+                                        name="registro_profissional" // ← Mudou o nome
+                                        value={novoProfissional.registro_profissional}
                                         onChange={handleInputChange}
                                     >
                                         {(inputProps) => (
                                             <Form.Control
                                                 {...inputProps}
-                                                isInvalid={!!errors.CRF}
+                                                isInvalid={!!errors.registro_profissional}
+                                                placeholder="Ex: 123456-SP/01"
                                             />
                                         )}
                                     </InputMask>
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.CRF}
+                                        {errors.registro_profissional}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
@@ -258,21 +281,21 @@ const Farmaceuticos = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* MODAL EXCLUSÃO */}
+            {/* ===== MODAL EXCLUSÃO ===== */}
             <Modal show={showDeleteModal} onHide={fecharModalExcluir} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Exclusão</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Tem certeza que deseja excluir o farmacêutico <strong>{farmaceuticoParaExcluir?.nome}</strong>?
+                    Tem certeza que deseja excluir o profissional <strong>{profissionalParaExcluir?.nome}</strong>?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={fecharModalExcluir}>Cancelar</Button>
-                    <Button variant="danger" onClick={handleExcluirFarmaceutico}>Excluir</Button>
+                    <Button variant="danger" onClick={handleExcluirProfissional}>Excluir</Button>
                 </Modal.Footer>
             </Modal>
         </div>
     );
 };
 
-export default Farmaceuticos;
+export default Profissionais;

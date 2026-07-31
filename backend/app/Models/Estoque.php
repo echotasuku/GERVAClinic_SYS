@@ -9,19 +9,26 @@ class Estoque extends Model
 {
     use HasFactory;
 
-    protected $table = 'estoque'; 
+    protected $table = 'estoque';
 
-    
     protected $fillable = [
         'lote',
-        'data_validade',
+        'preco',
         'quantidade_estoque',
-        'medicamento_id',
+        'data_validade',
+        'temperatura_recebimento',
+        'vacina_id',
     ];
 
-
-    public function medicamento()
+    // Relacionamento: cada lote pertence a uma vacina
+    public function vacina()
     {
-        return $this->belongsTo(Medicamento::class);
+        return $this->belongsTo(Vacina::class, 'vacina_id');
+    }
+
+    // Relacionamento: um lote pode ter várias aplicações
+    public function aplicacoes()
+    {
+        return $this->hasMany(Aplicacao::class, 'estoque_id');
     }
 }

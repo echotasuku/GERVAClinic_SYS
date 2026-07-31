@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Estoque;
 use App\Models\User;
+use App\Models\Vacina;
 use App\Notifications\AlertaSistema;
 use App\Events\NovoAlerta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EstoqueController extends Controller
 {
     public function index()
     {
-        $estoques = Estoque::with('medicamento')->get();
+        $estoques = Estoque::with('vacina')->get();
         return response()->json($estoques);
     }
 
@@ -22,27 +22,25 @@ class EstoqueController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'lote' => 'required|string|max:255',
-            'data_validade' => 'required|date|after:today',
+            'preco' => 'nullable|numeric|min:0',
             'quantidade_estoque' => 'required|integer|min:1',
-            'medicamento_id' => 'required|exists:medicamentos,id',
+            'data_validade' => 'required|date|after:today',
+            'temperatura_recebimento' => 'nullable|numeric',
+            'vacina_id' => 'required|exists:vacinas,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        try {
-            $estoque = Estoque::create($request->all());
-            $this->verificarEDispararAlertas();
-            return response()->json($estoque, 201);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Medicamento nao encontrado'], 404);
-        }
+        $estoque = Estoque::create($request->all());
+        $this->verificarEDispararAlertas();
+        return response()->json($estoque, 201);
     }
 
     public function show($id)
     {
-        $estoque = Estoque::with('medicamento')->findOrFail($id);
+        $estoque = Estoque::with('vacina')->findOrFail($id);
         return response()->json($estoque);
     }
 
@@ -52,9 +50,11 @@ class EstoqueController extends Controller
 
         $validator = Validator::make($request->all(), [
             'lote' => 'required|string|max:255',
-            'data_validade' => 'required|date|after:today',
+            'preco' => 'nullable|numeric|min:0',
             'quantidade_estoque' => 'required|integer|min:1',
-            'medicamento_id' => 'required|exists:medicamentos,id',
+            'data_validade' => 'required|date|after:today',
+            'temperatura_recebimento' => 'nullable|numeric',
+            'vacina_id' => 'required|exists:vacinas,id',
         ]);
 
         if ($validator->fails()) {
@@ -78,39 +78,42 @@ class EstoqueController extends Controller
     {
         $usuarios = User::where('role', 'admin')->get();
         $todosAlertas = [];
-        
-        $estoqueBaixo = Estoque::with('medicamento')
+
+        // Estoque baixo
+        $estoqueBaixo = Estoque::with('vacina')
             ->where('quantidade_estoque', '<', 10)
             ->get();
 
         foreach ($estoqueBaixo as $item) {
             $alerta = [
                 'tipo' => 'estoque_baixo',
-                'mensagem' => "Estoque baixo: {$item->medicamento->nome} - {$item->quantidade_estoque} unidades"
+                'mensagem' => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades"
             ];
             $todosAlertas[] = $alerta;
-            
+
             foreach ($usuarios as $usuario) {
                 $usuario->notify(new AlertaSistema($alerta));
             }
         }
 
-        $validadeProxima = Estoque::with('medicamento')
+        // Validade próxima
+        $validadeProxima = Estoque::with('vacina')
             ->whereDate('data_validade', '<=', now()->addDays(30))
             ->get();
 
         foreach ($validadeProxima as $item) {
+            $dias = now()->diffInDays($item->data_validade);
             $alerta = [
                 'tipo' => 'validade_proxima',
-                'mensagem' => "Validade proxima: {$item->medicamento->nome} - Vence em " . now()->diffInDays($item->data_validade) . " dias"
+                'mensagem' => "Validade próxima: {$item->vacina->nome} - vence em {$dias} dias"
             ];
             $todosAlertas[] = $alerta;
-            
+
             foreach ($usuarios as $usuario) {
                 $usuario->notify(new AlertaSistema($alerta));
             }
         }
-        
+
         if (count($todosAlertas) > 0) {
             event(new NovoAlerta($todosAlertas, count($todosAlertas)));
         }
@@ -120,25 +123,25 @@ class EstoqueController extends Controller
     {
         $alertas = [];
 
-        $estoqueBaixo = Estoque::with('medicamento')
+        $estoqueBaixo = Estoque::with('vacina')
             ->where('quantidade_estoque', '<', 10)
             ->get();
 
         foreach ($estoqueBaixo as $item) {
             $alertas[] = [
                 'tipo' => 'estoque_baixo',
-                'mensagem' => "Estoque baixo: {$item->medicamento->nome} - {$item->quantidade_estoque} unidades"
+                'mensagem' => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades"
             ];
         }
 
-        $validadeProxima = Estoque::with('medicamento')
+        $validadeProxima = Estoque::with('vacina')
             ->whereDate('data_validade', '<=', now()->addDays(30))
             ->get();
 
         foreach ($validadeProxima as $item) {
             $alertas[] = [
                 'tipo' => 'validade_proxima',
-                'mensagem' => "Validade proxima: {$item->medicamento->nome}"
+                'mensagem' => "Validade próxima: {$item->vacina->nome}"
             ];
         }
 

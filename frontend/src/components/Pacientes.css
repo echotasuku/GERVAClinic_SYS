@@ -1,76 +1,76 @@
-
-.retiradas-container {
+.pacientes-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.retiradas-container h2 {
+.pacientes-container h2 {
     margin-bottom: 20px;
 }
 
-.retiradas-container .btn-primary {
+.pacientes-container .btn-primary {
     margin-bottom: 20px;
 }
 
-.retiradas-table {
+.pacientes-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.retiradas-table th,
-.retiradas-table td {
+.pacientes-table th,
+.pacientes-table td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: left;
     vertical-align: middle;
 }
 
-.retiradas-table th {
+.pacientes-table th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
 
-.retiradas-table tr:nth-child(even) {
+.pacientes-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.retiradas-table tr:hover {
+.pacientes-table tr:hover {
     background-color: #f1f1f1;
 }
 
-.retiradas-table .actions-cell {
+.pacientes-table .actions-cell {
     text-align: center;
     white-space: nowrap;
 }
+
 .custom-modal-width {
     max-width: 700px;
     width: 90%;
 }
 
-.retiradas-modal-theme .modal-header {
+.pacientes-modal-theme .modal-header {
     background-color: #212529;
     color: white;
     border-bottom: 1px solid #000;
     border-radius: 0;
 }
 
-.retiradas-modal-theme .modal-title {
+.pacientes-modal-theme .modal-title {
     color: white;
 }
 
-.retiradas-modal-theme .btn-close {
+.pacientes-modal-theme .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-.retiradas-modal-theme .modal-content {
+.pacientes-modal-theme .modal-content {
     border-radius: 0;
     border: none;
     padding-top: 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.retiradas-modal-theme .modal-body {
+.pacientes-modal-theme .modal-body {
     padding: 1.5rem;
 }

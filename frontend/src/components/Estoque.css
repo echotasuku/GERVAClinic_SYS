@@ -1,47 +1,81 @@
-
+/* ===== CONTAINER PRINCIPAL ===== */
 .estoque-container {
     padding: 20px;
     max-width: 900px;
     margin: 0 auto;
 }
 
+/* ===== NOTIFICAÇÃO (MANTIDA) ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===== TÍTULO ===== */
 .estoque-container h2 {
     margin-bottom: 20px;
-}
-.estoque-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.estoque-table th,
-.estoque-table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.estoque-table th {
-    background-color: #f2f2f2;
     font-weight: bold;
+    color: #212529;
 }
 
-.estoque-row:nth-child(even) {
-    background-color: #f9f9f9;
+/* ===== MODAL - CAMPOS COMPACTOS ===== */
+.estoque-modal-theme .form-control,
+.estoque-modal-theme .form-select {
+    max-width: 220px;
+    font-size: 14px;
+    padding: 6px 10px;
+    display: inline-block;
 }
 
-.estoque-row:hover {
-    background-color: #f1f1f1;
+/* Ajuste para grupos de campos no modal */
+.estoque-modal-theme .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.estoque-table .actions-cell {
-    text-align: center;
-    white-space: nowrap;
-    
+/* Ajuste para os Rows no modal */
+.estoque-modal-theme .row {
+    margin-right: -5px;
+    margin-left: -5px;
 }
+
+.estoque-modal-theme .row>[class*="col-"] {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+/* ===== MODAL - CONFIGURAÇÕES GERAIS ===== */
 .custom-modal-width {
-    max-width: 700px;
+    max-width: 650px;
     width: 90%;
 }
 
@@ -64,10 +98,83 @@
     border-radius: 0;
     border: none;
     padding-top: 0;
-    
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .estoque-modal-theme .modal-body {
-    padding: 1.5rem;
+    padding: 1.2rem;
+}
+
+/* ===== TABELA ===== */
+.estoque-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.estoque-table th,
+.estoque-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.estoque-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.estoque-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.estoque-row:hover {
+    background-color: #f1f1f1;
+}
+
+.estoque-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ===== COLUNAS ESPECÍFICAS ===== */
+.estoque-table td:nth-child(2),
+/* lote */
+.estoque-table td:nth-child(4),
+/* quantidade */
+.estoque-table td:nth-child(5),
+/* preço */
+.estoque-table td:nth-child(6) {
+    /* temperatura */
+    text-align: center;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.estoque-table td:nth-child(5) {
+    /* preço - verde */
+    color: #198754;
+}
+
+.estoque-table td:nth-child(6) {
+    /* temperatura - azul */
+    color: #0d6efd;
+}
+
+/* ===== BOTÕES ===== */
+.estoque-container .btn {
+    font-size: 13px;
+    padding: 6px 14px;
+}
+
+.estoque-container .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.estoque-container .btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
 }

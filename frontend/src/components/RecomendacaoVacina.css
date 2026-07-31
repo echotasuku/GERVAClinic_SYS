@@ -1,0 +1,109 @@
+.recomendacao-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.recomendacao-container h2 {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #212529;
+}
+
+/* Tabela */
+.recomendacao-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.recomendacao-table th,
+.recomendacao-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.recomendacao-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.recomendacao-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.recomendacao-row:hover {
+    background-color: #f1f1f1;
+}
+
+.recomendacao-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Modal */
+.custom-modal-width {
+    max-width: 650px;
+    width: 90%;
+}
+
+.recomendacao-modal-theme .modal-header {
+    background-color: #212529;
+    color: white;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+}
+
+.recomendacao-modal-theme .modal-title {
+    color: white;
+}
+
+.recomendacao-modal-theme .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.recomendacao-modal-theme .modal-content {
+    border-radius: 0;
+    border: none;
+    padding-top: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.recomendacao-modal-theme .modal-body {
+    padding: 1.2rem;
+}
+
+/* Inputs compactos */
+.recomendacao-modal-theme .form-control,
+.recomendacao-modal-theme .form-select {
+    max-width: 250px;
+    font-size: 14px;
+    padding: 6px 10px;
+    display: inline-block;
+}
+
+/* Observações ocupa mais espaço */
+.recomendacao-modal-theme textarea {
+    max-width: 100%;
+    min-height: 80px;
+    font-size: 14px;
+}
+
+/* Status destacado na tabela */
+.recomendacao-table td:nth-child(4) {
+    text-align: center;
+    font-weight: 600;
+}
+
+.recomendacao-table td:nth-child(4).status-pendente {
+    color: #ffc107;
+    /* amarelo */
+}
+
+.recomendacao-table td:nth-child(4).status-aplicada {
+    color: #198754;
+    /* verde */
+}
