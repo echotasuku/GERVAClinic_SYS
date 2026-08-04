@@ -14,6 +14,8 @@ import Pacientes from './components/Pacientes';
 import Aplicacoes from './components/Aplicacoes';
 import AgendamentoVacina from './components/AgendamentoVacina';
 import RecomendacaoVacina from './components/RecomendacaoVacina';
+import EsquemaVacinal from './components/EsquemaVacinal';
+import Relatorios from './components/Relatorios';
 
 import GoogleLoginComponent from './components/GoogleLoginComponent';
 import './App.css';
@@ -76,6 +78,8 @@ const App = () => {
                   {/* Rotas acessíveis para todos os usuários */}
                   <Route path="/agendamento-vacina" element={<AgendamentoVacina />} />
                   <Route path="/recomendacao-vacina" element={<RecomendacaoVacina />} />
+                  <Route path="/esquemas-vacinais" element={<EsquemaVacinal />} />
+                  <Route path="/relatorios" element={<Relatorios />} />
                   
 
                   {/* Rotas acessíveis para administradores */}

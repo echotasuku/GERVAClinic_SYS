@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   FaHome, FaTags, FaTruck, FaUserMd, FaWarehouse, 
   FaSignOutAlt, FaBell, FaTimes, FaExclamationTriangle, FaCalendarAlt, 
-  FaUsers, FaSyringe, FaClipboardCheck, FaBriefcaseMedical, FaCalendarCheck
+  FaUsers, FaSyringe, FaClipboardCheck, FaBriefcaseMedical, FaCalendarCheck,
+  FaListOl, FaCheckCircle
 } from 'react-icons/fa';
 import axios from 'axios';
 import echo from '../echo';
@@ -212,6 +213,20 @@ const Sidebar = ({ onLogout, userRole }) => {
         <div className="sidebar-item-content">
           <FaCalendarCheck className="sidebar-icon" />
           <span className="sidebar-text">Recomendação de Vacinas</span>
+        </div>
+      </NavLink>
+
+       <NavLink to="/esquemas-vacinais" className="sidebar-item">
+        <div className="sidebar-item-content">
+          <FaListOl className="sidebar-icon" />
+          <span className="sidebar-text">Esquema Vacinal</span>
+        </div>
+      </NavLink>
+
+        <NavLink to="/relatorios" className="sidebar-item">
+        <div className="sidebar-item-content">
+          <FaCheckCircle className="sidebar-icon" />
+          <span className="sidebar-text">Relatórios</span>
         </div>
       </NavLink>
 

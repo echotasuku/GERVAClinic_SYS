@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('bairro')->nullable();
             $table->string('cidade')->nullable();
             $table->string('uf', 2)->nullable();
-            $table->string('cep', 8)->nullable();
+            $table->string('cep', 9)->nullable();
              $table->timestamps();
         });
     }

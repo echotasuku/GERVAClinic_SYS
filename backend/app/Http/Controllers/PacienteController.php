@@ -6,6 +6,9 @@ use App\Models\Paciente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
+use Barryvdh\DomPDF\Facade\Pdf; // importa o DomPDF
+use App\Mail\NotificacaoVacinaMail; // importa o Mailable
+use Illuminate\Support\Facades\Mail; // importa o Mail
 
 class PacienteController extends Controller
 {
@@ -71,9 +74,28 @@ class PacienteController extends Controller
 
     // Função para consultar CEP
     public function consultarCep($cep)
-{
-    $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
-    return response()->json($response->json());
-}
+    {
+        $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
+        return response()->json($response->json());
+    }
 
+    // Função para exportar histórico vacinal em PDF
+    public function exportarHistorico($id)
+    {
+        $paciente = Paciente::with('aplicacoes.vacina', 'aplicacoes.profissional')->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.historico', compact('paciente'));
+        return $pdf->download("historico_vacinal_{$paciente->nome}.pdf");
+    }
+
+    // Função para enviar notificação por e-mail
+    public function enviarNotificacao($pacienteId)
+    {
+        $paciente = Paciente::findOrFail($pacienteId);
+        $mensagem = "Olá {$paciente->nome}, lembre-se da sua próxima dose de vacina!";
+
+        Mail::to($paciente->email)->send(new NotificacaoVacinaMail($mensagem));
+
+        return response()->json(['status' => 'Email enviado com sucesso!']);
+    }
 }
