@@ -1,4 +1,4 @@
-# Gerenciamento de Medicamentos
+# Gerenciamento de Vacinas
 
 Este projeto é dividido em duas partes: **Frontend** e **Backend**. 
 Siga os passos abaixo para instalar e executar cada uma delas.
