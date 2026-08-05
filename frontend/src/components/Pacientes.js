@@ -23,10 +23,10 @@ const Pacientes = () => {
     const [modoEdicao, setModoEdicao] = useState(false);
     const [pacienteParaEdicao, setPacienteParaEdicao] = useState(null);
     const [errors, setErrors] = useState({});
-    const [loadingCep, setLoadingCep] = useState(false); // ← Estado para loading do CEP
+    const [loadingCep, setLoadingCep] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
-    // ===== NOTIFICAÇÕES =====
+    // ===== NOTIFICACOES =====
     const showNotification = (message, type = 'success') => {
         setNotification({ show: true, message, type });
         setTimeout(() => {
@@ -52,9 +52,8 @@ const Pacientes = () => {
         }
     };
 
-    // ===== FUNÇÃO PARA BUSCAR CEP VIA VIACEP =====
+    // ===== FUNCAO PARA BUSCAR CEP VIA VIACEP =====
     const buscarCep = async (cep) => {
-        // Remove máscara e verifica se tem 8 dígitos
         const cepLimpo = cep.replace(/\D/g, '');
         
         if (cepLimpo.length !== 8) {
@@ -67,12 +66,11 @@ const Pacientes = () => {
             const response = await axios.get(`https://viacep.com.br/ws/${cepLimpo}/json/`);
             
             if (response.data.erro) {
-                showNotification('CEP não encontrado!', 'error');
-                setErrors(prev => ({ ...prev, cep: 'CEP não encontrado.' }));
+                showNotification('CEP nao encontrado!', 'error');
+                setErrors(prev => ({ ...prev, cep: 'CEP nao encontrado.' }));
                 return;
             }
 
-            // Preenche os campos com os dados do VIACEP
             setNovoPaciente(prev => ({
                 ...prev,
                 logradouro: response.data.logradouro || '',
@@ -81,16 +79,15 @@ const Pacientes = () => {
                 uf: response.data.uf || ''
             }));
 
-            // Limpa erro do CEP se existir
             if (errors.cep) {
                 setErrors(prev => ({ ...prev, cep: null }));
             }
 
-            showNotification('CEP encontrado! Endereço preenchido.', 'success');
+            showNotification('CEP encontrado! Endereco preenchido.', 'success');
             
         } catch (error) {
             console.error('Erro ao buscar CEP:', error);
-            showNotification('Erro ao buscar CEP. Verifique sua conexão.', 'error');
+            showNotification('Erro ao buscar CEP. Verifique sua conexao.', 'error');
         } finally {
             setLoadingCep(false);
         }
@@ -128,14 +125,11 @@ const Pacientes = () => {
         if (name === 'telefone') valorFormatado = aplicarMascaraTelefone(value);
         if (name === 'uf') valorFormatado = value.toUpperCase().substring(0, 2);
         
-        // ===== TRATAMENTO ESPECIAL PARA CEP =====
         if (name === 'cep') {
             valorFormatado = aplicarMascaraCEP(value);
             
-            // Atualiza o estado com o CEP formatado
             setNovoPaciente(prev => ({ ...prev, [name]: valorFormatado }));
             
-            // Verifica se o CEP tem 8 dígitos (sem máscara) para buscar automaticamente
             const cepLimpo = valorFormatado.replace(/\D/g, '');
             if (cepLimpo.length === 8) {
                 buscarCep(valorFormatado);
@@ -153,7 +147,6 @@ const Pacientes = () => {
         }
     };
 
-    // ===== BOTÃO PARA BUSCAR CEP MANUALMENTE =====
     const handleBuscarCep = () => {
         if (novoPaciente.cep) {
             buscarCep(novoPaciente.cep);
@@ -165,15 +158,15 @@ const Pacientes = () => {
     const validateForm = () => {
         const newErrors = {};
         if (!novoPaciente.nome) newErrors.nome = 'Informe o nome completo.';
-        if (!novoPaciente.cpf || novoPaciente.cpf.length < 14) newErrors.cpf = 'Informe um CPF válido.';
+        if (!novoPaciente.cpf || novoPaciente.cpf.length < 14) newErrors.cpf = 'Informe um CPF valido.';
         if (!novoPaciente.data_nascimento) newErrors.data_nascimento = 'Informe a data de nascimento.';
         if (!novoPaciente.sexo) newErrors.sexo = 'Selecione o sexo.';
-        if (!novoPaciente.telefone || novoPaciente.telefone.length < 14) newErrors.telefone = 'Informe um telefone válido.';
+        if (!novoPaciente.telefone || novoPaciente.telefone.length < 14) newErrors.telefone = 'Informe um telefone valido.';
         if (!novoPaciente.logradouro) newErrors.logradouro = 'Informe o logradouro.';
         if (!novoPaciente.bairro) newErrors.bairro = 'Informe o bairro.';
         if (!novoPaciente.cidade) newErrors.cidade = 'Informe a cidade.';
-        if (!novoPaciente.uf || novoPaciente.uf.length !== 2) newErrors.uf = 'UF inválida (Ex: SP).';
-        if (!novoPaciente.cep || novoPaciente.cep.length < 9) newErrors.cep = 'Informe um CEP válido.';
+        if (!novoPaciente.uf || novoPaciente.uf.length !== 2) newErrors.uf = 'UF invalida (Ex: SP).';
+        if (!novoPaciente.cep || novoPaciente.cep.length < 9) newErrors.cep = 'Informe um CEP valido.';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -209,7 +202,7 @@ const Pacientes = () => {
             fetchPacientes();
             fecharModal();
         } catch (err) {
-            console.error("Erro na requisição:", err);
+            console.error("Erro na requisicao:", err);
 
             if (err.response && err.response.status === 422) {
                 const errosDoLaravel = err.response.data;
@@ -266,7 +259,7 @@ const Pacientes = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchPacientes();
-            showNotification('Paciente excluído com sucesso!', 'success');
+            showNotification('Paciente excluido com sucesso!', 'success');
         } catch (err) {
             console.error("Erro ao deletar paciente:", err);
             showNotification('Erro ao excluir paciente.', 'error');
@@ -275,7 +268,6 @@ const Pacientes = () => {
 
     return (
         <div className="pacientes-container">
-            {/* ===== NOTIFICAÇÃO ===== */}
             {notification.show && (
                 <div className={`notification ${notification.type}`}>
                     {notification.message}
@@ -305,7 +297,7 @@ const Pacientes = () => {
                                 <Form.Control
                                     type="text"
                                     name="nome"
-                                    placeholder="Ex: João da Silva"
+                                    placeholder="Ex: Joao da Silva"
                                     value={novoPaciente.nome}
                                     onChange={handleInputChange}
                                     isInvalid={!!errors.nome}
@@ -385,9 +377,8 @@ const Pacientes = () => {
                             </Form.Group>
                         </Row>
 
-                        {/* ===== SEÇÃO DE ENDEREÇO COM VIACEP ===== */}
                         <div className="endereco-section">
-                            <h6 className="mb-3">📍 Endereço</h6>
+                            <h6 className="mb-3">Endereco</h6>
                             
                             <Row className="mb-3">
                                 <Form.Group as={Col} md="4">
@@ -408,13 +399,13 @@ const Pacientes = () => {
                                             disabled={loadingCep || !novoPaciente.cep}
                                             className="btn-buscar-cep"
                                         >
-                                            {loadingCep ? '⏳' : '🔍'}
+                                            {loadingCep ? '...' : 'Buscar'}
                                         </Button>
                                     </div>
                                     {loadingCep && (
                                         <div className="text-muted small mt-1">
                                             <span className="spinner-border spinner-border-sm me-1" />
-                                            Buscando endereço...
+                                            Buscando endereco...
                                         </div>
                                     )}
                                     <Form.Control.Feedback type="invalid">{errors.cep}</Form.Control.Feedback>
@@ -453,7 +444,7 @@ const Pacientes = () => {
                                     <Form.Control
                                         type="text"
                                         name="cidade"
-                                        placeholder="São Paulo"
+                                        placeholder="Sao Paulo"
                                         value={novoPaciente.cidade}
                                         onChange={handleInputChange}
                                         isInvalid={!!errors.cidade}
@@ -479,7 +470,7 @@ const Pacientes = () => {
                         <div className="d-flex justify-content-end gap-2 mt-3">
                             <Button variant="secondary" onClick={fecharModal}>Cancelar</Button>
                             <Button variant="primary" type="submit" disabled={loadingCep}>
-                                {modoEdicao ? 'Atualizar Alterações' : 'Salvar Paciente'}
+                                {modoEdicao ? 'Atualizar Alteracoes' : 'Salvar Paciente'}
                             </Button>
                         </div>
                     </Form>
@@ -495,7 +486,7 @@ const Pacientes = () => {
                         <th>Sexo</th>
                         <th>Telefone</th>
                         <th>Cidade</th>
-                        <th>Ações</th>
+                        <th>Acoes</th>
                     </tr>
                 </thead>
                 <tbody>
