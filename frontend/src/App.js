@@ -16,6 +16,7 @@ import AgendamentoVacina from './components/AgendamentoVacina';
 import RecomendacaoVacina from './components/RecomendacaoVacina';
 import EsquemaVacinal from './components/EsquemaVacinal';
 import Relatorios from './components/Relatorios';
+import CalendarioVacinal from './components/CalendarioVacinal';
 
 import GoogleLoginComponent from './components/GoogleLoginComponent';
 import './App.css';
@@ -80,6 +81,7 @@ const App = () => {
                   <Route path="/recomendacao-vacina" element={<RecomendacaoVacina />} />
                   <Route path="/esquemas-vacinais" element={<EsquemaVacinal />} />
                   <Route path="/relatorios" element={<Relatorios />} />
+                  <Route path="/calendario-vacinal" element={<CalendarioVacinal />} />
                   
 
                   {/* Rotas acessíveis para administradores */}

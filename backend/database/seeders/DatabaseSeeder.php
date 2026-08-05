@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         RecomendacoesVacinaSeeder::class,
         AgendamentoVacinaSeeder::class,
         EsquemaVacinalSeeder::class,
+        CalendarioVacinalSeeder::class,
 
     ]);
 }

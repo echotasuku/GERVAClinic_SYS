@@ -16,6 +16,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\CalendarioVacinalController;
 use Illuminate\Support\Facades\Broadcast;
 
 
@@ -31,7 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('recomendacoes-vacinas', RecomendacaoVacinaController::class);
     Route::get('/recomendacoes-vacinas/gerar-automaticas/{pacienteId}', [RecomendacaoVacinaController::class, 'gerarAutomaticas']);
     Route::apiResource('agendamentos-vacinas', AgendamentoVacinaController::class);
-    // 🔔 rota para notificação de agendamento de vacina
+    Route::apiResource('calendarios-vacinais', CalendarioVacinalController::class);
+    // rota para notificação de agendamento de vacina
     Route::post('/agendamentos-vacinas/{pacienteId}/{vacinaId}/enviar-notificacao', [AgendamentoVacinaController::class, 'enviarNotificacao']);
 
 });

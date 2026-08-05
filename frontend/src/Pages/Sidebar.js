@@ -230,6 +230,13 @@ const Sidebar = ({ onLogout, userRole }) => {
         </div>
       </NavLink>
 
+        <NavLink to="/calendario-vacinal" className="sidebar-item">
+        <div className="sidebar-item-content">
+          <FaCalendarAlt className="sidebar-icon" />
+          <span className="sidebar-text">Calendário Vacinal</span>
+        </div>
+      </NavLink>
+
 
 
 
