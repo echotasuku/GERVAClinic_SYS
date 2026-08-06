@@ -17,7 +17,7 @@ class Profissional extends Model
         'nome',
     ];
 
-    // Relacionamento: um profissional pode ter várias aplicações
+    
     public function aplicacoes()
     {
         return $this->hasMany(Aplicacao::class, 'id_profissional');

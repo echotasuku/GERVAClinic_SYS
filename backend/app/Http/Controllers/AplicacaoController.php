@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Validator;
 
 class AplicacaoController extends Controller
 {
-    // Listar todas as aplicações
+    
     public function index()
     {
         return Aplicacao::with(['profissional', 'paciente', 'estoque'])->get();
     }
 
-    // Criar uma nova aplicação
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -34,13 +34,13 @@ class AplicacaoController extends Controller
         return response()->json($aplicacao, 201);
     }
 
-    // Mostrar uma aplicação específica
+    
     public function show($id)
     {
         return Aplicacao::with(['profissional', 'paciente', 'estoque'])->findOrFail($id);
     }
 
-    // Atualizar uma aplicação
+    
     public function update(Request $request, $id)
     {
         $aplicacao = Aplicacao::findOrFail($id);

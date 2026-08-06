@@ -18,7 +18,7 @@ class EsquemaVacinal extends Model
         'intervalo_minimo',
     ];
 
-    // Relacionamento: cada esquema pertence a uma vacina
+    
     public function vacina()
     {
         return $this->belongsTo(Vacina::class, 'vacina_id');

@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\Validator;
 
 class EsquemaVacinalController extends Controller
 {
-    // Listar todos os esquemas vacinais
+    
     public function index()
     {
         return EsquemaVacinal::with('vacina')->get();
     }
-
-    // Criar um novo esquema vacinal
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -32,13 +30,13 @@ class EsquemaVacinalController extends Controller
         return response()->json($esquema, 201);
     }
 
-    // Mostrar um esquema vacinal específico
+
     public function show($id)
     {
         return EsquemaVacinal::with('vacina')->findOrFail($id);
     }
 
-    // Atualizar um esquema vacinal
+
     public function update(Request $request, $id)
     {
         $esquema = EsquemaVacinal::findOrFail($id);
@@ -58,7 +56,6 @@ class EsquemaVacinalController extends Controller
         return response()->json($esquema);
     }
 
-    // Deletar um esquema vacinal
     public function destroy($id)
     {
         $esquema = EsquemaVacinal::findOrFail($id);

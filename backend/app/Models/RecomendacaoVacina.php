@@ -18,7 +18,7 @@ class RecomendacaoVacina extends Model
         'status',
     ];
 
-    // Relacionamentos
+    
     public function paciente()
     {
         return $this->belongsTo(Paciente::class, 'paciente_id');

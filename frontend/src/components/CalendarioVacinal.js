@@ -23,7 +23,7 @@ const CalendarioVacinal = () => {
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
     const [filtroFaixaEtaria, setFiltroFaixaEtaria] = useState('');
 
-    // ===== NOTIFICACOES =====
+    
     const showNotification = (message, type = 'success') => {
         setNotification({ show: true, message, type });
         setTimeout(() => {
@@ -36,7 +36,7 @@ const CalendarioVacinal = () => {
         fetchVacinas();
     }, []);
 
-    // ===== BUSCAR CALENDARIOS =====
+    
     const fetchCalendarios = async () => {
         setLoading(true);
         try {
@@ -53,7 +53,7 @@ const CalendarioVacinal = () => {
         }
     };
 
-    // ===== BUSCAR VACINAS =====
+    
     const fetchVacinas = async () => {
         try {
             const token = localStorage.getItem('auth_token');
@@ -67,7 +67,7 @@ const CalendarioVacinal = () => {
         }
     };
 
-    // ===== HANDLE INPUT CHANGE =====
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNovoCalendario(prev => ({ ...prev, [name]: value }));
@@ -76,7 +76,7 @@ const CalendarioVacinal = () => {
         }
     };
 
-    // ===== VALIDAR FORMULARIO =====
+    
     const validateForm = () => {
         const { faixa_etaria, vacina_id, dose } = novoCalendario;
         const newErrors = {};
@@ -92,7 +92,7 @@ const CalendarioVacinal = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // ===== SALVAR CALENDARIO =====
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
@@ -138,7 +138,7 @@ const CalendarioVacinal = () => {
         }
     };
 
-    // ===== ABRIR MODAL =====
+    
     const abrirModal = () => {
         setShowModal(true);
         setModoEdicao(false);
@@ -153,7 +153,7 @@ const CalendarioVacinal = () => {
         setErrors({});
     };
 
-    // ===== FECHAR MODAL =====
+    
     const fecharModal = () => {
         setShowModal(false);
         setModoEdicao(false);
@@ -168,7 +168,7 @@ const CalendarioVacinal = () => {
         setErrors({});
     };
 
-    // ===== EDITAR CALENDARIO =====
+    
     const handleEditarCalendario = (calendario) => {
         setNovoCalendario({
             faixa_etaria: calendario.faixa_etaria,
@@ -182,7 +182,7 @@ const CalendarioVacinal = () => {
         setShowModal(true);
     };
 
-    // ===== EXCLUIR CALENDARIO =====
+    
     const handleExcluirCalendario = async (id) => {
         if (!window.confirm('Tem certeza que deseja excluir este calendario vacinal?')) return;
 
@@ -202,7 +202,6 @@ const CalendarioVacinal = () => {
         }
     };
 
-    // ===== OBTER COR PARA FAIXA ETARIA =====
     const getCorFaixaEtaria = (faixa) => {
         const cores = {
             'Recem-nascido': '#4CAF50',
@@ -228,7 +227,7 @@ const CalendarioVacinal = () => {
         return cores[faixa] || '#757575';
     };
 
-    // ===== OBTER ICONE PARA FAIXA ETARIA =====
+    
     const getIconeFaixaEtaria = (faixa) => {
         if (faixa.toLowerCase().includes('gestante')) return <FaUserMd />;
         if (faixa.toLowerCase().includes('idoso')) return <FaUserMd />;
@@ -237,25 +236,24 @@ const CalendarioVacinal = () => {
         return <FaChild />;
     };
 
-    // ===== FILTRAR POR FAIXA ETARIA =====
     const calendariosFiltrados = filtroFaixaEtaria
         ? calendarios.filter(c => c.faixa_etaria === filtroFaixaEtaria)
         : calendarios;
 
-    // ===== AGRUPAR POR FAIXA ETARIA =====
+    
     const faixasEtarias = [...new Set(calendarios.map(c => c.faixa_etaria))];
 
-    // ===== RENDER =====
+
     return (
         <div className="calendario-container">
-            {/* ===== NOTIFICACAO ===== */}
+        
             {notification.show && (
                 <div className={`notification ${notification.type}`}>
                     {notification.message}
                 </div>
             )}
 
-            {/* ===== HEADER ===== */}
+            
             <div className="calendario-header">
                 <div className="header-left">
                     <h2>
@@ -270,7 +268,7 @@ const CalendarioVacinal = () => {
                 </Button>
             </div>
 
-            {/* ===== FILTROS ===== */}
+            
             <div className="filtros-container">
                 <div className="filtro-item">
                     <label>Filtrar por Faixa Etaria</label>
@@ -293,7 +291,7 @@ const CalendarioVacinal = () => {
                 </div>
             </div>
 
-            {/* ===== CARDS DE CALENDARIO ===== */}
+            
             {loading && !calendarios.length ? (
                 <div className="text-center py-5">
                     <div className="spinner-border text-primary" role="status">
@@ -401,7 +399,6 @@ const CalendarioVacinal = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form noValidate onSubmit={handleFormSubmit}>
-                        {/* FAIXA ETARIA */}
                         <Form.Group className="mb-3">
                             <Form.Label>Faixa Etaria</Form.Label>
                             <Form.Select
@@ -436,8 +433,6 @@ const CalendarioVacinal = () => {
                                 {errors.faixa_etaria}
                             </Form.Control.Feedback>
                         </Form.Group>
-
-                        {/* VACINA */}
                         <Form.Group className="mb-3">
                             <Form.Label>Vacina</Form.Label>
                             <Form.Select
@@ -460,7 +455,6 @@ const CalendarioVacinal = () => {
                         </Form.Group>
 
                         <Row>
-                            {/* DOSE */}
                             <Form.Group as={Col} md="6" className="mb-3">
                                 <Form.Label>Dose</Form.Label>
                                 <Form.Control
@@ -476,8 +470,6 @@ const CalendarioVacinal = () => {
                                     {errors.dose}
                                 </Form.Control.Feedback>
                             </Form.Group>
-
-                            {/* INTERVALO DIAS */}
                             <Form.Group as={Col} md="6" className="mb-3">
                                 <Form.Label>Intervalo (dias)</Form.Label>
                                 <Form.Control
@@ -495,8 +487,6 @@ const CalendarioVacinal = () => {
                                 <small className="text-muted">(Opcional)</small>
                             </Form.Group>
                         </Row>
-
-                        {/* OBSERVACOES */}
                         <Form.Group className="mb-3">
                             <Form.Label>Observacoes</Form.Label>
                             <Form.Control

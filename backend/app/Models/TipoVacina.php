@@ -16,7 +16,7 @@ class TipoVacina extends Model
         'descricao',
     ];
 
-    // Relacionamento: um tipo de vacina pode ter várias vacinas
+
     public function vacinas()
     {
         return $this->hasMany(Vacina::class, 'tipos_vacinas_id');

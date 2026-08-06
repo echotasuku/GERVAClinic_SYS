@@ -1,11 +1,10 @@
-/* ===== CONTAINER PRINCIPAL ===== */
+
 .calendario-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* ===== NOTIFICACOES ===== */
 .notification {
     position: fixed;
     top: 20px;
@@ -80,7 +79,7 @@
     box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
-/* ===== FILTROS ===== */
+
 .filtros-container {
     display: flex;
     gap: 20px;
@@ -120,7 +119,7 @@
     border-radius: 20px;
 }
 
-/* ===== GRID DE CARDS ===== */
+
 .calendario-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -128,7 +127,7 @@
     margin-top: 10px;
 }
 
-/* ===== CARD ===== */
+
 .calendario-card {
     border: none;
     border-radius: 12px;
@@ -142,7 +141,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* ===== CARD HEADER ===== */
+
 .calendario-card-header {
     display: flex;
     justify-content: space-between;
@@ -234,7 +233,7 @@
     font-size: 13px;
 }
 
-/* ===== CARD FOOTER ===== */
+
 .calendario-card-footer {
     display: flex;
     gap: 8px;
@@ -343,7 +342,7 @@
     font-size: 12px;
 }
 
-/* ===== RESPONSIVIDADE ===== */
+
 @media (max-width: 768px) {
     .calendario-container {
         padding: 12px;

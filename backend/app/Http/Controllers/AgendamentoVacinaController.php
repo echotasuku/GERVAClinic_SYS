@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\AgendamentoVacina;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Jobs\EnviarNotificacaoVacinaJob; // importa o Job
+use App\Jobs\EnviarNotificacaoVacinaJob; 
 use App\Models\Paciente;
 use App\Models\Vacina;
-use App\Mail\NotificacaoVacinaMail; // importa o Mailable
+use App\Mail\NotificacaoVacinaMail; 
 use Illuminate\Support\Facades\Mail;
 
 class AgendamentoVacinaController extends Controller

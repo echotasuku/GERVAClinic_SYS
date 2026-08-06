@@ -79,7 +79,7 @@ class EstoqueController extends Controller
         $usuarios = User::where('role', 'admin')->get();
         $todosAlertas = [];
 
-        // Estoque baixo
+        
         $estoqueBaixo = Estoque::with('vacina')
             ->where('quantidade_estoque', '<', 10)
             ->get();
@@ -96,7 +96,7 @@ class EstoqueController extends Controller
             }
         }
 
-        // Validade próxima
+        
         $validadeProxima = Estoque::with('vacina')
             ->whereDate('data_validade', '<=', now()->addDays(30))
             ->get();
