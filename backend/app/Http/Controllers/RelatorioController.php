@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Aplicacao;
@@ -11,8 +10,10 @@ class RelatorioController extends Controller
     {
         $dados = Aplicacao::with([
             'paciente',
-            'estoque.vacina',
-            'profissional'
+            'profissional',
+            'estoque' => function ($query) {
+                $query->with('vacina');
+            }
         ])->get();
 
         return response()->json($dados);
@@ -22,8 +23,10 @@ class RelatorioController extends Controller
     {
         $dados = Aplicacao::with([
             'paciente',
-            'estoque.vacina',
-            'profissional'
+            'profissional',
+            'estoque' => function ($query) {
+                $query->with('vacina');
+            }
         ])->get();
 
         $pdf = Pdf::loadView('relatorios.pdf', [
@@ -33,3 +36,4 @@ class RelatorioController extends Controller
         return $pdf->download('relatorio-aplicacoes.pdf');
     }
 }
+

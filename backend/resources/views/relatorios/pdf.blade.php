@@ -43,6 +43,7 @@
             <tr>
                 <th>Paciente</th>
                 <th>Vacina</th>
+                <th>Lote</th> <!-- ✅ COLUNA LOTE ADICIONADA -->
                 <th>Data</th>
                 <th>Profissional</th>
             </tr>
@@ -57,6 +58,11 @@
 
                     <td>
                         {{ $aplicacao->estoque->vacina->nome ?? 'Não informado' }}
+                    </td>
+
+                    <!-- ✅ DADOS DO LOTE -->
+                    <td>
+                        {{ $aplicacao->estoque->lote ?? 'Não informado' }}
                     </td>
 
                     <td>

@@ -63,9 +63,7 @@ class RecomendacaoVacinaController extends Controller
         return response()->noContent();
     }
 
-    /**
-     * Gera recomendações automáticas para um paciente
-     */
+    
     public function gerarAutomaticas($pacienteId)
     {
         $paciente = Paciente::with('aplicacoes')->findOrFail($pacienteId);

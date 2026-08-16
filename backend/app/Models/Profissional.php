@@ -17,7 +17,6 @@ class Profissional extends Model
         'nome',
     ];
 
-    
     public function aplicacoes()
     {
         return $this->hasMany(Aplicacao::class, 'id_profissional');

@@ -1,0 +1,183 @@
+.carteira-container {
+    padding: 24px;
+}
+
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
+.carteira-header {
+    margin-bottom: 25px;
+}
+
+.carteira-header h2 {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.carteira-header p {
+    margin-bottom: 0;
+}
+
+
+/* =====================================================
+   SELEÇÃO DO PACIENTE
+   ===================================================== */
+
+.carteira-selecao {
+    border-radius: 12px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.section-title>svg {
+    font-size: 24px;
+}
+
+.section-title h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.section-title span {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   CARTEIRA VAZIA
+   ===================================================== */
+
+.carteira-vazia {
+    border-radius: 12px;
+    padding: 35px;
+}
+
+.carteira-icon {
+    opacity: 0.45;
+}
+
+.carteira-vazia h5 {
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   CARD DA CARTEIRA
+   ===================================================== */
+
+.carteira-card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   CABEÇALHO DA CARTEIRA
+   ===================================================== */
+
+.carteira-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+}
+
+.carteira-card-header h4 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.carteira-card-header span {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.carteira-badge {
+    padding: 9px 12px;
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   DADOS DO PACIENTE
+   ===================================================== */
+
+.dados-paciente {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+
+    padding: 18px;
+
+    border-radius: 10px;
+
+    background-color: #f8f9fa;
+}
+
+.dados-paciente div {
+    display: flex;
+    flex-direction: column;
+}
+
+.dados-paciente small {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6c757d;
+    margin-bottom: 3px;
+}
+
+.dados-paciente strong {
+    font-size: 16px;
+}
+
+
+/* =====================================================
+   TABELA
+   ===================================================== */
+
+.carteira-card table {
+    margin-bottom: 0;
+}
+
+.carteira-card table th {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.carteira-card table td {
+    vertical-align: middle;
+}
+
+
+/* =====================================================
+   RESPONSIVIDADE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    .carteira-container {
+        padding: 15px;
+    }
+
+    .carteira-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .dados-paciente {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+}

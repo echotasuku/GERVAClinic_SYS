@@ -1,0 +1,325 @@
+
+/* ===== CONTAINER PRINCIPAL ===== */
+
+.planejamento-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+/* ===== HEADER ===== */
+
+.planejamento-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-left h2 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
+}
+
+.header-left p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+}
+
+
+/* ===== ABAS ===== */
+
+.planejamento-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #dee2e6;
+    overflow-x: auto;
+}
+
+.planejamento-tab {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.planejamento-tab:hover {
+    color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+.planejamento-tab.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+
+/* ===== CONTEUDO ===== */
+
+.planejamento-conteudo {
+    margin-top: 10px;
+}
+
+
+/* ===== MODULOS ===== */
+
+.planejamento-modulo {
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+/* ===== CARD DO PACIENTE ===== */
+
+.paciente-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.paciente-card .card-body {
+    padding: 25px;
+}
+
+
+/* ===== TITULO DA SECAO ===== */
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    color: #0d6efd;
+}
+
+.section-title>svg {
+    font-size: 24px;
+}
+
+.section-title h5 {
+    margin: 0;
+    color: #212529;
+    font-weight: 600;
+}
+
+.section-title span {
+    display: block;
+    margin-top: 3px;
+    font-size: 13px;
+    color: #6c757d;
+}
+
+
+/* ===== FORMULARIO ===== */
+
+.paciente-card .form-label {
+    color: #212529;
+    font-weight: 500;
+}
+
+.paciente-card .form-select {
+    color: #212529;
+    background-color: #ffffff;
+    border-color: #ced4da;
+    padding: 10px 12px;
+}
+
+.paciente-card .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+
+/* ===== BOTAO PLANEJAMENTO ===== */
+
+.btn-planejamento {
+    width: 100%;
+    padding: 10px 15px;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-planejamento:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+
+/* ===== ESTADO VAZIO ===== */
+
+.empty-planejamento {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+}
+
+.empty-planejamento .card-body {
+    padding: 50px 20px;
+}
+
+.empty-icon {
+    color: #adb5bd;
+    margin-bottom: 15px;
+}
+
+.empty-planejamento h5 {
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.empty-planejamento p {
+    color: #adb5bd;
+    margin-bottom: 0;
+}
+
+
+/* ===== CARD DE VACINAS ===== */
+
+.vacinas-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.vacinas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #ffffff;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.vacinas-header h5 {
+    margin: 0;
+    color: #212529;
+    font-weight: 600;
+}
+
+.vacinas-header small {
+    display: block;
+    margin-top: 4px;
+}
+
+
+/* ===== VACINAS VAZIAS ===== */
+
+.empty-vacinas {
+    text-align: center;
+    padding: 45px 20px;
+}
+
+.empty-vacinas h6 {
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.empty-vacinas p {
+    color: #adb5bd;
+    margin-bottom: 0;
+}
+
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 768px) {
+
+    .planejamento-container {
+        padding: 12px;
+    }
+
+    .planejamento-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .header-left h2 {
+        font-size: 20px;
+    }
+
+    .header-left p {
+        font-size: 13px;
+    }
+
+    .planejamento-tabs {
+        margin-bottom: 20px;
+    }
+
+    .planejamento-tab {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .paciente-card .card-body {
+        padding: 18px;
+    }
+
+    .btn-planejamento {
+        margin-top: 10px;
+    }
+
+    .vacinas-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+}
+
+
+/* ===== TELAS PEQUENAS ===== */
+
+@media (max-width: 576px) {
+
+    .planejamento-container {
+        padding: 8px;
+    }
+
+    .planejamento-tabs {
+        gap: 0;
+    }
+
+    .planejamento-tab {
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    .planejamento-tab svg {
+        margin-right: 5px !important;
+    }
+
+    .paciente-card {
+        border-radius: 8px;
+    }
+
+    .paciente-card .card-body {
+        padding: 15px;
+    }
+
+    .empty-planejamento .card-body {
+        padding: 40px 15px;
+    }
+
+    .vacinas-card {
+        border-radius: 8px;
+    }
+
+}
+

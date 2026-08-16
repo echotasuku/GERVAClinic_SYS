@@ -9,6 +9,8 @@ class Paciente extends Model
 {
     use HasFactory;
 
+    protected $table = 'pacientes';
+
     protected $fillable = [
         'nome',
         'cpf',
@@ -23,9 +25,13 @@ class Paciente extends Model
         'cep'
     ];
 
-    
     public function retiradas()
     {
         return $this->hasMany(Retirada::class);
+    }
+
+    public function aplicacoes()
+    {
+        return $this->hasMany(Aplicacao::class, 'paciente_id');
     }
 }

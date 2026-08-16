@@ -20,7 +20,6 @@ class Aplicacao extends Model
         'hora_aplicacao',
     ];
 
-    // Relacionamentos
     public function profissional()
     {
         return $this->belongsTo(Profissional::class, 'id_profissional');

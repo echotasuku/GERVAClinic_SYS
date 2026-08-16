@@ -20,13 +20,11 @@ class Estoque extends Model
         'vacina_id',
     ];
 
-    // Relacionamento: cada lote pertence a uma vacina
     public function vacina()
     {
         return $this->belongsTo(Vacina::class, 'vacina_id');
     }
 
-    // Relacionamento: um lote pode ter várias aplicações
     public function aplicacoes()
     {
         return $this->hasMany(Aplicacao::class, 'estoque_id');

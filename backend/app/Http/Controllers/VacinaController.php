@@ -71,4 +71,22 @@ class VacinaController extends Controller
         $vacina->delete();
         return response()->noContent();
     }
+
+    public function planejamento()
+{
+    try {
+        $esquemas = \DB::table('esquema_vacinal')->get();
+        $calendario = \DB::table('calendario_vacinal')->get();
+
+        return response()->json([
+            'esquemas' => $esquemas,
+            'calendario' => $calendario,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Erro ao carregar planejamento vacinal'
+        ], 500);
+    }
+}
+
 }
