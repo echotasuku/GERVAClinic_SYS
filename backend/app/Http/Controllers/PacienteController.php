@@ -27,7 +27,7 @@ class PacienteController extends Controller
             'bairro' => 'nullable|string',
             'cidade' => 'nullable|string',
             'uf' => 'nullable|string|max:2',
-            'cep' => 'nullable|string|max:8',
+            'cep' => 'nullable|string|max:9',
         ]);
 
         if ($validator->fails()) {
@@ -54,7 +54,7 @@ class PacienteController extends Controller
             'bairro' => 'nullable|string',
             'cidade' => 'nullable|string',
             'uf' => 'nullable|string|max:2',
-            'cep' => 'nullable|string|max:8',
+            'cep' => 'nullable|string|max:9',
         ]);
 
         if ($validator->fails()) {

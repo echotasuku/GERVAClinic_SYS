@@ -1,11 +1,13 @@
 /* ===== CONTAINER PRINCIPAL ===== */
+
 .estoque-container {
     padding: 20px;
     max-width: 900px;
     margin: 0 auto;
 }
 
-/* ===== NOTIFICAÇÃO (MANTIDA) ===== */
+/* ===== NOTIFICAÇÃO ===== */
+
 .notification {
     position: fixed;
     top: 20px;
@@ -40,13 +42,218 @@
 }
 
 /* ===== TÍTULO ===== */
+
 .estoque-container h2 {
     margin-bottom: 20px;
     font-weight: bold;
     color: #212529;
 }
 
-/* ===== MODAL - CAMPOS COMPACTOS ===== */
+/* =====================================================
+   BARRA DE FILTROS
+===================================================== */
+
+.filtros-container {
+    width: 100%;
+}
+
+.filtro-row {
+    display: flex;
+    align-items: center !important;
+}
+
+/* Garante que as colunas não tenham espaçamento vertical */
+.filtro-row>[class*='col-'] {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Campo de busca */
+.filtro-row .input-group {
+    height: 38px;
+}
+
+.filtro-row .input-group-text {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-color: #ced4da;
+}
+
+.filtro-row .input-busca {
+    height: 38px;
+    font-size: 14px;
+}
+
+/* Coluna do botão */
+.filtro-botao-col {
+    display: flex;
+    align-items: center !important;
+}
+
+/* Botão corrigido */
+.filtro-limpar-btn {
+    height: 38px !important;
+    min-height: 38px !important;
+    margin: 0 !important;
+    padding: 6px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap;
+}
+
+/* =====================================================
+   REACT SELECT DO FILTRO
+===================================================== */
+
+.filtro-row .react-select__control {
+    height: 38px !important;
+    min-height: 38px !important;
+    overflow: hidden;
+}
+
+.filtro-row .react-select__value-container {
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 8px !important;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.filtro-row .react-select__indicators {
+    height: 38px !important;
+}
+
+.filtro-row .react-select__indicator {
+    padding: 6px 8px;
+}
+
+.filtro-row .react-select__placeholder {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filtro-row .react-select__input-container {
+    margin: 0;
+    padding: 0;
+}
+
+.filtro-row .react-select__multi-value {
+    max-width: 125px;
+    margin: 2px 4px 2px 0;
+    overflow: hidden;
+}
+
+.filtro-row .react-select__multi-value__label {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 2px 5px;
+}
+
+.filtro-row .react-select__multi-value__remove {
+    cursor: pointer;
+    padding: 0 3px;
+}
+
+.filtro-row .react-select__menu {
+    z-index: 1050;
+}
+
+.filtro-row .react-select__menu-portal {
+    z-index: 9999;
+}
+
+/* =====================================================
+   INSÍGNIAS DOS FILTROS
+===================================================== */
+
+.filtros-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.badge-filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 26px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Insígnia da busca */
+.badge-busca {
+    color: #084298;
+    background-color: #cfe2ff;
+    border: 1px solid #b6d4fe;
+}
+
+/* Insígnia da vacina */
+.badge-vacina {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border: 1px solid #badbcc;
+}
+
+/* Texto "Busca:" e "Vacina:" */
+.badge-filtro .badge-tipo {
+    color: inherit;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-weight: 700;
+}
+
+/* Valor do filtro */
+.badge-valor {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Botão X da insígnia */
+.badge-remover {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: 3px;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.badge-remover:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+    transform: scale(1.1);
+}
+
+/* =====================================================
+   MODAL
+===================================================== */
+
 .estoque-modal-theme .form-control,
 .estoque-modal-theme .form-select {
     max-width: 220px;
@@ -55,25 +262,22 @@
     display: inline-block;
 }
 
-/* Ajuste para grupos de campos no modal */
 .estoque-modal-theme .form-group {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-/* Ajuste para os Rows no modal */
 .estoque-modal-theme .row {
     margin-right: -5px;
     margin-left: -5px;
 }
 
-.estoque-modal-theme .row>[class*="col-"] {
+.estoque-modal-theme .row>[class*='col-'] {
     padding-right: 5px;
     padding-left: 5px;
 }
 
-/* ===== MODAL - CONFIGURAÇÕES GERAIS ===== */
 .custom-modal-width {
     max-width: 650px;
     width: 90%;
@@ -105,7 +309,15 @@
     padding: 1.2rem;
 }
 
-/* ===== TABELA ===== */
+/* Select do modal */
+.estoque-modal-theme .react-select__control {
+    max-width: 220px;
+}
+
+/* =====================================================
+   TABELA
+===================================================== */
+
 .estoque-table {
     width: 100%;
     border-collapse: collapse;
@@ -140,30 +352,28 @@
 }
 
 /* ===== COLUNAS ESPECÍFICAS ===== */
+
 .estoque-table td:nth-child(2),
-/* lote */
 .estoque-table td:nth-child(4),
-/* quantidade */
 .estoque-table td:nth-child(5),
-/* preço */
 .estoque-table td:nth-child(6) {
-    /* temperatura */
     text-align: center;
     font-weight: 500;
     font-size: 13px;
 }
 
 .estoque-table td:nth-child(5) {
-    /* preço - verde */
     color: #198754;
 }
 
 .estoque-table td:nth-child(6) {
-    /* temperatura - azul */
     color: #0d6efd;
 }
 
-/* ===== BOTÕES ===== */
+/* =====================================================
+   BOTÕES
+===================================================== */
+
 .estoque-container .btn {
     font-size: 13px;
     padding: 6px 14px;
@@ -177,4 +387,48 @@
 .estoque-container .btn-primary:hover {
     background-color: #0b5ed7;
     border-color: #0a58ca;
+}
+
+/* =====================================================
+   RESPONSIVIDADE
+===================================================== */
+
+@media (max-width: 768px) {
+    .estoque-container {
+        padding: 15px;
+    }
+
+    .filtro-row>[class*='col-'] {
+        margin-bottom: 8px !important;
+    }
+
+    .filtro-botao-col {
+        width: 100%;
+    }
+
+    .filtro-limpar-btn {
+        width: 100%;
+    }
+
+    .badge-valor {
+        max-width: 140px;
+    }
+}
+
+@media (max-width: 576px) {
+    .estoque-container {
+        padding: 10px;
+    }
+
+    .filtros-badges {
+        gap: 5px;
+    }
+
+    .badge-filtro {
+        max-width: 100%;
+    }
+
+    .badge-valor {
+        max-width: 120px;
+    }
 }

@@ -19,6 +19,10 @@ const RecomendacaoVacina = () => {
   const [recomendacaoParaEdicao, setRecomendacaoParaEdicao] = useState(null);
   const [pacienteSelecionadoId, setPacienteSelecionadoId] = useState('');
 
+  // 1. Obter a role do usuário (Ajuste a chave 'user_role' ou 'user' conforme sua aplicação salva no localStorage)
+  const userRole = localStorage.getItem('user_role'); 
+  const isAdminOrProfissional = userRole === 'admin' || userRole === 'profissional';
+
   useEffect(() => {
     fetchRecomendacoes();
     fetchPacientes();
@@ -72,6 +76,8 @@ const RecomendacaoVacina = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (!isAdminOrProfissional) return; // Trava de segurança no frontend
+
     try {
       const token = localStorage.getItem('auth_token');
       const headers = { Authorization: `Bearer ${token}` };
@@ -116,6 +122,8 @@ const RecomendacaoVacina = () => {
   };
 
   const handleExcluirRecomendacao = async (item) => {
+    if (!isAdminOrProfissional) return; // Trava de segurança no frontend
+
     try {
       const token = localStorage.getItem('auth_token');
       await axios.delete(`http://127.0.0.1:8080/api/recomendacoes-vacinas/${item.id}`, {
@@ -128,6 +136,8 @@ const RecomendacaoVacina = () => {
   };
 
   const gerarAutomaticas = async () => {
+    if (!isAdminOrProfissional) return; // Trava de segurança no frontend
+
     try {
       const token = localStorage.getItem('auth_token');
       const response = await axios.get(
@@ -144,64 +154,69 @@ const RecomendacaoVacina = () => {
     <div className="recomendacao-container">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Recomendações de Vacinas</h2>
-        <div>
-          <Button variant="primary" onClick={abrirModal}>Nova Recomendação</Button>
-          {pacienteSelecionadoId && (
-            <Button variant="warning" className="ms-2" onClick={gerarAutomaticas}>
-              Gerar Automáticas
-            </Button>
-          )}
-        </div>
+        {/* Renderiza os botões apenas se for admin ou profissional */}
+        {isAdminOrProfissional && (
+          <div>
+            <Button variant="primary" onClick={abrirModal}>Nova Recomendação</Button>
+            {pacienteSelecionadoId && (
+              <Button variant="warning" className="ms-2" onClick={gerarAutomaticas}>
+                Gerar Automáticas
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Modal */}
-      <Modal show={showModal} onHide={fecharModal} centered dialogClassName="custom-modal-width" className="recomendacao-modal-theme">
-        <Modal.Header closeButton>
-          <Modal.Title>{modoEdicao ? 'Editar Recomendação' : 'Nova Recomendação'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleFormSubmit}>
-            <Row className="mb-3">
-              <Form.Group as={Col} md="6" controlId="formPacienteId">
-                <Form.Label>Paciente</Form.Label>
-                <Form.Select name="paciente_id" value={novaRecomendacao.paciente_id} onChange={handleInputChange} required>
-                  <option value="">Selecione um paciente</option>
-                  {pacientes.map((paciente) => (
-                    <option key={paciente.id} value={paciente.id}>{paciente.nome}</option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-              <Form.Group as={Col} md="6" controlId="formVacinaId">
-                <Form.Label>Vacina</Form.Label>
-                <Form.Select name="vacina_id" value={novaRecomendacao.vacina_id} onChange={handleInputChange} required>
-                  <option value="">Selecione uma vacina</option>
-                  {vacinas.map((vacina) => (
-                    <option key={vacina.id} value={vacina.id}>{vacina.nome}</option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Row>
-            <Row className="mb-3">
-              <Form.Group as={Col} md="6" controlId="formDataRecomendada">
-                <Form.Label>Data Recomendada</Form.Label>
-                <Form.Control type="date" name="data_recomendada" value={novaRecomendacao.data_recomendada} onChange={handleInputChange} required />
-              </Form.Group>
-              <Form.Group as={Col} md="6" controlId="formStatus">
-                <Form.Label>Status</Form.Label>
-                <Form.Select name="status" value={novaRecomendacao.status} onChange={handleInputChange} required>
-                  <option value="pendente">Pendente</option>
-                  <option value="aplicada">Aplicada</option>
-                </Form.Select>
-              </Form.Group>
-            </Row>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="success" onClick={handleFormSubmit}>
-            {modoEdicao ? 'Salvar Alterações' : 'Salvar'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {/* Modal só é relevante para quem pode criar/editar */}
+      {isAdminOrProfissional && (
+        <Modal show={showModal} onHide={fecharModal} centered dialogClassName="custom-modal-width" className="recomendacao-modal-theme">
+          <Modal.Header closeButton>
+            <Modal.Title>{modoEdicao ? 'Editar Recomendação' : 'Nova Recomendação'}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleFormSubmit}>
+              <Row className="mb-3">
+                <Form.Group as={Col} md="6" controlId="formPacienteId">
+                  <Form.Label>Paciente</Form.Label>
+                  <Form.Select name="paciente_id" value={novaRecomendacao.paciente_id} onChange={handleInputChange} required>
+                    <option value="">Selecione um paciente</option>
+                    {pacientes.map((paciente) => (
+                      <option key={paciente.id} value={paciente.id}>{paciente.nome}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="formVacinaId">
+                  <Form.Label>Vacina</Form.Label>
+                  <Form.Select name="vacina_id" value={novaRecomendacao.vacina_id} onChange={handleInputChange} required>
+                    <option value="">Selecione uma vacina</option>
+                    {vacinas.map((vacina) => (
+                      <option key={vacina.id} value={vacina.id}>{vacina.nome}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Row>
+              <Row className="mb-3">
+                <Form.Group as={Col} md="6" controlId="formDataRecomendada">
+                  <Form.Label>Data Recomendada</Form.Label>
+                  <Form.Control type="date" name="data_recomendada" value={novaRecomendacao.data_recomendada} onChange={handleInputChange} required />
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="formStatus">
+                  <Form.Label>Status</Form.Label>
+                  <Form.Select name="status" value={novaRecomendacao.status} onChange={handleInputChange} required>
+                    <option value="pendente">Pendente</option>
+                    <option value="aplicada">Aplicada</option>
+                  </Form.Select>
+                </Form.Group>
+              </Row>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="success" onClick={handleFormSubmit}>
+              {modoEdicao ? 'Salvar Alterações' : 'Salvar'}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
 
       {/* Tabela */}
       <table className="recomendacao-table">
@@ -211,7 +226,8 @@ const RecomendacaoVacina = () => {
             <th>Vacina</th>
             <th>Data Recomendada</th>
             <th>Status</th>
-            <th className="text-center">Ações</th>
+            {/* Oculta o cabeçalho Ações para usuário comum */}
+            {isAdminOrProfissional && <th className="text-center">Ações</th>}
           </tr>
         </thead>
         <tbody>
@@ -220,12 +236,14 @@ const RecomendacaoVacina = () => {
               <td>{item.paciente?.nome || `Paciente #${item.paciente_id}`}</td>
               <td>{item.vacina?.nome || `Vacina #${item.vacina_id}`}</td>
               <td>{new Date(item.data_recomendada).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
-              {/* Status com classe dinâmica */}
               <td className={`status-${item.status}`}>{item.status}</td>
-              <td className="actions-cell">
-                <Button variant="info" size="sm" onClick={() => handleEditarRecomendacao(item)}>Editar</Button>
-                <Button variant="danger" size="sm" onClick={() => handleExcluirRecomendacao(item)} className="ms-2">Excluir</Button>
-              </td>
+              {/* Oculta as células de ação para usuário comum */}
+              {isAdminOrProfissional && (
+                <td className="actions-cell">
+                  <Button variant="info" size="sm" onClick={() => handleEditarRecomendacao(item)}>Editar</Button>
+                  <Button variant="danger" size="sm" onClick={() => handleExcluirRecomendacao(item)} className="ms-2">Excluir</Button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

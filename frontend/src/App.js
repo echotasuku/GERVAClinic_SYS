@@ -27,12 +27,10 @@ import GoogleLoginComponent from './components/GoogleLoginComponent';
 
 import './App.css';
 
-
 const App = () => {
 
   const [authenticated, setAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
-
 
   useEffect(() => {
 
@@ -45,7 +43,6 @@ const App = () => {
     }
 
   }, []);
-
 
   const handleLoginSuccess = (response) => {
 
@@ -81,7 +78,6 @@ const App = () => {
 
   };
 
-
   const handleLoginFailure = (error) => {
 
     console.error(
@@ -90,7 +86,6 @@ const App = () => {
     );
 
   };
-
 
   const handleLogout = () => {
 
@@ -102,14 +97,12 @@ const App = () => {
 
   };
 
-
   const isAdmin = userRole === 'admin';
   const isProfessional = userRole === 'profissional';
   const isUser = userRole === 'user';
 
   const canAccessProfessional =
     isAdmin || isProfessional;
-
 
   return (
 
@@ -130,7 +123,6 @@ const App = () => {
                 userRole={userRole}
               />
 
-
               <div className="content">
 
                 <Routes>
@@ -149,7 +141,6 @@ const App = () => {
                     element={<Home />}
                   />
 
-
                   {/* ==================================================
                       USUÁRIO COMUM
                       PROFISSIONAL E ADMIN TAMBÉM PODEM
@@ -157,11 +148,6 @@ const App = () => {
 
                   {(isUser || canAccessProfessional) && (
                     <>
-
-                      <Route
-                        path="/agendamento-vacina"
-                        element={<AgendamentoVacina />}
-                      />
 
                       <Route
                         path="/recomendacao-vacina"
@@ -176,13 +162,18 @@ const App = () => {
                     </>
                   )}
 
-
                   {/* ==================================================
                       PROFISSIONAL + ADMIN
                   ================================================== */}
 
                   {canAccessProfessional && (
                     <>
+
+                      {/* Agendamento - movido para cá: somente profissional e admin */}
+                      <Route
+                        path="/agendamento-vacina"
+                        element={<AgendamentoVacina />}
+                      />
 
                       {/* Aplicações */}
 
@@ -191,14 +182,12 @@ const App = () => {
                         element={<Aplicacoes />}
                       />
 
-
                       {/* Pacientes */}
 
                       <Route
                         path="/pacientes"
                         element={<Pacientes />}
                       />
-
 
                       {/* Esquemas */}
 
@@ -207,7 +196,6 @@ const App = () => {
                         element={<EsquemaVacinal />}
                       />
 
-
                       {/* Calendário */}
 
                       <Route
@@ -215,14 +203,12 @@ const App = () => {
                         element={<CalendarioVacinal />}
                       />
 
-
                       {/* Planejamento */}
 
                       <Route
                         path="/planejamento-vacinal"
                         element={<PlanejamentoVacinal />}
                       />
-
 
                       {/* Relatórios */}
 
@@ -233,7 +219,6 @@ const App = () => {
 
                     </>
                   )}
-
 
                   {/* ==================================================
                       ADMINISTRADOR
@@ -308,6 +293,5 @@ const App = () => {
   );
 
 };
-
 
 export default App;

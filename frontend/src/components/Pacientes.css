@@ -1,17 +1,37 @@
+/* ===== CONTAINER PRINCIPAL ===== */
 .pacientes-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.pacientes-container h2 {
+/* ===== HEADER ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
 }
 
-.pacientes-container .btn-primary {
-    margin-bottom: 20px;
+.header h2 {
+    margin: 0;
 }
 
+.btn-add {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #0056b3;
+}
+
+/* ===== TABELA ===== */
 .pacientes-table {
     width: 100%;
     border-collapse: collapse;
@@ -24,6 +44,7 @@
     padding: 12px;
     text-align: left;
     vertical-align: middle;
+    font-size: 14px;
 }
 
 .pacientes-table th {
@@ -44,9 +65,44 @@
     white-space: nowrap;
 }
 
-.custom-modal-width {
-    max-width: 700px;
-    width: 90%;
+/* ===== BOTÕES DE AÇÃO ===== */
+.btn-actions {
+    display: inline-flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.btn-edit,
+.btn-delete {
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.btn-edit {
+    background-color: #007bff;
+}
+
+.btn-edit:hover {
+    background-color: #0056b3;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+/* ===== MODAL ===== */
+.custom-modal-widthpac {
+    max-width: 850px !important;
+    width: 90% !important;
 }
 
 .pacientes-modal-theme .modal-header {
@@ -73,4 +129,357 @@
 
 .pacientes-modal-theme .modal-body {
     padding: 1.5rem;
+}
+
+/* ===== BARRA DE FILTROS ===== */
+.filtros-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.filtro-row {
+    display: flex;
+    align-items: center;
+}
+
+.filtro-row [class*="col-"] {
+    display: flex;
+    align-items: stretch;
+}
+
+.filtro-row [class*="col-"]>* {
+    width: 100%;
+    height: 100%;
+}
+
+/* ===== INPUT GROUP DA BUSCA ===== */
+.input-group {
+    height: 38px;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group-text {
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border: 1px solid #ced4da;
+    border-right: none;
+    border-radius: 0.375rem 0 0 0.375rem;
+    background-color: #e9ecef;
+    color: #6c757d;
+}
+
+.input-busca {
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+    padding: 0 12px;
+    margin: 0;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 0.375rem 0.375rem 0;
+    line-height: 38px;
+    box-sizing: border-box;
+    font-size: 15px;
+    width: 100%;
+}
+
+.input-busca:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* ===== SELECT DE FILTRO ===== */
+.filtro-select {
+    height: 38px;
+    min-height: 38px;
+}
+
+/* ===== BOTÃO LIMPAR FILTROS ===== */
+.filtro-botao-col {
+    display: flex;
+    align-items: stretch;
+}
+
+.filtro-limpar-btn {
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    border-radius: 0.375rem;
+    width: 100%;
+}
+
+/* ===== BADGES DE FILTROS ATIVOS ===== */
+.filtros-badges {
+    padding: 8px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.badge-filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px 4px 10px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+/* Badge de Busca */
+.badge-busca {
+    background-color: #e7f5ff;
+    color: #1971c2;
+    border-color: #a5d8ff;
+}
+
+/* Badge de Cidade */
+.badge-cidade {
+    background-color: #ebfbee;
+    color: #2f9e44;
+    border-color: #b2f2bb;
+}
+
+/* Badge de Sexo (caso queira adicionar depois) */
+.badge-sexo {
+    background-color: #fff3bf;
+    color: #e67700;
+    border-color: #ffec99;
+}
+
+.badge-tipo {
+    font-weight: 600;
+    opacity: 0.8;
+    font-size: 12px;
+}
+
+.badge-valor {
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.badge-remover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.badge-remover:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+/* ===== NOTIFICAÇÕES ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+    max-width: 400px;
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+.notification.warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.notification.info {
+    background-color: #17a2b8;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===== REACT-SELECT OVERRIDES ===== */
+.react-select__control {
+    min-height: 38px !important;
+    height: 38px !important;
+    border-radius: 0.375rem !important;
+}
+
+.react-select__control--is-focused {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.react-select__value-container {
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.react-select__indicators {
+    height: 38px !important;
+    min-height: 38px !important;
+}
+
+.react-select__input {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.react-select__menu {
+    z-index: 1050 !important;
+}
+
+.react-select__menu-portal {
+    z-index: 9999 !important;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .pacientes-container {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .header h2 {
+        text-align: center;
+    }
+
+    .filtro-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filtro-row [class*="col-"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    .pacientes-table {
+        font-size: 12px;
+    }
+
+    .pacientes-table th,
+    .pacientes-table td {
+        padding: 8px;
+    }
+
+    .btn-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .custom-modal-widthpac {
+        max-width: 95% !important;
+        width: 95% !important;
+    }
+
+    .badge-filtro {
+        font-size: 11px;
+        padding: 3px 6px 3px 8px;
+    }
+
+    .badge-valor {
+        font-size: 11px;
+    }
+
+    .badge-remover {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .pacientes-table {
+        font-size: 11px;
+    }
+
+    .pacientes-table th,
+    .pacientes-table td {
+        padding: 6px;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+
+    .filtros-container {
+        padding: 10px;
+    }
+
+    .input-busca {
+        font-size: 13px;
+    }
+
+    .filtro-limpar-btn {
+        font-size: 13px;
+        padding: 0 10px;
+    }
+
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: 100%;
+        font-size: 14px;
+        padding: 12px 16px;
+    }
 }

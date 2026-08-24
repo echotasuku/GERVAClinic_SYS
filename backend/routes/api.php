@@ -358,8 +358,7 @@ Route::middleware([
     // =====================================================
     // PROFISSIONAIS
     //
-    // Somente Admin cadastra/edita/exclui.
-    // =====================================================
+
 
     Route::post(
         '/profissionais',

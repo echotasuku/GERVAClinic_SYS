@@ -1,756 +1,463 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
-  FaHome,
-  FaTags,
-  FaTruck,
-  FaWarehouse,
-  FaSignOutAlt,
-  FaBell,
-  FaTimes,
-  FaExclamationTriangle,
-  FaCalendarAlt,
-  FaUsers,
-  FaSyringe,
-  FaClipboardCheck,
-  FaBriefcaseMedical,
-  FaCalendarCheck,
-  FaCheckCircle
+    FaHome,
+    FaSignOutAlt,
+    FaBell,
+    FaTimes,
+    FaExclamationTriangle,
+    FaCalendarAlt,
+    FaUsers,
+    FaSyringe,
+    FaChevronDown,
+    FaCog
 } from 'react-icons/fa';
 
 import axios from 'axios';
 import echo from '../echo';
 
 import {
-  ignorarNotificacao,
-  isNotificacaoIgnorada
+    ignorarNotificacao,
+    isNotificacaoIgnorada
 } from '../utils/notificacoesUtils';
 
 import './Sidebar.css';
 
+// ==========================================
+// CONFIGURAÇÃO DOS GRUPOS (estilo SUAP)
+// ==========================================
+
+const GRUPOS = {
+    vacinacao: {
+        titulo: 'Vacinação',
+        caminhos: [
+            '/agendamento-vacina',
+            '/recomendacao-vacina',
+            '/carteira-vacinal',
+            '/aplicacoes',
+            '/planejamento-vacinal'
+        ]
+    },
+    atendimento: {
+        titulo: 'Atendimento',
+        caminhos: ['/pacientes', '/relatorios']
+    },
+    administracao: {
+        titulo: 'Administração',
+        caminhos: [
+            '/vacinas',
+            '/estoque',
+            '/Tipo Vacina',
+            '/fornecedores',
+            '/profissionais',
+            '/notificacoes'
+        ]
+    }
+};
+
+// ==========================================
+// GRUPO RECOLHÍVEL
+// ==========================================
+
+const GrupoSidebar = ({ titulo, icone, aberto, ativo, onToggle, children }) => (
+    <div className="sidebar-group">
+
+        <div
+            className={`sidebar-item sidebar-group-header ${ativo ? 'ativo' : ''}`}
+            onClick={onToggle}
+        >
+            <div className="sidebar-item-content">
+                {icone}
+                <span className="sidebar-text">{titulo}</span>
+            </div>
+            <FaChevronDown className={`seta-grupo ${aberto ? 'aberta' : ''}`} />
+        </div>
+
+        <div className={`sidebar-group-items ${aberto ? 'aberto' : ''}`}>
+            {children}
+        </div>
+
+    </div>
+);
+
+// ==========================================
+// SUBITEM DO GRUPO
+// ==========================================
+
+const SubItemSidebar = ({ to, children }) => (
+    <NavLink to={to} className="sidebar-subitem">
+        {children}
+    </NavLink>
+);
 
 const Sidebar = ({ onLogout, userRole }) => {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  const [notificacoes, setNotificacoes] = useState([]);
-  const [temNotificacao, setTemNotificacao] = useState(false);
-  const [mostrarNotificacoes, setMostrarNotificacoes] = useState(false);
-  const [quantidadeNaoLidas, setQuantidadeNaoLidas] = useState(0);
-  const [alertasVistos, setAlertasVistos] = useState(false);
+    const [notificacoes, setNotificacoes] = useState([]);
+    const [temNotificacao, setTemNotificacao] = useState(false);
+    const [mostrarNotificacoes, setMostrarNotificacoes] = useState(false);
+    const [quantidadeNaoLidas, setQuantidadeNaoLidas] = useState(0);
+    const [alertasVistos, setAlertasVistos] = useState(false);
 
-  const isAdmin = userRole === 'admin';
-  const isProfessional = userRole === 'profissional';
-  const canAccessProfessional = isAdmin || isProfessional;
+    // ==========================================
+    // GRUPOS ABERTOS (acordeão)
+    // ==========================================
 
+    const [gruposAbertos, setGruposAbertos] = useState({});
 
-  const buscarAlertas = async () => {
-
-    try {
-
-      const token = localStorage.getItem('auth_token');
-
-      const response = await axios.get(
-        'http://127.0.0.1:8080/api/alertas',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      let alertas = response.data;
-
-      alertas = alertas.filter(
-        alerta => !isNotificacaoIgnorada(alerta.mensagem)
-      );
-
-      const notificacoesFormatadas = alertas.map(
-        (alerta, index) => ({
-          id: `alerta-${index}-${Date.now()}`,
-          data: {
-            mensagem: alerta.mensagem,
-            tipo: alerta.tipo
-          }
-        })
-      );
-
-      setNotificacoes(notificacoesFormatadas);
-
-      if (!alertasVistos && alertas.length > 0) {
-
-        setQuantidadeNaoLidas(alertas.length);
-        setTemNotificacao(true);
-
-      }
-
-      return alertas;
-
-    } catch (error) {
-
-      console.error(
-        'Erro ao buscar alertas:',
-        error
-      );
-
-      return [];
-
-    }
-
-  };
-
-
-  const handleClickSino = async () => {
-
-    if (!mostrarNotificacoes) {
-
-      await buscarAlertas();
-
-      setAlertasVistos(true);
-      setTemNotificacao(false);
-      setQuantidadeNaoLidas(0);
-
-    }
-
-    setMostrarNotificacoes(
-      prev => !prev
-    );
-
-  };
-
-
-  const handleIgnorarNotificacao = (
-    mensagem,
-    event
-  ) => {
-
-    event.stopPropagation();
-
-    ignorarNotificacao(mensagem);
-
-    setNotificacoes(
-      prev =>
-        prev.filter(
-          n => n.data.mensagem !== mensagem
-        )
-    );
-
-    setQuantidadeNaoLidas(prev => {
-
-      const novoValor = prev - 1;
-
-      if (novoValor <= 0) {
-        setTemNotificacao(false);
-      }
-
-      return novoValor;
-
-    });
-
-  };
-
-
-  const verTodasNotificacoes = () => {
-
-    setMostrarNotificacoes(false);
-
-    navigate('/notificacoes');
-
-  };
-
-
-  useEffect(() => {
-
-    const verificarNovosAlertas = async () => {
-
-      try {
-
-        const token =
-          localStorage.getItem('auth_token');
-
-        const response = await axios.get(
-          'http://127.0.0.1:8080/api/alertas',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        let novosAlertas = response.data;
-
-        novosAlertas = novosAlertas.filter(
-          alerta =>
-            !isNotificacaoIgnorada(
-              alerta.mensagem
-            )
-        );
-
-        if (
-          novosAlertas.length > 0 &&
-          !alertasVistos
-        ) {
-
-          setQuantidadeNaoLidas(
-            novosAlertas.length
-          );
-
-          setTemNotificacao(true);
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          'Erro na verificacao periodica:',
-          error
-        );
-
-      }
-
+    const toggleGrupo = (nome) => {
+        setGruposAbertos((prev) => ({
+            ...prev,
+            [nome]: !prev[nome]
+        }));
     };
 
+    const grupoAtivo = (nome) =>
+        GRUPOS[nome].caminhos.some((p) =>
+            location.pathname.startsWith(p)
+        );
 
-    verificarNovosAlertas();
+    // Abre sozinho o grupo da página atual
+    useEffect(() => {
+        const caminho = location.pathname;
 
-    const intervalo =
-      setInterval(
-        verificarNovosAlertas,
-        30000
-      );
+        setGruposAbertos((prev) => {
+            const novo = { ...prev };
 
-    return () =>
-      clearInterval(intervalo);
+            Object.entries(GRUPOS).forEach(([nome, grupo]) => {
+                if (grupo.caminhos.some((p) => caminho.startsWith(p))) {
+                    novo[nome] = true;
+                }
+            });
 
-  }, [alertasVistos]);
+            return novo;
+        });
+    }, [location.pathname]);
 
+    // ==========================================
+    // PERMISSÕES
+    // ==========================================
 
-  useEffect(() => {
+    const isAdmin = userRole === 'admin';
+    const isProfessional = userRole === 'profissional';
+    const canAccessProfessional = isAdmin || isProfessional;
 
-    echo.channel('alertas')
-      .listen(
-        '.novo-alerta',
-        (event) => {
+    // ==========================================
+    // NOTIFICAÇÕES (sem mudanças)
+    // ==========================================
 
-          if (event.alertas) {
+    const buscarAlertas = async () => {
+        try {
+            const token = localStorage.getItem('auth_token');
 
-            const alertasNaoIgnorados =
-              event.alertas.filter(
-                alerta =>
-                  !isNotificacaoIgnorada(
-                    alerta.mensagem
-                  )
-              );
+            const response = await axios.get(
+                'http://127.0.0.1:8080/api/alertas',
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
-            if (
-              alertasNaoIgnorados.length > 0
-            ) {
+            let alertas = response.data;
 
-              setAlertasVistos(false);
+            alertas = alertas.filter(
+                (alerta) => !isNotificacaoIgnorada(alerta.mensagem)
+            );
 
-              setQuantidadeNaoLidas(
-                alertasNaoIgnorados.length
-              );
+            const notificacoesFormatadas = alertas.map((alerta, index) => ({
+                id: `alerta-${index}-${Date.now()}`,
+                data: {
+                    mensagem: alerta.mensagem,
+                    tipo: alerta.tipo
+                }
+            }));
 
-              setTemNotificacao(true);
+            setNotificacoes(notificacoesFormatadas);
 
+            if (!alertasVistos && alertas.length > 0) {
+                setQuantidadeNaoLidas(alertas.length);
+                setTemNotificacao(true);
             }
 
-          }
+            return alertas;
 
+        } catch (error) {
+            console.error('Erro ao buscar alertas:', error);
+            return [];
         }
-      );
-
-
-    return () => {
-
-      echo.leave('alertas');
-
     };
 
-  }, []);
+    const handleClickSino = async () => {
+        if (!mostrarNotificacoes) {
+            await buscarAlertas();
+            setAlertasVistos(true);
+            setTemNotificacao(false);
+            setQuantidadeNaoLidas(0);
+        }
 
+        setMostrarNotificacoes((prev) => !prev);
+    };
 
-  const getIconeTipo = (tipo) => {
+    const handleIgnorarNotificacao = (mensagem, event) => {
+        event.stopPropagation();
 
-    switch (tipo) {
+        ignorarNotificacao(mensagem);
 
-      case 'estoque_baixo':
-
-        return (
-          <FaExclamationTriangle
-            className="icone-alerta estoque-baixo"
-          />
+        setNotificacoes((prev) =>
+            prev.filter((n) => n.data.mensagem !== mensagem)
         );
 
-      case 'validade_proxima':
+        setQuantidadeNaoLidas((prev) => {
+            const novoValor = prev - 1;
 
-        return (
-          <FaCalendarAlt
-            className="icone-alerta validade-proxima"
-          />
-        );
+            if (novoValor <= 0) {
+                setTemNotificacao(false);
+            }
 
-      default:
+            return novoValor;
+        });
+    };
 
-        return (
-          <FaBell
-            className="icone-alerta"
-          />
-        );
+    const verTodasNotificacoes = () => {
+        setMostrarNotificacoes(false);
+        navigate('/notificacoes');
+    };
 
-    }
+    useEffect(() => {
+        const verificarNovosAlertas = async () => {
+            try {
+                const token = localStorage.getItem('auth_token');
 
-  };
+                const response = await axios.get(
+                    'http://127.0.0.1:8080/api/alertas',
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
 
+                let novosAlertas = response.data;
 
-  return (
+                novosAlertas = novosAlertas.filter(
+                    (alerta) => !isNotificacaoIgnorada(alerta.mensagem)
+                );
 
-    <div className="sidebar">
+                if (novosAlertas.length > 0 && !alertasVistos) {
+                    setQuantidadeNaoLidas(novosAlertas.length);
+                    setTemNotificacao(true);
+                }
 
-      {/* ============================================================
-          NOTIFICAÇÕES
-      ============================================================ */}
+            } catch (error) {
+                console.error('Erro na verificacao periodica:', error);
+            }
+        };
 
-      <div className="bell-container">
+        verificarNovosAlertas();
 
-        <FaBell
-          className="sidebar-icon bell-click"
-          onClick={handleClickSino}
-        />
+        const intervalo = setInterval(verificarNovosAlertas, 30000);
 
-        {temNotificacao && (
+        return () => clearInterval(intervalo);
 
-          <span className="notification-dot">
+    }, [alertasVistos]);
 
-            {quantidadeNaoLidas > 0 && (
+    useEffect(() => {
+        echo.channel('alertas')
+            .listen('.novo-alerta', (event) => {
 
-              <span className="notification-count">
-                {quantidadeNaoLidas}
-              </span>
+                if (event.alertas) {
 
-            )}
+                    const alertasNaoIgnorados = event.alertas.filter(
+                        (alerta) => !isNotificacaoIgnorada(alerta.mensagem)
+                    );
 
-          </span>
+                    if (alertasNaoIgnorados.length > 0) {
+                        setAlertasVistos(false);
+                        setQuantidadeNaoLidas(alertasNaoIgnorados.length);
+                        setTemNotificacao(true);
+                    }
+                }
+            });
 
-        )}
+        return () => {
+            echo.leave('alertas');
+        };
 
+    }, []);
 
-        {mostrarNotificacoes && (
+    const getIconeTipo = (tipo) => {
+        switch (tipo) {
+            case 'estoque_baixo':
+                return <FaExclamationTriangle className="icone-alerta estoque-baixo" />;
+            case 'validade_proxima':
+                return <FaCalendarAlt className="icone-alerta validade-proxima" />;
+            default:
+                return <FaBell className="icone-alerta" />;
+        }
+    };
 
-          <div className="notification-dropdown">
+    return (
+        <div className="sidebar">
 
-            {notificacoes.length === 0 ? (
+            {/* ============================================================
+                NOTIFICAÇÕES
+            ============================================================ */}
+            <div className="bell-container">
 
-              <div className="notification-item">
-                Nenhum alerta no momento
-              </div>
+                <FaBell
+                    className="sidebar-icon bell-click"
+                    onClick={handleClickSino}
+                />
 
-            ) : (
+                {temNotificacao && (
+                    <span className="notification-dot">
+                        {quantidadeNaoLidas > 0 && (
+                            <span className="notification-count">
+                                {quantidadeNaoLidas}
+                            </span>
+                        )}
+                    </span>
+                )}
 
-              <>
+                {mostrarNotificacoes && (
+                    <div className="notification-dropdown">
 
-                {notificacoes
-                  .slice(0, 5)
-                  .map(n => (
+                        {notificacoes.length === 0 ? (
+                            <div className="notification-item">
+                                Nenhum alerta no momento
+                            </div>
+                        ) : (
+                            <>
+                                {notificacoes.slice(0, 5).map((n) => (
+                                    <div key={n.id} className="notification-item-wrapper">
+                                        <div className="notification-item">
+                                            {getIconeTipo(n.data?.tipo)}
+                                            <span className="notification-text">
+                                                {n.data?.mensagem || n.mensagem}
+                                            </span>
+                                        </div>
 
-                    <div
-                      key={n.id}
-                      className="notification-item-wrapper"
-                    >
+                                        <button
+                                            className="btn-ignorar"
+                                            onClick={(e) =>
+                                                handleIgnorarNotificacao(n.data.mensagem, e)
+                                            }
+                                            title="Ignorar notificacao"
+                                        >
+                                            <FaTimes />
+                                        </button>
+                                    </div>
+                                ))}
 
-                      <div className="notification-item">
-
-                        {getIconeTipo(
-                          n.data?.tipo
+                                <div
+                                    className="notification-item ver-todas"
+                                    onClick={verTodasNotificacoes}
+                                >
+                                    Ver todas as notificacoes
+                                </div>
+                            </>
                         )}
 
-                        <span className="notification-text">
-                          {n.data?.mensagem || n.mensagem}
-                        </span>
-
-                      </div>
-
-
-                      <button
-                        className="btn-ignorar"
-                        onClick={(e) =>
-                          handleIgnorarNotificacao(
-                            n.data.mensagem,
-                            e
-                          )
-                        }
-                        title="Ignorar notificacao"
-                      >
-
-                        <FaTimes />
-
-                      </button>
-
                     </div>
+                )}
 
-                  ))}
+            </div>
 
-
-                <div
-                  className="notification-item ver-todas"
-                  onClick={verTodasNotificacoes}
-                >
-                  Ver todas as notificacoes
+            {/* ============================================================
+                HOME
+            ============================================================ */}
+            <NavLink to="/home" className="sidebar-item">
+                <div className="sidebar-item-content">
+                    <FaHome className="sidebar-icon" />
+                    <span className="sidebar-text">Home</span>
                 </div>
+            </NavLink>
 
-              </>
+            {/* ============================================================
+                GRUPO: VACINAÇÃO (todos os usuários)
+            ============================================================ */}
+            <GrupoSidebar
+                titulo={GRUPOS.vacinacao.titulo}
+                icone={<FaSyringe className="sidebar-icon" />}
+                aberto={!!gruposAbertos.vacinacao}
+                ativo={grupoAtivo('vacinacao')}
+                onToggle={() => toggleGrupo('vacinacao')}
+            >
+                {canAccessProfessional && (
+                    <SubItemSidebar to="/agendamento-vacina">
+                        Agendamento de Vacinas
+                    </SubItemSidebar>
+                )}
 
+                <SubItemSidebar to="/recomendacao-vacina">
+                    Recomendação de Vacinas
+                </SubItemSidebar>
+
+                <SubItemSidebar to="/carteira-vacinal/:pacienteId">
+                    Carteira Vacinal
+                </SubItemSidebar>
+
+                {canAccessProfessional && (
+                    <SubItemSidebar to="/aplicacoes">
+                        Aplicações
+                    </SubItemSidebar>
+                )}
+
+                {canAccessProfessional && (
+                    <SubItemSidebar to="/planejamento-vacinal">
+                        Planejamento Vacinal
+                    </SubItemSidebar>
+                )}
+            </GrupoSidebar>
+
+            {/* ============================================================
+                GRUPO: ATENDIMENTO (profissional + admin)
+            ============================================================ */}
+            {canAccessProfessional && (
+                <GrupoSidebar
+                    titulo={GRUPOS.atendimento.titulo}
+                    icone={<FaUsers className="sidebar-icon" />}
+                    aberto={!!gruposAbertos.atendimento}
+                    ativo={grupoAtivo('atendimento')}
+                    onToggle={() => toggleGrupo('atendimento')}
+                >
+                    <SubItemSidebar to="/pacientes">
+                        Pacientes
+                    </SubItemSidebar>
+
+                    <SubItemSidebar to="/relatorios">
+                        Relatórios
+                    </SubItemSidebar>
+                </GrupoSidebar>
             )}
 
-          </div>
+            {/* ============================================================
+                GRUPO: ADMINISTRAÇÃO (somente admin)
+            ============================================================ */}
+            {isAdmin && (
+                <GrupoSidebar
+                    titulo={GRUPOS.administracao.titulo}
+                    icone={<FaCog className="sidebar-icon" />}
+                    aberto={!!gruposAbertos.administracao}
+                    ativo={grupoAtivo('administracao')}
+                    onToggle={() => toggleGrupo('administracao')}
+                >
+                    <SubItemSidebar to="/vacinas">Vacinas</SubItemSidebar>
+                    <SubItemSidebar to="/estoque">Estoque</SubItemSidebar>
+                    <SubItemSidebar to="/Tipo Vacina">Tipo de Vacina</SubItemSidebar>
+                    <SubItemSidebar to="/fornecedores">Fornecedores</SubItemSidebar>
+                    <SubItemSidebar to="/profissionais">Profissionais</SubItemSidebar>
+                    <SubItemSidebar to="/notificacoes">Notificações</SubItemSidebar>
+                </GrupoSidebar>
+            )}
 
-        )}
-
-      </div>
-
-
-      {/* ============================================================
-          HOME
-      ============================================================ */}
-
-      <NavLink
-        to="/home"
-        className="sidebar-item"
-      >
-
-        <div className="sidebar-item-content">
-
-          <FaHome className="sidebar-icon" />
-
-          <span className="sidebar-text">
-            Home
-          </span>
+            {/* ============================================================
+                LOGOUT
+            ============================================================ */}
+            <div className="sidebar-item logout" onClick={onLogout}>
+                <div className="sidebar-item-content">
+                    <FaSignOutAlt className="sidebar-icon" />
+                    <span className="sidebar-text">Logout</span>
+                </div>
+            </div>
 
         </div>
-
-      </NavLink>
-
-
-      {/* ============================================================
-          USUÁRIO COMUM
-          PROFISSIONAL E ADMIN TAMBÉM
-      ============================================================ */}
-
-      <NavLink
-        to="/agendamento-vacina"
-        className="sidebar-item"
-      >
-
-        <div className="sidebar-item-content">
-
-          <FaCalendarCheck className="sidebar-icon" />
-
-          <span className="sidebar-text">
-            Agendamento de Vacinas
-          </span>
-
-        </div>
-
-      </NavLink>
-
-
-      <NavLink
-        to="/recomendacao-vacina"
-        className="sidebar-item"
-      >
-
-        <div className="sidebar-item-content">
-
-          <FaCalendarCheck className="sidebar-icon" />
-
-          <span className="sidebar-text">
-            Recomendação de Vacinas
-          </span>
-
-        </div>
-
-      </NavLink>
-
-
-      <NavLink
-        to="/carteira-vacinal/:pacienteId"
-        className="sidebar-item"
-      >
-
-        <div className="sidebar-item-content">
-
-          <FaCalendarAlt className="sidebar-icon" />
-
-          <span className="sidebar-text">
-            Carteira Vacinal
-          </span>
-
-        </div>
-
-      </NavLink>
-
-
-      {/* ============================================================
-          PROFISSIONAL + ADMIN
-      ============================================================ */}
-
-      {canAccessProfessional && (
-
-        <>
-
-          {/* Aplicações */}
-
-          <NavLink
-            to="/aplicacoes"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaClipboardCheck
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Aplicações
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          {/* Planejamento */}
-
-          <NavLink
-            to="/planejamento-vacinal"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaCalendarAlt
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Planejamento Vacinal
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          {/* Pacientes */}
-
-          <NavLink
-            to="/pacientes"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaUsers
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Pacientes
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          {/* Relatórios */}
-
-          <NavLink
-            to="/relatorios"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaCheckCircle
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Relatórios
-              </span>
-
-            </div>
-
-          </NavLink>
-
-        </>
-
-      )}
-
-
-      {/* ============================================================
-          ADMINISTRADOR
-      ============================================================ */}
-
-      {isAdmin && (
-
-        <>
-
-          <NavLink
-            to="/vacinas"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaSyringe
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Vacinas
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          <NavLink
-            to="/estoque"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaWarehouse
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Estoque
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          <NavLink
-            to="/Tipo Vacina"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaTags
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Tipo de Vacina
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          <NavLink
-            to="/fornecedores"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaTruck
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Fornecedores
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          <NavLink
-            to="/profissionais"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaBriefcaseMedical
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Profissionais
-              </span>
-
-            </div>
-
-          </NavLink>
-
-
-          <NavLink
-            to="/notificacoes"
-            className="sidebar-item"
-          >
-
-            <div className="sidebar-item-content">
-
-              <FaBell
-                className="sidebar-icon"
-              />
-
-              <span className="sidebar-text">
-                Notificações
-              </span>
-
-            </div>
-
-          </NavLink>
-
-        </>
-
-      )}
-
-
-      {/* ============================================================
-          LOGOUT
-      ============================================================ */}
-
-      <div
-        className="sidebar-item logout"
-        onClick={onLogout}
-      >
-
-        <div className="sidebar-item-content">
-
-          <FaSignOutAlt
-            className="sidebar-icon"
-          />
-
-          <span className="sidebar-text">
-            Logout
-          </span>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  );
-
+    );
 };
-
 
 export default Sidebar;

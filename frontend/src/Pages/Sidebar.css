@@ -194,3 +194,80 @@
 .notification-dropdown::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+/* ==========================================
+   GRUPOS RECOLHÍVEIS (estilo SUAP)
+========================================== */
+.sidebar-group {
+    margin: 4px 0;
+}
+
+.sidebar-group-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sidebar-group-header .sidebar-item-content {
+    flex: 1;
+}
+
+/* Seta que gira */
+.seta-grupo {
+    margin-left: auto;
+    margin-right: 16px;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    transition: transform 0.3s ease;
+}
+
+.seta-grupo.aberta {
+    transform: rotate(180deg);
+}
+
+/* Grupo que contém a página atual fica destacado (verde-água, como no SUAP) */
+.sidebar-group-header.ativo .sidebar-icon,
+.sidebar-group-header.ativo .sidebar-text {
+    color: #2474c0;
+}
+
+/* Container dos subitens (animação de abrir/fechar) */
+.sidebar-group-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-group-items.aberto {
+    max-height: 500px;
+}
+
+/* Subitens (sem ícone, indentados, com linha separadora — igual SUAP) */
+.sidebar-subitem {
+    display: block;
+    padding: 10px 16px 10px 48px;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+}
+
+.sidebar-group-items .sidebar-subitem:last-child {
+    border-bottom: none;
+}
+
+.sidebar-subitem:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    padding-left: 52px;
+}
+
+/* Subitem da página atual */
+.sidebar-subitem.active {
+    color: #eaeaec;
+    font-weight: 600;
+    background: rgba(79, 209, 197, 0.08);
+    border-left: 3px solid #edf0ee;
+    padding-left: 45px;
+}

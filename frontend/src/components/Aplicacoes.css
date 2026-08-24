@@ -1,193 +1,42 @@
-/* ===== CONTAINER PRINCIPAL ===== */
+/* ==========================================
+   CONTAINER GERAL
+========================================== */
 .aplicacoes-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.aplicacoes-container h2 {
-    margin-bottom: 20px;
-    color: #212529;
-    /* ← Garantindo texto escuro */
-}
-
-.aplicacoes-container .btn-primary {
-    margin-bottom: 20px;
-}
-
-/* ===== TABELA ===== */
-.aplicacoes-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.aplicacoes-table th,
-.aplicacoes-table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-    vertical-align: middle;
-    color: #212529;
-    /* ← Garantindo texto escuro nas células */
-}
-
-.aplicacoes-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    color: #212529;
-    /* ← Garantindo texto escuro no cabeçalho */
-}
-
-.aplicacoes-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.aplicacoes-table tr:hover {
-    background-color: #f1f1f1;
-}
-
-.aplicacoes-table .actions-cell {
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* ===== MODAL ===== */
-.custom-modal-width {
-    max-width: 700px;
-    width: 90%;
-}
-
-.aplicacoes-modal-theme .modal-header {
-    background-color: #212529;
-    color: white;
-    /* ← Mantém o título branco no header escuro */
-    border-bottom: 1px solid #000;
-    border-radius: 0;
-}
-
-.aplicacoes-modal-theme .modal-title {
-    color: white;
-    /* ← Título do modal em branco (header escuro) */
-}
-
-.aplicacoes-modal-theme .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
-}
-
-.aplicacoes-modal-theme .modal-content {
-    border-radius: 0;
-    border: none;
-    padding-top: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    background-color: #ffffff;
-    /* ← Fundo branco garantido */
-}
-
-.aplicacoes-modal-theme .modal-body {
     padding: 1.5rem;
-    color: #212529;
-    /* ← Texto escuro no corpo do modal */
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* ===== CORREÇÃO PARA OS LABELS E INPUTS DO MODAL ===== */
-.aplicacoes-modal-theme .modal-body .form-label {
-    color: #212529;
-    /* ← Labels em escuro */
-    font-weight: 500;
-}
-
-.aplicacoes-modal-theme .modal-body .form-control,
-.aplicacoes-modal-theme .modal-body .form-select {
-    color: #212529;
-    /* ← Texto dos inputs em escuro */
-    background-color: #ffffff;
-    /* ← Fundo branco nos inputs */
-    border-color: #ced4da;
-}
-
-.aplicacoes-modal-theme .modal-body .form-control:focus,
-.aplicacoes-modal-theme .modal-body .form-select:focus {
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.aplicacoes-modal-theme .modal-body .form-control::placeholder {
-    color: #6c757d;
-    /* ← Placeholder cinza */
-}
-
-/* ===== CORREÇÃO PARA OS BOTÕES DO MODAL ===== */
-.aplicacoes-modal-theme .modal-footer .btn {
-    font-weight: 500;
-}
-
-.aplicacoes-modal-theme .modal-footer .btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
-    color: white;
-}
-
-.aplicacoes-modal-theme .modal-footer .btn-secondary:hover {
-    background-color: #5c636a;
-    border-color: #565e64;
-}
-
-.aplicacoes-modal-theme .modal-footer .btn-success {
-    background-color: #198754;
-    border-color: #198754;
-    color: white;
-}
-
-.aplicacoes-modal-theme .modal-footer .btn-success:hover {
-    background-color: #157347;
-    border-color: #146c43;
-}
-
-/* ===== MENSAGENS DE VALIDAÇÃO ===== */
-.aplicacoes-modal-theme .invalid-feedback {
-    color: #dc3545;
-    /* ← Mensagens de erro em vermelho */
-    font-size: 0.875em;
-}
-
-.aplicacoes-modal-theme .is-invalid {
-    border-color: #dc3545;
-}
-
-/* ===== LOADING E ERROR ===== */
-.loading,
-.error {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 18px;
-    color: #212529;
-}
-
-.error {
-    color: #dc3545;
-}
-
-/* ===== NOTIFICAÇÕES (se tiver) ===== */
+/* ==========================================
+   NOTIFICAÇÃO
+========================================== */
 .notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 15px 25px;
-    border-radius: 5px;
-    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: #fff;
     font-weight: 500;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     z-index: 9999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease;
+    max-width: 400px;
+    word-break: break-word;
+    animation: slideIn 0.3s ease-out;
 }
 
 .notification.success {
-    background-color: #28a745;
+    background-color: #198754;
 }
 
 .notification.error {
     background-color: #dc3545;
+}
+
+.notification.warning {
+    background-color: #ffc107;
+    color: #212529;
 }
 
 @keyframes slideIn {
@@ -199,5 +48,465 @@
     to {
         transform: translateX(0);
         opacity: 1;
+    }
+}
+
+/* ==========================================
+   CABEÇALHO
+========================================== */
+.header-aplicacoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.header-aplicacoes h2 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
+}
+
+/* ==========================================
+   FILTROS
+========================================== */
+.filtros-container {
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.filtro-row {
+    margin-bottom: 0.5rem;
+}
+
+.filtro-botao-col {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Alturas alinhadas (42px) */
+.filtros-container .input-group-text,
+.filtros-container .input-busca {
+    height: 42px;
+}
+
+.input-busca {
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    color: #6c757d;
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* Ícone de funil fixo no campo do filtro */
+.filtro-control-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px;
+    color: #0d6efd;
+    flex-shrink: 0;
+}
+
+/* Chips dentro do campo do filtro */
+.chip-conteudo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 160px;
+}
+
+.chip-icone {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.chip-texto {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   BOTÃO LIMPAR FILTROS
+   (ESTÁTICO - NÃO SE MEXE NO HOVER)
+========================================== */
+.filtro-limpar-btn {
+    width: 100%;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    /* texto nunca corta */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hover só muda cor — SEM movimento, SEM sombra, SEM rotação */
+.filtro-limpar-btn:hover {
+    background-color: #fdecee;
+    border-color: #f5c2c7;
+    color: #dc3545;
+}
+
+/* ==========================================
+   GARANTIA DE LEGIBILIDADE DOS SELECTS
+   (texto NUNCA fica branco/invisível)
+========================================== */
+.react-select__control {
+    background-color: #fff !important;
+}
+
+.react-select__single-value {
+    color: #212529 !important;
+}
+
+.react-select__input {
+    color: #212529 !important;
+}
+
+.react-select__placeholder {
+    color: #6c757d !important;
+}
+
+.react-select__option {
+    color: #212529;
+}
+
+.react-select__option--is-selected {
+    color: #fff !important;
+}
+
+.react-select__menu {
+    background-color: #fff !important;
+}
+
+/* ==========================================
+   BADGES DOS FILTROS
+========================================== */
+.filtros-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.badge-filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.badge-busca {
+    background-color: #6c757d;
+}
+
+.badge-paciente {
+    background-color: #0d6efd;
+}
+
+.badge-profissional {
+    background-color: #198754;
+}
+
+.badge-vacina {
+    background-color: #6f42c1;
+}
+
+.badge-icone {
+    display: inline-flex;
+    align-items: center;
+}
+
+.badge-tipo {
+    opacity: 0.9;
+    font-weight: 600;
+}
+
+.badge-valor {
+    font-weight: 500;
+}
+
+.badge-remover {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.badge-remover:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================
+   TABELA
+========================================== */
+.aplicacoes-table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.aplicacoes-table thead th {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px;
+    white-space: nowrap;
+}
+
+.aplicacoes-table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.aplicacoes-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+/* ==========================================
+   BOTÕES DE AÇÃO (EDITAR / EXCLUIR)
+========================================== */
+/* ==========================================
+   BOTÕES DE AÇÃO (EDITAR / EXCLUIR)
+   Classes renomeadas + !important = CSS antigo não interfere mais
+========================================== */
+.linha-acoes {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-acao {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px;
+    width: auto !important;
+    /* nunca mais cortado */
+    height: auto !important;
+    max-width: none !important;
+    padding: 7px 14px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    /* formato pílula */
+    font-size: 0.83rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-acao svg {
+    flex-shrink: 0;
+}
+
+/* EDITAR — azul suave, hover azul sólido */
+.btn-acao-editar {
+    background-color: #e7f1ff !important;
+    color: #0d6efd !important;
+}
+
+.btn-acao-editar:hover {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+/* EXCLUIR — vermelho suave, hover vermelho sólido */
+.btn-acao-excluir {
+    background-color: #fdecee !important;
+    color: #dc3545 !important;
+}
+
+.btn-acao-excluir:hover {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.25);
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+.custom-modal-width {
+    max-width: 800px;
+}
+
+.aplicacoes-modal-theme .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.aplicacoes-modal-theme .modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.aplicacoes-modal-theme .modal-title {
+    font-weight: 600;
+    color: #212529;
+}
+
+.aplicacoes-modal-theme .modal-body {
+    padding: 1.5rem;
+}
+
+.aplicacoes-modal-theme .form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.35rem;
+}
+
+.aplicacoes-modal-theme .form-control {
+    border-radius: 0.375rem;
+    color: #212529;
+    background-color: #fff;
+}
+
+.aplicacoes-modal-theme .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* ==========================================
+   OPÇÕES DO MENU DO FILTRO
+========================================== */
+.option-label-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+
+.option-label-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.option-type-prefix {
+    font-weight: 600;
+    opacity: 0.75;
+    font-size: 0.875em;
+}
+
+.option-check {
+    font-weight: 700;
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   SCROLLBAR DO MENU (PORTAL)
+========================================== */
+.react-select__menu-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+    background: #c2c9d1;
+    border-radius: 4px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb:hover {
+    background: #a8b0b9;
+}
+
+.react-select__menu-list {
+    scrollbar-width: thin;
+    scrollbar-color: #c2c9d1 #f1f1f1;
+}
+
+/* ==========================================
+   RESPONSIVO
+========================================== */
+@media (max-width: 768px) {
+    .aplicacoes-container {
+        padding: 1rem;
+    }
+
+    .header-aplicacoes {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .header-aplicacoes h2 {
+        text-align: center;
+    }
+
+    .custom-modal-width {
+        max-width: 95% !important;
+        margin: 1rem auto;
+    }
+
+    .btn-actions {
+        flex-direction: column;
+    }
+
+    .btn-action {
+        width: 100%;
+        justify-content: center;
     }
 }

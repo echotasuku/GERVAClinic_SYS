@@ -26,6 +26,7 @@ class EstoqueController extends Controller
             'quantidade_estoque' => 'required|integer|min:1',
             'data_validade' => 'required|date|after:today',
             'temperatura_recebimento' => 'nullable|numeric',
+            'hora' => 'nullable|date_format:H:i',
             'vacina_id' => 'required|exists:vacinas,id',
         ]);
 
@@ -53,6 +54,7 @@ class EstoqueController extends Controller
             'preco' => 'nullable|numeric|min:0',
             'quantidade_estoque' => 'required|integer|min:1',
             'data_validade' => 'required|date|after:today',
+            'hora' => 'nullable|date_format:H:i',
             'temperatura_recebimento' => 'nullable|numeric',
             'vacina_id' => 'required|exists:vacinas,id',
         ]);

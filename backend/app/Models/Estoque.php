@@ -16,6 +16,7 @@ class Estoque extends Model
         'preco',
         'quantidade_estoque',
         'data_validade',
+        'hora',
         'temperatura_recebimento',
         'vacina_id',
     ];
