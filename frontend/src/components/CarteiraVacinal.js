@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+
 import {
     FaSyringe,
     FaUser,
@@ -7,71 +8,112 @@ import {
     FaDownload
 } from 'react-icons/fa';
 
-import { Card, Form, Spinner, Alert, Badge, Table, Button } from 'react-bootstrap';
+import {
+    Card,
+    Form,
+    Spinner,
+    Alert,
+    Badge,
+    Table,
+    Button
+} from 'react-bootstrap';
 
 import './CarteiraVacinal.css';
 
 
 const CarteiraVacinal = () => {
 
+    // =====================================================
+    // ESTADOS
+    // =====================================================
+
     const [pacientes, setPacientes] = useState([]);
-    const [pacienteSelecionado, setPacienteSelecionado] = useState('');
+
+    const [pacienteSelecionado, setPacienteSelecionado] =
+        useState('');
+
     const [paciente, setPaciente] = useState(null);
+
     const [aplicacoes, setAplicacoes] = useState([]);
-    const [carregandoPacientes, setCarregandoPacientes] = useState(true);
-    const [carregandoCarteira, setCarregandoCarteira] = useState(false);
+
+    const [carregandoPacientes, setCarregandoPacientes] =
+        useState(true);
+
+    const [carregandoCarteira, setCarregandoCarteira] =
+        useState(false);
+
     const [erro, setErro] = useState('');
 
+    const [userRole, setUserRole] = useState(null);
+
+
+    // =====================================================
+    // TOKEN
+    // =====================================================
 
     const getToken = () => {
         return localStorage.getItem('auth_token');
     };
 
 
-    const carregarPacientes = useCallback(async () => {
-        try {
-            const token = getToken();
-            const response = await fetch(
-                'http://localhost:8080/api/pacientes',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json'
-                    }
-                }
-            );
+    // =====================================================
+    // PAPEL DO USUÁRIO
+    // =====================================================
 
-            if (!response.ok) {
-                throw new Error('Erro ao carregar pacientes');
-            }
+    useEffect(() => {
 
-            const data = await response.json();
-            setPacientes(data);
+        const role = localStorage.getItem('user_role');
 
-        } catch (error) {
-            console.error('Erro ao carregar pacientes:', error);
-            setErro('Não foi possível carregar os pacientes.');
-        } finally {
-            setCarregandoPacientes(false);
-        }
+        setUserRole(role);
+
     }, []);
 
 
-    const carregarCarteira = async (pacienteId) => {
-        if (!pacienteId) {
-            setPaciente(null);
-            setAplicacoes([]);
+    const isAdmin =
+        userRole === 'admin';
+
+    const isProfessional =
+        userRole === 'profissional';
+
+    const isUser =
+        userRole === 'user';
+
+
+    const canSelectPatients =
+        isAdmin || isProfessional;
+
+
+    // =====================================================
+    // CARREGAR PACIENTES
+    //
+    // SOMENTE ADMIN / PROFISSIONAL
+    // =====================================================
+
+    const carregarPacientes = useCallback(async () => {
+
+        // Usuário comum nunca deve carregar
+        // a lista de pacientes.
+
+        if (!canSelectPatients) {
+
+            setCarregandoPacientes(false);
+
             return;
         }
 
-        setCarregandoCarteira(true);
-        setErro('');
 
         try {
+
+            setErro('');
+
             const token = getToken();
+
+
             const response = await fetch(
-                `http://localhost:8080/api/carteira-vacinal/${pacienteId}`,
+                'http://127.0.0.1:8080/api/pacientes',
                 {
+                    method: 'GET',
+
                     headers: {
                         Authorization: `Bearer ${token}`,
                         Accept: 'application/json'
@@ -79,247 +121,1219 @@ const CarteiraVacinal = () => {
                 }
             );
 
+
             if (!response.ok) {
-                throw new Error('Erro ao carregar carteira');
+
+                const data =
+                    await response.json().catch(() => null);
+
+                throw new Error(
+                    data?.message ||
+                    data?.error ||
+                    'Erro ao carregar pacientes.'
+                );
             }
+
 
             const data = await response.json();
-            setPaciente(data.paciente);
-            setAplicacoes(data.aplicacoes);
+
+
+            // Alguns controllers retornam diretamente
+            // o array e outros podem retornar { data: [] }.
+
+            const listaPacientes =
+                Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.data)
+                        ? data.data
+                        : [];
+
+
+            setPacientes(listaPacientes);
+
 
         } catch (error) {
-            console.error('Erro ao carregar carteira vacinal:', error);
-            setPaciente(null);
-            setAplicacoes([]);
-            setErro('Não foi possível carregar a carteira vacinal.');
+
+            console.error(
+                'Erro ao carregar pacientes:',
+                error
+            );
+
+
+            setPacientes([]);
+
+
+            setErro(
+                error.message ||
+                'Não foi possível carregar os pacientes.'
+            );
+
+
         } finally {
-            setCarregandoCarteira(false);
+
+            setCarregandoPacientes(false);
+
         }
-    };
+
+    }, [canSelectPatients]);
 
 
-    useEffect(() => {
-        carregarPacientes();
-    }, [carregarPacientes]);
+    // =====================================================
+    // CARREGAR CARTEIRA DE UM PACIENTE
+    //
+    // ADMIN / PROFISSIONAL
+    // =====================================================
+
+    const carregarCarteira = useCallback(async (pacienteId) => {
+
+        if (!pacienteId) {
+
+            setPaciente(null);
+
+            setAplicacoes([]);
+
+            return;
+        }
 
 
-    const handlePacienteChange = (e) => {
-        const pacienteId = e.target.value;
-        setPacienteSelecionado(pacienteId);
-        carregarCarteira(pacienteId);
-    };
+        setCarregandoCarteira(true);
 
+        setErro('');
 
-    // ✅ FUNÇÃO DE DOWNLOAD — PDF DO BACKEND
-    const baixarCarteira = async () => {
-        if (!pacienteSelecionado || aplicacoes.length === 0) return;
-
-        const token = getToken();
-        const url = `http://localhost:8080/api/carteira-vacinal/${pacienteSelecionado}/exportar`;
 
         try {
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+
+            const token = getToken();
+
+
+            const response = await fetch(
+                `http://127.0.0.1:8080/api/carteira-vacinal/${pacienteId}`,
+                {
+                    method: 'GET',
+
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json'
+                    }
                 }
-            });
+            );
+
 
             if (!response.ok) {
-                throw new Error('Erro ao gerar PDF');
+
+                const data =
+                    await response.json().catch(() => null);
+
+                throw new Error(
+                    data?.message ||
+                    data?.error ||
+                    'Erro ao carregar carteira vacinal.'
+                );
             }
 
-            const blob = await response.blob();
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = `carteira-vacinal-${paciente?.nome?.replace(/\s+/g, '_') || pacienteSelecionado}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(downloadUrl);
 
-        } catch (err) {
-            console.error(err);
-            alert('❌ Não foi possível baixar o PDF.');
+            const data =
+                await response.json();
+
+
+            setPaciente(
+                data.paciente || null
+            );
+
+
+            setAplicacoes(
+                Array.isArray(data.aplicacoes)
+                    ? data.aplicacoes
+                    : []
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao carregar carteira vacinal:',
+                error
+            );
+
+
+            setPaciente(null);
+
+            setAplicacoes([]);
+
+
+            setErro(
+                error.message ||
+                'Não foi possível carregar a carteira vacinal.'
+            );
+
+
+        } finally {
+
+            setCarregandoCarteira(false);
+
         }
+
+    }, []);
+
+
+    // =====================================================
+    // CARREGAR MINHA CARTEIRA
+    //
+    // SOMENTE USUÁRIO COMUM
+    //
+    // O BACKEND ENCONTRA O PACIENTE PELO E-MAIL
+    // =====================================================
+
+    const carregarMinhaCarteira = useCallback(async () => {
+
+        setCarregandoCarteira(true);
+
+        setCarregandoPacientes(false);
+
+        setErro('');
+
+
+        try {
+
+            const token = getToken();
+
+
+            /*
+             * IMPORTANTE:
+             *
+             * A rota correta é:
+             *
+             * /api/minha-carteira
+             *
+             * e NÃO:
+             *
+             * /api/minha-carteira-vacinal
+             */
+
+            const response = await fetch(
+                'http://127.0.0.1:8080/api/minha-carteira',
+                {
+                    method: 'GET',
+
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json'
+                    }
+                }
+            );
+
+
+            if (!response.ok) {
+
+                const data =
+                    await response.json().catch(() => null);
+
+
+                throw new Error(
+                    data?.message ||
+                    data?.error ||
+                    'Não foi possível carregar sua carteira.'
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            setPaciente(
+                data.paciente || null
+            );
+
+
+            setAplicacoes(
+                Array.isArray(data.aplicacoes)
+                    ? data.aplicacoes
+                    : []
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao carregar minha carteira:',
+                error
+            );
+
+
+            setPaciente(null);
+
+            setAplicacoes([]);
+
+
+            setErro(
+                error.message ||
+                'Não foi possível carregar sua carteira vacinal.'
+            );
+
+
+        } finally {
+
+            setCarregandoCarteira(false);
+
+        }
+
+    }, []);
+
+
+    // =====================================================
+    // CARREGAMENTO INICIAL
+    // =====================================================
+
+    useEffect(() => {
+
+        if (!userRole) {
+            return;
+        }
+
+
+        // -----------------------------------------
+        // USUÁRIO COMUM
+        // -----------------------------------------
+
+        if (isUser) {
+
+            carregarMinhaCarteira();
+
+            return;
+        }
+
+
+        // -----------------------------------------
+        // ADMIN / PROFISSIONAL
+        // -----------------------------------------
+
+        if (canSelectPatients) {
+
+            carregarPacientes();
+
+        }
+
+    }, [
+        userRole,
+        isUser,
+        canSelectPatients,
+        carregarMinhaCarteira,
+        carregarPacientes
+    ]);
+
+
+    // =====================================================
+    // SELECIONAR PACIENTE
+    // =====================================================
+
+    const handlePacienteChange = (e) => {
+
+        const pacienteId =
+            e.target.value;
+
+
+        setPacienteSelecionado(
+            pacienteId
+        );
+
+
+        carregarCarteira(
+            pacienteId
+        );
+
     };
 
 
+    // =====================================================
+    // DOWNLOAD DA CARTEIRA EM PDF
+    // =====================================================
+
+    const baixarCarteira = async () => {
+
+        if (!paciente?.id) {
+
+            return;
+        }
+
+
+        try {
+
+            const token =
+                getToken();
+
+
+            let url;
+
+
+            // -----------------------------------------
+            // USUÁRIO COMUM
+            // -----------------------------------------
+
+            if (isUser) {
+
+                /*
+                 * O backend já sabe quem é o usuário
+                 * pelo token/e-mail.
+                 *
+                 * Portanto NÃO precisamos mandar
+                 * o ID do paciente.
+                 */
+
+                url =
+                    'http://127.0.0.1:8080/api/minha-carteira/exportar';
+
+            }
+
+            // -----------------------------------------
+            // ADMIN / PROFISSIONAL
+            // -----------------------------------------
+
+            else {
+
+                url =
+                    `http://127.0.0.1:8080/api/carteira-vacinal/${paciente.id}/exportar`;
+
+            }
+
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: 'GET',
+
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            Accept: 'application/pdf'
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const contentType =
+                    response.headers.get('content-type');
+
+
+                let mensagem =
+                    'Não foi possível gerar o PDF.';
+
+
+                if (
+                    contentType &&
+                    contentType.includes('application/json')
+                ) {
+
+                    const data =
+                        await response
+                            .json()
+                            .catch(() => null);
+
+
+                    mensagem =
+                        data?.message ||
+                        data?.error ||
+                        mensagem;
+                }
+
+
+                throw new Error(
+                    mensagem
+                );
+            }
+
+
+            const blob =
+                await response.blob();
+
+
+            const downloadUrl =
+                window.URL.createObjectURL(
+                    blob
+                );
+
+
+            const a =
+                document.createElement('a');
+
+
+            a.href =
+                downloadUrl;
+
+
+            a.download =
+                `carteira-vacinal-${
+                    paciente.nome
+                        ?.replace(/\s+/g, '_')
+                        .replace(/[^\w\-À-ÿ]/g, '') ||
+                    paciente.id
+                }.pdf`;
+
+
+            document.body.appendChild(a);
+
+
+            a.click();
+
+
+            document.body.removeChild(a);
+
+
+            window.URL.revokeObjectURL(
+                downloadUrl
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao baixar carteira:',
+                error
+            );
+
+
+            alert(
+                `❌ ${error.message || 'Não foi possível baixar o PDF.'}`
+            );
+
+        }
+
+    };
+
+
+    // =====================================================
+    // FORMATAR DATA
+    // =====================================================
+
+    const formatarData = (data) => {
+
+        if (!data) {
+            return 'Não informado';
+        }
+
+
+        /*
+         * Evita problemas de fuso horário
+         * ao trabalhar apenas com YYYY-MM-DD.
+         */
+
+        const partes =
+            data.split('-');
+
+
+        if (partes.length === 3) {
+
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+        }
+
+
+        return data;
+
+    };
+
+
+    // =====================================================
+    // FORMATAR HORA
+    // =====================================================
+
+    const formatarHora = (hora) => {
+
+        if (!hora) {
+
+            return 'Não informado';
+        }
+
+
+        return hora.slice(
+            0,
+            5
+        );
+
+    };
+
+
+    // =====================================================
+    // TELA
+    // =====================================================
+
     return (
+
         <div className="carteira-container">
 
+
+            {/* =================================================
+                CABEÇALHO
+            ================================================= */}
+
             <div className="carteira-header">
+
                 <div>
+
                     <h2>
-                        <FaSyringe className="me-2" />
+
+                        <FaSyringe
+                            className="me-2"
+                        />
+
                         Carteira Vacinal
+
                     </h2>
+
+
                     <p className="text-muted">
-                        Consulte o histórico de vacinação dos pacientes cadastrados.
+
+                        {isUser
+
+                            ? 'Consulte seu histórico de vacinação.'
+
+                            : 'Consulte o histórico de vacinação dos pacientes cadastrados.'
+
+                        }
+
                     </p>
+
                 </div>
+
             </div>
 
-            <Card className="carteira-selecao shadow-sm border-0">
-                <Card.Body>
-                    <div className="section-title">
-                        <FaUser />
-                        <div>
-                            <h5>Paciente</h5>
-                            <span>Selecione um paciente para consultar sua carteira vacinal.</span>
-                        </div>
-                    </div>
 
-                    <Form.Group>
-                        <Form.Label>Paciente</Form.Label>
+            {/* =================================================
+                SELEÇÃO DE PACIENTE
+                SOMENTE ADMIN / PROFISSIONAL
+            ================================================= */}
 
-                        {carregandoPacientes ? (
-                            <div className="d-flex align-items-center">
-                                <Spinner animation="border" size="sm" className="me-2" />
-                                Carregando pacientes...
-                            </div>
-                        ) : (
-                            <Form.Select
-                                value={pacienteSelecionado}
-                                onChange={handlePacienteChange}
-                            >
-                                <option value="">Selecione um paciente...</option>
-                                {pacientes.map(pacienteItem => (
-                                    <option
-                                        key={pacienteItem.id}
-                                        value={pacienteItem.id}
-                                    >
-                                        {pacienteItem.nome}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        )}
-                    </Form.Group>
-                </Card.Body>
-            </Card>
+            {canSelectPatients && (
 
-            {erro && (
-                <Alert variant="danger" className="mt-4">
-                    {erro}
-                </Alert>
-            )}
-
-            {!pacienteSelecionado && !erro && (
-                <Card className="carteira-vazia shadow-sm border-0 mt-4">
-                    <Card.Body className="text-center">
-                        <FaSyringe size={55} className="carteira-icon" />
-                        <h5 className="mt-3">Nenhum paciente selecionado</h5>
-                        <p className="text-muted">
-                            Selecione um paciente acima para visualizar sua carteira vacinal.
-                        </p>
-                    </Card.Body>
-                </Card>
-            )}
-
-            {carregandoCarteira && (
-                <div className="text-center mt-5">
-                    <Spinner animation="border" />
-                    <p className="text-muted mt-2">Carregando carteira vacinal...</p>
-                </div>
-            )}
-
-            {paciente && !carregandoCarteira && (
-                <Card className="carteira-card shadow-sm border-0 mt-4">
-                    <Card.Header className="carteira-card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4>
-                                <FaClipboardCheck className="me-2" />
-                                Carteira Vacinal
-                            </h4>
-                            <span>Histórico de vacinação do paciente</span>
-                        </div>
-
-                        <div className="d-flex align-items-center gap-3">
-                            <Badge bg="light" text="dark">
-                                {aplicacoes.length}{' '}
-                                {aplicacoes.length === 1
-                                    ? 'vacinação registrada'
-                                    : 'vacinações registradas'}
-                            </Badge>
-
-                            <Button
-                                variant="success"
-                                size="sm"
-                                onClick={baixarCarteira}
-                                disabled={aplicacoes.length === 0}
-                            >
-                                <FaDownload className="me-1" /> Baixar Carteira
-                            </Button>
-                        </div>
-                    </Card.Header>
+                <Card
+                    className="
+                        carteira-selecao
+                        shadow-sm
+                        border-0
+                    "
+                >
 
                     <Card.Body>
-                        <div className="dados-paciente">
+
+                        <div className="section-title">
+
+                            <FaUser />
+
                             <div>
-                                <small>PACIENTE</small>
-                                <strong>{paciente.nome}</strong>
+
+                                <h5>
+                                    Paciente
+                                </h5>
+
+                                <span>
+                                    Selecione um paciente para
+                                    consultar sua carteira vacinal.
+                                </span>
+
                             </div>
 
-                            {paciente.data_nascimento && (
-                                <div>
-                                    <small>DATA DE NASCIMENTO</small>
-                                    <strong>{paciente.data_nascimento}</strong>
-                                </div>
-                            )}
                         </div>
 
-                        <div className="mt-4">
-                            <h5 className="mb-3">
-                                <FaCalendarAlt className="me-2" />
-                                Histórico de Vacinação
+
+                        <Form.Group>
+
+                            <Form.Label>
+                                Paciente
+                            </Form.Label>
+
+
+                            {carregandoPacientes ? (
+
+                                <div
+                                    className="
+                                        d-flex
+                                        align-items-center
+                                    "
+                                >
+
+                                    <Spinner
+                                        animation="border"
+                                        size="sm"
+                                        className="me-2"
+                                    />
+
+                                    Carregando pacientes...
+
+                                </div>
+
+                            ) : (
+
+                                <Form.Select
+                                    value={
+                                        pacienteSelecionado
+                                    }
+                                    onChange={
+                                        handlePacienteChange
+                                    }
+                                >
+
+                                    <option value="">
+                                        Selecione um paciente...
+                                    </option>
+
+
+                                    {pacientes.map(
+                                        pacienteItem => (
+
+                                            <option
+                                                key={
+                                                    pacienteItem.id
+                                                }
+                                                value={
+                                                    pacienteItem.id
+                                                }
+                                            >
+
+                                                {
+                                                    pacienteItem.nome
+                                                }
+
+                                            </option>
+
+                                        )
+                                    )}
+
+                                </Form.Select>
+
+                            )}
+
+                        </Form.Group>
+
+                    </Card.Body>
+
+                </Card>
+
+            )}
+
+
+            {/* =================================================
+                ERRO
+            ================================================= */}
+
+            {erro && (
+
+                <Alert
+                    variant="danger"
+                    className="mt-4"
+                >
+
+                    {erro}
+
+                </Alert>
+
+            )}
+
+
+            {/* =================================================
+                USUÁRIO COMUM SEM PACIENTE
+            ================================================= */}
+
+            {isUser &&
+                !paciente &&
+                !carregandoCarteira &&
+                !erro && (
+
+                    <Card
+                        className="
+                            carteira-vazia
+                            shadow-sm
+                            border-0
+                            mt-4
+                        "
+                    >
+
+                        <Card.Body
+                            className="text-center"
+                        >
+
+                            <FaSyringe
+                                size={55}
+                                className="carteira-icon"
+                            />
+
+
+                            <h5 className="mt-3">
+                                Carteira vacinal
                             </h5>
 
-                            {aplicacoes.length === 0 ? (
-                                <Alert variant="info">
-                                    Nenhuma vacinação foi registrada para este paciente.
-                                </Alert>
-                            ) : (
-                                <div className="table-responsive">
-                                    <Table striped bordered hover className="align-middle">
-                                        <thead className="table-light">
-                                            <tr>
-                                                <th>Vacina</th>
-                                                {/* ✅ LOTE REMOVIDO DA CARTEIRA */}
-                                                <th>Data</th>
-                                                <th>Hora</th>
-                                                <th>Profissional</th>
-                                                <th>Observações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {aplicacoes.map(aplicacao => (
-                                                <tr key={aplicacao.id}>
-                                                    <td>
-                                                        <strong>
-                                                            {aplicacao?.estoque?.vacina?.nome || 'Não informado'}
-                                                        </strong>
-                                                    </td>
-                                                    {/* ✅ SEM LOTE */}
-                                                    <td>{aplicacao?.data_aplicacao || 'Não informado'}</td>
-                                                    <td>
-                                                        {aplicacao?.hora_aplicacao
-                                                            ? aplicacao.hora_aplicacao.slice(0, 5)
-                                                            : 'Não informado'}
-                                                    </td>
-                                                    <td>{aplicacao?.profissional?.nome || 'Não informado'}</td>
-                                                    <td>{aplicacao?.observacoes || '-'}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            )}
-                        </div>
-                    </Card.Body>
-                </Card>
+
+                            <p className="text-muted">
+
+                                Não foi encontrada uma ficha
+                                de paciente vinculada ao seu
+                                e-mail.
+
+                            </p>
+
+                        </Card.Body>
+
+                    </Card>
+
+                )}
+
+
+            {/* =================================================
+                ADMIN / PROFISSIONAL SEM SELEÇÃO
+            ================================================= */}
+
+            {canSelectPatients &&
+                !pacienteSelecionado &&
+                !paciente &&
+                !carregandoCarteira &&
+                !erro && (
+
+                    <Card
+                        className="
+                            carteira-vazia
+                            shadow-sm
+                            border-0
+                            mt-4
+                        "
+                    >
+
+                        <Card.Body
+                            className="text-center"
+                        >
+
+                            <FaSyringe
+                                size={55}
+                                className="carteira-icon"
+                            />
+
+
+                            <h5 className="mt-3">
+
+                                Nenhum paciente selecionado
+
+                            </h5>
+
+
+                            <p className="text-muted">
+
+                                Selecione um paciente acima
+                                para visualizar sua carteira
+                                vacinal.
+
+                            </p>
+
+                        </Card.Body>
+
+                    </Card>
+
+                )}
+
+
+            {/* =================================================
+                CARREGANDO
+            ================================================= */}
+
+            {carregandoCarteira && (
+
+                <div className="text-center mt-5">
+
+                    <Spinner
+                        animation="border"
+                    />
+
+
+                    <p className="text-muted mt-2">
+
+                        Carregando carteira vacinal...
+
+                    </p>
+
+                </div>
+
             )}
+
+
+            {/* =================================================
+                CARTEIRA
+            ================================================= */}
+
+            {paciente &&
+                !carregandoCarteira && (
+
+                    <Card
+                        className="
+                            carteira-card
+                            shadow-sm
+                            border-0
+                            mt-4
+                        "
+                    >
+
+
+                        {/* =====================================
+                            CABEÇALHO DA CARTEIRA
+                        ===================================== */}
+
+                        <Card.Header
+                            className="
+                                carteira-card-header
+                                d-flex
+                                justify-content-between
+                                align-items-center
+                            "
+                        >
+
+                            <div>
+
+                                <h4>
+
+                                    <FaClipboardCheck
+                                        className="me-2"
+                                    />
+
+                                    Carteira Vacinal
+
+                                </h4>
+
+
+                                <span>
+
+                                    Histórico de vacinação
+                                    do paciente
+
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                className="
+                                    d-flex
+                                    align-items-center
+                                    gap-3
+                                "
+                            >
+
+                                <Badge
+                                    bg="light"
+                                    text="dark"
+                                >
+
+                                    {aplicacoes.length}{' '}
+
+                                    {aplicacoes.length === 1
+
+                                        ? 'vacinação registrada'
+
+                                        : 'vacinações registradas'
+
+                                    }
+
+                                </Badge>
+
+
+                                <Button
+                                    variant="success"
+                                    size="sm"
+                                    onClick={
+                                        baixarCarteira
+                                    }
+                                    disabled={
+                                        !paciente ||
+                                        carregandoCarteira
+                                    }
+                                >
+
+                                    <FaDownload
+                                        className="me-1"
+                                    />
+
+                                    Baixar Carteira
+
+                                </Button>
+
+                            </div>
+
+                        </Card.Header>
+
+
+                        {/* =====================================
+                            CORPO
+                        ===================================== */}
+
+                        <Card.Body>
+
+
+                            {/* =================================
+                                DADOS DO PACIENTE
+                            ================================= */}
+
+                            <div
+                                className="dados-paciente"
+                            >
+
+                                <div>
+
+                                    <small>
+                                        PACIENTE
+                                    </small>
+
+
+                                    <strong>
+                                        {paciente.nome}
+                                    </strong>
+
+                                </div>
+
+
+                                {paciente.data_nascimento && (
+
+                                    <div>
+
+                                        <small>
+                                            DATA DE NASCIMENTO
+                                        </small>
+
+
+                                        <strong>
+
+                                            {formatarData(
+                                                paciente.data_nascimento
+                                            )}
+
+                                        </strong>
+
+                                    </div>
+
+                                )}
+
+
+                                {paciente.cpf && (
+
+                                    <div>
+
+                                        <small>
+                                            CPF
+                                        </small>
+
+
+                                        <strong>
+                                            {paciente.cpf}
+                                        </strong>
+
+                                    </div>
+
+                                )}
+
+
+                                {paciente.email && (
+
+                                    <div>
+
+                                        <small>
+                                            E-MAIL
+                                        </small>
+
+
+                                        <strong>
+                                            {paciente.email}
+                                        </strong>
+
+                                    </div>
+
+                                )}
+
+                            </div>
+
+
+                            {/* =================================
+                                HISTÓRICO
+                            ================================= */}
+
+                            <div className="mt-4">
+
+                                <h5 className="mb-3">
+
+                                    <FaCalendarAlt
+                                        className="me-2"
+                                    />
+
+                                    Histórico de Vacinação
+
+                                </h5>
+
+
+                                {aplicacoes.length === 0 ? (
+
+                                    <Alert
+                                        variant="info"
+                                    >
+
+                                        Nenhuma vacinação foi
+                                        registrada para este
+                                        paciente.
+
+                                    </Alert>
+
+                                ) : (
+
+                                    <div
+                                        className="
+                                            table-responsive
+                                        "
+                                    >
+
+                                        <Table
+                                            striped
+                                            bordered
+                                            hover
+                                            className="
+                                                align-middle
+                                            "
+                                        >
+
+                                            <thead
+                                                className="
+                                                    table-light
+                                                "
+                                            >
+
+                                                <tr>
+
+                                                    <th>
+                                                        Vacina
+                                                    </th>
+
+                                                    <th>
+                                                        Data
+                                                    </th>
+
+                                                    <th>
+                                                        Hora
+                                                    </th>
+
+                                                    <th>
+                                                        Profissional
+                                                    </th>
+
+                                                    <th>
+                                                        Observações
+                                                    </th>
+
+                                                </tr>
+
+                                            </thead>
+
+
+                                            <tbody>
+
+                                                {aplicacoes.map(
+                                                    aplicacao => (
+
+                                                        <tr
+                                                            key={
+                                                                aplicacao.id
+                                                            }
+                                                        >
+
+                                                            {/* VACINA */}
+
+                                                            <td>
+
+                                                                <strong>
+
+                                                                    {
+                                                                        aplicacao
+                                                                            ?.estoque
+                                                                            ?.vacina
+                                                                            ?.nome ||
+                                                                        'Não informado'
+                                                                    }
+
+                                                                </strong>
+
+                                                            </td>
+
+
+                                                            {/* DATA */}
+
+                                                            <td>
+
+                                                                {
+                                                                    formatarData(
+                                                                        aplicacao?.data_aplicacao
+                                                                    )
+                                                                }
+
+                                                            </td>
+
+
+                                                            {/* HORA */}
+
+                                                            <td>
+
+                                                                {
+                                                                    formatarHora(
+                                                                        aplicacao?.hora_aplicacao
+                                                                    )
+                                                                }
+
+                                                            </td>
+
+
+                                                            {/* PROFISSIONAL */}
+
+                                                            <td>
+
+                                                                {
+                                                                    aplicacao
+                                                                        ?.profissional
+                                                                        ?.nome ||
+                                                                    'Não informado'
+                                                                }
+
+                                                            </td>
+
+
+                                                            {/* OBSERVAÇÕES */}
+
+                                                            <td>
+
+                                                                {
+                                                                    aplicacao
+                                                                        ?.observacoes ||
+                                                                    '-'
+                                                                }
+
+                                                            </td>
+
+                                                        </tr>
+
+                                                    )
+                                                )}
+
+                                            </tbody>
+
+                                        </Table>
+
+                                    </div>
+
+                                )}
+
+                            </div>
+
+                        </Card.Body>
+
+                    </Card>
+
+                )}
+
         </div>
+
     );
+
 };
+
 
 export default CarteiraVacinal;

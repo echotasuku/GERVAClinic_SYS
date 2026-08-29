@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\VacinaController;
 use App\Http\Controllers\EsquemaVacinalController;
 use App\Http\Controllers\TipoVacinaController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CalendarioVacinalController;
 use App\Http\Controllers\CarteiraVacinalController;
+
 use Illuminate\Support\Facades\Broadcast;
 
 
@@ -30,16 +32,92 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 // =====================================================
-// ROTAS AUTENTICADAS
-// Admin + Profissional + Usuário
+// ROTAS QUE QUALQUER USUÁRIO AUTENTICADO PODE CONSULTAR
 // =====================================================
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    // =====================================================
+    // =================================================
+    // RECOMENDAÇÕES - SOMENTE CONSULTA
+    //
+    // ADMIN/PROFISSIONAL -> podem consultar todas
+    // USUÁRIO COMUM      -> controller filtra as dele
+    // =================================================
+
+    Route::get(
+        '/recomendacoes-vacinas',
+        [RecomendacaoVacinaController::class, 'index']
+    );
+
+    Route::get(
+        '/recomendacoes-vacinas/{id}',
+        [RecomendacaoVacinaController::class, 'show']
+    );
+
+
+    // =================================================
+    // MINHA CARTEIRA VACINAL
+    //
+    // USUÁRIO COMUM
+    //
+    // O paciente é encontrado automaticamente pelo
+    // e-mail do usuário autenticado.
+    //
+    // NÃO precisa enviar ID do paciente.
+    // =================================================
+
+    Route::get(
+        '/minha-carteira',
+        [CarteiraVacinalController::class, 'minhaCarteira']
+    );
+
+    Route::get(
+        '/minha-carteira/exportar',
+        [CarteiraVacinalController::class, 'exportarMinhaCarteira']
+    );
+
+
+    // =================================================
+    // CARTEIRA VACINAL DE PACIENTE
+    //
+    // ADMIN/PROFISSIONAL -> qualquer paciente
+    // USUÁRIO COMUM      -> somente o paciente
+    //                       correspondente ao e-mail
+    //
+    // A autorização é feita pelo Controller.
+    // =================================================
+
+    Route::get(
+        '/carteira-vacinal/{pacienteId}',
+        [CarteiraVacinalController::class, 'show']
+    );
+
+    Route::get(
+        '/carteira-vacinal/{pacienteId}/exportar',
+        [CarteiraVacinalController::class, 'exportar']
+    );
+});
+
+
+// =====================================================
+// ROTAS DE PROFISSIONAL
+//
+// profissional -> SIM
+// admin        -> SIM
+// user         -> NÃO
+//
+// O middleware "profissional" já permite admin também.
+// =====================================================
+
+Route::middleware([
+    'auth:sanctum',
+    'profissional'
+])->group(function () {
+
+
+    // =================================================
     // APLICAÇÕES
-    // Admin e profissional podem cadastrar/editar/excluir
-    // =====================================================
+    // =================================================
 
     Route::apiResource(
         'aplicacoes',
@@ -47,9 +125,9 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // ESQUEMAS VACINAIS
-    // =====================================================
+    // =================================================
 
     Route::apiResource(
         'esquemas-vacinais',
@@ -57,24 +135,40 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // RECOMENDAÇÕES
-    // =====================================================
-
-    Route::apiResource(
-        'recomendacoes-vacinas',
-        RecomendacaoVacinaController::class
-    );
+    // CRUD COMPLETO
+    // =================================================
 
     Route::get(
         '/recomendacoes-vacinas/gerar-automaticas/{pacienteId}',
         [RecomendacaoVacinaController::class, 'gerarAutomaticas']
     );
 
+    Route::post(
+        '/recomendacoes-vacinas',
+        [RecomendacaoVacinaController::class, 'store']
+    );
 
-    // =====================================================
+    Route::put(
+        '/recomendacoes-vacinas/{id}',
+        [RecomendacaoVacinaController::class, 'update']
+    );
+
+    Route::patch(
+        '/recomendacoes-vacinas/{id}',
+        [RecomendacaoVacinaController::class, 'update']
+    );
+
+    Route::delete(
+        '/recomendacoes-vacinas/{id}',
+        [RecomendacaoVacinaController::class, 'destroy']
+    );
+
+
+    // =================================================
     // AGENDAMENTOS
-    // =====================================================
+    // =================================================
 
     Route::apiResource(
         'agendamentos-vacinas',
@@ -87,9 +181,9 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // CALENDÁRIOS
-    // =====================================================
+    // =================================================
 
     Route::apiResource(
         'calendarios-vacinais',
@@ -102,9 +196,9 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // PLANEJAMENTO
-    // =====================================================
+    // =================================================
 
     Route::get(
         '/planejamento',
@@ -112,28 +206,15 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
-    // CARTEIRA VACINAL
-    // =====================================================
-
-    Route::get(
-        '/carteira-vacinal/{pacienteId}',
-        [CarteiraVacinalController::class, 'show']
-    );
-
-    Route::get(
-        '/carteira-vacinal/{pacienteId}/exportar',
-        [CarteiraVacinalController::class, 'exportar']
-    );
-
-
-    // =====================================================
+    // =================================================
     // PACIENTES
     //
-    // Profissional pode cadastrar e consultar.
-    // =====================================================
+    // SOMENTE ADMIN/PROFISSIONAL
+    //
+    // Usuário comum NÃO possui acesso.
+    // =================================================
 
-    // CEP precisa ficar antes de /pacientes/{paciente}
+    // Deve ficar antes de /pacientes/{paciente}
     Route::get(
         '/pacientes/consultar-cep/{cep}',
         [PacienteController::class, 'consultarCep']
@@ -175,16 +256,12 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // PROFISSIONAIS
     //
-    // IMPORTANTE:
-    // Aqui estamos falando dos profissionais cadastrados
-    // no módulo "Profissionais" pelo ADMIN.
-    //
-    // Profissional pode CONSULTAR.
-    // Somente Admin cadastra/edita/exclui.
-    // =====================================================
+    // Profissional pode consultar.
+    // CRUD continua no ADMIN.
+    // =================================================
 
     Route::get(
         '/profissionais',
@@ -197,12 +274,12 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // ESTOQUE
     //
-    // Profissional pode CONSULTAR o estoque
-    // cadastrado pelo Admin.
-    // =====================================================
+    // Profissional pode consultar.
+    // CRUD continua no ADMIN.
+    // =================================================
 
     Route::get(
         '/estoque',
@@ -215,12 +292,12 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // VACINAS
     //
-    // Profissional pode consultar vacinas cadastradas
-    // pelo Admin.
-    // =====================================================
+    // Profissional pode consultar.
+    // CRUD continua no ADMIN.
+    // =================================================
 
     Route::get(
         '/vacinas',
@@ -233,13 +310,11 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    // =====================================================
+    // =================================================
     // RELATÓRIOS
     //
-    // ADMIN + PROFISSIONAL
-    //
-    // Ambos podem visualizar e exportar.
-    // =====================================================
+    // Profissional e Admin podem consultar/exportar.
+    // =================================================
 
     Route::get(
         '/relatorios',
@@ -249,51 +324,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get(
         '/relatorios/exportar',
         [RelatorioController::class, 'exportar']
-    );
-
-
-    // =====================================================
-    // NOTIFICAÇÕES
-    // =====================================================
-
-    Route::get(
-        '/notificacoes',
-        [NotificacaoController::class, 'index']
-    );
-
-    Route::get(
-        '/notificacoes-nao-lidas',
-        [NotificacaoController::class, 'naoLidas']
-    );
-
-    Route::post(
-        '/notificacoes/{id}/ler',
-        [NotificacaoController::class, 'marcarComoLida']
-    );
-
-    Route::post(
-        '/notificacoes/marcar-todas-lidas',
-        [NotificacaoController::class, 'marcarTodasComoLidas']
-    );
-
-    Route::delete(
-        '/notificacoes/{id}',
-        [NotificacaoController::class, 'destroy']
-    );
-
-    Route::delete(
-        '/notificacoes',
-        [NotificacaoController::class, 'destroyAll']
-    );
-
-
-    // =====================================================
-    // ALERTAS
-    // =====================================================
-
-    Route::get(
-        '/alertas',
-        [EstoqueController::class, 'verificarAlertas']
     );
 
 });
@@ -308,9 +338,10 @@ Route::middleware([
     'admin'
 ])->group(function () {
 
-    // =====================================================
+
+    // =================================================
     // TIPOS DE VACINA
-    // =====================================================
+    // =================================================
 
     Route::apiResource(
         'tipos-vacinas',
@@ -318,9 +349,9 @@ Route::middleware([
     );
 
 
-    // =====================================================
+    // =================================================
     // FORNECEDORES
-    // =====================================================
+    // =================================================
 
     Route::apiResource(
         'fornecedores',
@@ -328,11 +359,9 @@ Route::middleware([
     );
 
 
-    // =====================================================
+    // =================================================
     // VACINAS
-    //
-    // Somente Admin cadastra/edita/exclui.
-    // =====================================================
+    // =================================================
 
     Route::post(
         '/vacinas',
@@ -355,10 +384,9 @@ Route::middleware([
     );
 
 
-    // =====================================================
+    // =================================================
     // PROFISSIONAIS
-    //
-
+    // =================================================
 
     Route::post(
         '/profissionais',
@@ -381,11 +409,9 @@ Route::middleware([
     );
 
 
-    // =====================================================
+    // =================================================
     // ESTOQUE
-    //
-    // Somente Admin cadastra/edita/exclui.
-    // =====================================================
+    // =================================================
 
     Route::post(
         '/estoque',
@@ -408,13 +434,58 @@ Route::middleware([
     );
 
 
-    // =====================================================
+    // =================================================
     // NOTIFICAÇÃO DE PACIENTE
-    // =====================================================
+    // =================================================
 
     Route::post(
         '/pacientes/{id}/enviar-notificacao',
         [PacienteController::class, 'enviarNotificacao']
+    );
+
+
+    // =================================================
+    // NOTIFICAÇÕES DO SISTEMA
+    // =================================================
+
+    Route::get(
+        '/notificacoes',
+        [NotificacaoController::class, 'index']
+    );
+
+    Route::get(
+        '/notificacoes-nao-lidas',
+        [NotificacaoController::class, 'naoLidas']
+    );
+
+    Route::post(
+        '/notificacoes/{id}/ler',
+        [NotificacaoController::class, 'marcarComoLida']
+    );
+
+    Route::post(
+        '/notificacoes/marcar-todas-lidas',
+        [NotificacaoController::class, 'marcarTodasComoLida']
+    );
+
+    Route::delete(
+        '/notificacoes/{id}',
+        [NotificacaoController::class, 'destroy']
+    );
+
+    Route::delete(
+        '/notificacoes',
+        [NotificacaoController::class, 'destroyAll']
+    );
+
+
+    // =================================================
+    // ALERTAS
+    // =================================================
+
+    Route::get(
+        '/alertas',
+        [EstoqueController::class, 'verificarAlertas']
     );
 
 });

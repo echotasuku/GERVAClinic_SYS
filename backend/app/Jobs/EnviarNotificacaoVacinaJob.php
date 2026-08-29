@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Mail\NotificacaoVacinaMail;
-use App\Models\Paciente;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,6 +18,9 @@ class EnviarNotificacaoVacinaJob implements ShouldQueue
     protected $vacina;
     protected $dataAgendada;
 
+    /**
+     * Cria uma nova instância do Job.
+     */
     public function __construct($paciente, $vacina, $dataAgendada)
     {
         $this->paciente = $paciente;
@@ -26,11 +28,28 @@ class EnviarNotificacaoVacinaJob implements ShouldQueue
         $this->dataAgendada = $dataAgendada;
     }
 
+    /**
+     * Executa o Job.
+     */
     public function handle()
     {
-        $mensagem = "Olá {$this->paciente->nome}, sua próxima dose da vacina {$this->vacina->nome} está marcada para {$this->dataAgendada}.";
-        Mail::to($this->paciente->email)->send(new NotificacaoVacinaMail($mensagem));
+        // Verifica se o paciente possui e-mail
+        if (empty($this->paciente->email)) {
+            return;
+        }
+
+        // Verifica se existe uma vacina
+        if (!$this->vacina) {
+            return;
+        }
+
+        // Envia o e-mail utilizando o Mailable existente
+        Mail::to($this->paciente->email)->send(
+            new NotificacaoVacinaMail(
+                $this->paciente,
+                $this->vacina,
+                $this->dataAgendada
+            )
+        );
     }
 }
-
-

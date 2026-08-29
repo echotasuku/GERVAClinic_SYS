@@ -22,6 +22,7 @@ import Relatorios from './components/Relatorios';
 import CalendarioVacinal from './components/CalendarioVacinal';
 import PlanejamentoVacinal from './components/PlanejamentoVacinal';
 import CarteiraVacinal from './components/CarteiraVacinal';
+import Perfil from './components/Perfil';
 
 import GoogleLoginComponent from './components/GoogleLoginComponent';
 
@@ -140,6 +141,11 @@ const App = () => {
                     path="/home"
                     element={<Home />}
                   />
+
+                  <Route
+    path="/perfil"
+    element={<Perfil />}
+/>
 
                   {/* ==================================================
                       USUÁRIO COMUM

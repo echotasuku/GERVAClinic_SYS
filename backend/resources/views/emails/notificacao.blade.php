@@ -59,7 +59,7 @@
             <p>Este é um lembrete da sua próxima dose da vacina <strong>{{ $vacina->nome }}</strong>.</p>
             <p>A aplicação está agendada para o dia <strong>{{ \Carbon\Carbon::parse($dataAgendada)->format('d/m/Y') }}</strong>.</p>
             <p>Por favor, compareça à clínica na data marcada para garantir sua proteção.</p>
-            <a href="http://127.0.0.1:8080" class="button">Ver detalhes do agendamento</a>
+          <a href="https://seu-dominio.com.br" class="button">Ver detalhes do agendamento</a>
         </div>
         <div class="footer">
             <p>© {{ date('Y') }} Clínica de Vacinação. Todos os direitos reservados.</p>
