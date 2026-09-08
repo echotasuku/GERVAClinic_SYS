@@ -1,308 +1,220 @@
-/* ===== CONTAINER PRINCIPAL ===== */
+/* ==========================================
+   CONTAINER GERAL
+========================================== */
 .vacinas-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* ===== HEADER ===== */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* ==========================================
+   NOTIFICAÇÃO
+========================================== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    max-width: 400px;
+    word-break: break-word;
+    animation: slideIn 0.3s ease-out;
 }
 
-.header h2 {
-    margin: 0;
+.notification.success {
+    background-color: #198754;
 }
 
-.btn-add {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.btn-add:hover {
-    background-color: #0056b3;
-}
-
-/* ===== TABELA ===== */
-.vacinas-table {
-    width: 85%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    max-width: 900px;
-    margin: 20px auto;
-}
-
-.vacinas-table th,
-.vacinas-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.vacinas-table th {
-    background-color: #f2f2f2;
-}
-
-.vacina-row:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.vacina-row:hover {
-    background-color: #f1f1f1;
-}
-
-/* ===== BOTÕES DE AÇÃO ===== */
-.btn-actions {
-    display: inline-flex;
-    gap: 5px;
-}
-
-.btn-edit,
-.btn-delete {
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.btn-edit {
-    background-color: #007bff;
-}
-
-.btn-edit:hover {
-    background-color: #0056b3;
-}
-
-.btn-delete {
+.notification.error {
     background-color: #dc3545;
 }
 
-.btn-delete:hover {
-    background-color: #c82333;
+.notification.warning {
+    background-color: #ffc107;
+    color: #212529;
 }
 
-/* ===== MODAL ===== */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ==========================================
+   CABEÇALHO
+========================================== */
+.header-vacinas {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dee2e6;
 }
 
-.modal-content {
-    background: white;
-    padding: 0px;
-    border-radius: 0px;
-    width: 900px;
-    position: relative;
+.header-vacinas h2 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
 }
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    cursor: pointer;
+/* ==========================================
+   FILTROS
+========================================== */
+.filtros-container {
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
 }
 
-/* ===== FORMULÁRIO ===== */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    margin-bottom: 5px;
-    display: block;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-
-button[type="submit"] {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-.loading,
-.error {
-    text-align: center;
-    margin-top: 20px;
-}
-
-/* ===== CONFIGURAÇÕES DO MODAL (Bootstrap) ===== */
-.custom-modal-widthvac {
-    /* ← MUDOU de widthmed para widthvac */
-    max-width: 850px !important;
-    width: 90% !important;
-}
-
-.vacinas-modal-theme .modal-header {
-    /* ← MUDOU de medicamentos-modal-theme */
-    background-color: #212529;
-    color: white;
-    border-bottom: 1px solid #000;
-    border-radius: 0;
-}
-
-.vacinas-modal-theme .modal-title {
-    color: white;
-}
-
-.vacinas-modal-theme .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
-}
-
-.vacinas-modal-theme .modal-content {
-    border-radius: 0;
-    border: none;
-    padding-top: 0;
-}
-
-.vacinas-modal-theme .modal-body {
-    padding: 1.5rem;
-}
-
-/* ===== BARRA DE FILTROS - CORRIGIDA ===== */
 .filtro-row {
-    display: flex;
-    align-items: center;
+    margin-bottom: 0.5rem;
 }
 
-.filtro-input-group {
-    height: 34px;
+.filtro-botao-col {
     display: flex;
-    align-items: center;
-    width: 100%;
+    align-items: flex-start;
 }
 
-.filtro-icone {
-    height: 34px;
-    min-height: 34px;
-    max-height: 34px;
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    border: 1px solid #ced4da;
+/* Alturas alinhadas (42px) */
+.filtros-container .input-group-text,
+.filtros-container .input-busca {
+    height: 42px;
+}
+
+.input-busca {
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
     border-right: none;
-    border-radius: 0.25rem 0 0 0.25rem;
-    background-color: #e9ecef;
+    color: #6c757d;
+    border-radius: 0.5rem 0 0 0.5rem;
 }
 
-.filtro-input {
-    height: 34px;
-    min-height: 34px;
-    max-height: 34px;
-    padding: 0 10px;
-    margin: 0;
-    border: 1px solid #ced4da;
-    border-left: none;
-    border-radius: 0 0.25rem 0.25rem 0;
-    line-height: 34px;
-    box-sizing: border-box;
-}
-
-.filtro-input:focus {
-    outline: none;
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.filtro-botao {
-    height: 34px;
-    min-height: 34px;
-    max-height: 34px;
-    padding: 0 10px;
-    display: flex;
+/* ==========================================
+   BOTÃO LIMPAR FILTROS
+========================================== */
+.filtro-limpar-btn {
+    width: 100%;
+    height: 42px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    gap: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 600;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Garantir que as colunas não mudem de tamanho */
-.filtro-row [class*="col-"] {
-    display: flex;
-    align-items: center;
+.filtro-limpar-btn:hover {
+    background-color: #fdecee;
+    border-color: #f5c2c7;
+    color: #dc3545;
 }
 
-.filtro-row [class*="col-"]>* {
-    width: 100%;
+/* ==========================================
+   REACT-SELECT - FILTRO
+========================================== */
+.react-select__control {
+    background-color: #fff !important;
 }
 
-/* ===== BADGES DE FILTROS ATIVOS ===== */
+.react-select__single-value {
+    color: #212529 !important;
+}
+
+.react-select__input {
+    color: #212529 !important;
+}
+
+.react-select__placeholder {
+    color: #6c757d !important;
+}
+
+.react-select__option {
+    color: #212529;
+}
+
+.react-select__option--is-selected {
+    color: #fff !important;
+}
+
+.react-select__menu {
+    background-color: #fff !important;
+}
+
+/* ==========================================
+   BADGES DOS FILTROS
+========================================== */
 .filtros-badges {
-    padding: 8px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1rem;
 }
 
 .badge-filtro {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 8px 4px 10px;
-    border-radius: 16px;
-    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: 500;
-    border: 1px solid transparent;
-    transition: all 0.2s ease;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .badge-busca {
-    background-color: #e7f5ff;
-    color: #1971c2;
-    border-color: #a5d8ff;
+    background-color: #6c757d;
 }
 
 .badge-fornecedor {
-    background-color: #ebfbee;
-    color: #2f9e44;
-    border-color: #b2f2bb;
+    background-color: #0d6efd;
 }
 
 .badge-tipo {
-    background-color: #fff9db;
-    color: #e67700;
-    border-color: #ffec99;
+    background-color: #198754;
 }
 
 .badge-tipo {
+    opacity: 0.9;
     font-weight: 600;
-    opacity: 0.8;
 }
 
 .badge-valor {
@@ -310,92 +222,306 @@ button[type="submit"]:hover {
 }
 
 .badge-remover {
-    display: inline-flex;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 18px;
     height: 18px;
-    border: none;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.1);
-    color: inherit;
-    cursor: pointer;
-    padding: 0;
-    transition: all 0.2s ease;
+    transition: background 0.2s;
 }
 
 .badge-remover:hover {
-    background: rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
-/* ===== BARRA DE BUSCA - SIMÉTRICA ===== */
-.filtro-input-group {
-    height: 38px;
-    display: flex;
-    align-items: stretch;
-    width: 100%;
+/* ==========================================
+   TABELA — PADRONIZADA
+========================================== */
+.vacinas-table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.filtro-icone {
-    height: 38px;
-    min-height: 38px;
-    max-height: 38px;
-    padding: 0 12px;
-    display: flex;
+/* ==========================================
+   CABEÇALHO DA TABELA — AZUL #0D6EFD
+========================================== */
+.vacinas-table thead,
+.vacinas-table thead.table-header-primary,
+.vacinas-table.table > thead {
+    background-color: #0d6efd !important;
+}
+
+.vacinas-table thead tr,
+.vacinas-table thead.table-header-primary tr {
+    background-color: #0d6efd !important;
+}
+
+.vacinas-table thead th,
+.vacinas-table thead.table-header-primary th,
+.vacinas-table.table > thead > tr > th {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px;
+    white-space: nowrap;
+    border: none !important;
+    vertical-align: middle;
+}
+
+/* ==========================================
+   CORPO DA TABELA
+========================================== */
+.vacinas-table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.vacinas-table tbody tr:hover {
+    background-color: #E6F0FA !important;
+}
+
+/* ==========================================
+   BOTÕES DE AÇÃO (EDITAR / EXCLUIR)
+========================================== */
+.linha-acoes {
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    margin: 0;
-    border: 1px solid #ced4da;
-    border-right: none;
-    border-radius: 0.375rem 0 0 0.375rem;
-    background-color: #e9ecef;
+    gap: 8px;
 }
 
-.filtro-input {
-    height: 38px;
-    min-height: 38px;
-    max-height: 38px;
-    padding: 0 12px;
-    margin: 0;
-    border: 1px solid #ced4da;
-    border-left: none;
-    border-radius: 0 0.375rem 0.375rem 0;
-    line-height: 38px;
-    box-sizing: border-box;
-    font-size: 15px;
+.btn-acao {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    padding: 7px 14px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.83rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.filtro-input:focus {
-    outline: none;
+.btn-acao svg {
+    flex-shrink: 0;
+}
+
+/* EDITAR — azul suave, hover azul sólido */
+.btn-acao-editar {
+    background-color: #e7f1ff !important;
+    color: #0d6efd !important;
+}
+
+.btn-acao-editar:hover {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+/* EXCLUIR — vermelho suave, hover vermelho sólido */
+.btn-acao-excluir {
+    background-color: #fdecee !important;
+    color: #dc3545 !important;
+}
+
+.btn-acao-excluir:hover {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.25);
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+.custom-modal-width {
+    max-width: 800px;
+}
+
+.vacinas-modal-theme .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.vacinas-modal-theme .modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.vacinas-modal-theme .modal-title {
+    font-weight: 600;
+    color: #212529;
+}
+
+.vacinas-modal-theme .modal-body {
+    padding: 1.5rem;
+}
+
+.vacinas-modal-theme .form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.35rem;
+}
+
+.vacinas-modal-theme .form-control {
+    border-radius: 0.375rem;
+    color: #212529;
+    background-color: #fff;
+}
+
+.vacinas-modal-theme .form-control:focus {
     border-color: #86b7fe;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-.filtro-botao {
-    height: 38px;
-    min-height: 38px;
-    max-height: 38px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
+.vacinas-modal-theme .form-select {
     border-radius: 0.375rem;
+    color: #212529;
+    background-color: #fff;
 }
 
-/* Garantir alinhamento perfeito das colunas */
-.filtro-row [class*="col-"] {
+.vacinas-modal-theme .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* ==========================================
+   SCROLLBAR DO MENU (PORTAL)
+========================================== */
+.react-select__menu-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+    background: #c2c9d1;
+    border-radius: 4px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb:hover {
+    background: #a8b0b9;
+}
+
+.react-select__menu-list {
+    scrollbar-width: thin;
+    scrollbar-color: #c2c9d1 #f1f1f1;
+}
+
+/* ==========================================
+   RESPONSIVO
+========================================== */
+@media (max-width: 768px) {
+    .vacinas-container {
+        padding: 1rem;
+    }
+
+    .header-vacinas {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .header-vacinas h2 {
+        text-align: center;
+    }
+
+    .custom-modal-width {
+        max-width: 95% !important;
+        margin: 1rem auto;
+    }
+
+    .linha-acoes {
+        flex-direction: column;
+    }
+
+    .btn-acao {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ==========================================
+   UTILITÁRIOS
+========================================== */
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.py-4 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.mb-1 {
+    margin-bottom: 0.25rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.d-flex {
     display: flex;
-    align-items: stretch;
 }
 
-.filtro-row [class*="col-"]>* {
+.justify-content-end {
+    justify-content: flex-end;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.w-100 {
     width: 100%;
-    height: 100%;
 }

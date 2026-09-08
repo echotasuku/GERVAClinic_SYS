@@ -15,7 +15,12 @@ class AgendamentoVacinaController extends Controller
 {
     public function index()
     {
-        return AgendamentoVacina::with('aplicacao')->get();
+        // ✅ Carrega a aplicação E TAMBÉM o paciente, profissional e vacina dentro dela
+        return AgendamentoVacina::with([
+            'aplicacao.paciente',
+            'aplicacao.profissional',
+            'aplicacao.estoque.vacina'
+        ])->get();
     }
 
     public function store(Request $request)
@@ -33,20 +38,31 @@ class AgendamentoVacinaController extends Controller
 
         $agendamento = AgendamentoVacina::create($request->all());
 
-        // pega paciente e vacina relacionados
-        $paciente = Paciente::findOrFail($request->paciente_id);
-        $vacina   = Vacina::findOrFail($request->vacina_id);
+        // Para pegar paciente e vacina, buscamos através da aplicação vinculada
+        $aplicacao = \App\Models\Aplicacao::with(['paciente', 'estoque.vacina'])->findOrFail($request->aplicacao_id);
+        
+        $paciente = $aplicacao->paciente;
+        $vacina = $aplicacao->estoque->vacina;
 
         // agenda o envio do e-mail 1 dia antes da data prevista
         EnviarNotificacaoVacinaJob::dispatch($paciente, $vacina, $agendamento->data_prevista)
             ->delay(now()->parse($agendamento->data_prevista)->subDay());
 
-        return response()->json($agendamento, 201);
+        // Retorna o agendamento já com os relacionamentos carregados
+        return response()->json($agendamento->load([
+            'aplicacao.paciente',
+            'aplicacao.profissional',
+            'aplicacao.estoque.vacina'
+        ]), 201);
     }
 
     public function show($id)
     {
-        return AgendamentoVacina::with('aplicacao')->findOrFail($id);
+        return AgendamentoVacina::with([
+            'aplicacao.paciente',
+            'aplicacao.profissional',
+            'aplicacao.estoque.vacina'
+        ])->findOrFail($id);
     }
 
     public function update(Request $request, $id)
@@ -55,7 +71,7 @@ class AgendamentoVacinaController extends Controller
 
         $validator = Validator::make($request->all(), [
             'aplicacao_id' => 'required|exists:aplicacoes,id',
-            'data_prevista' => 'required|date|after:today',
+            'data_prevista' => 'required|date', // Removi 'after:today' para permitir edição de datas passadas se necessário
             'status' => 'required|in:pendente,aplicada,atrasada',
             'observacoes' => 'nullable|string',
         ]);
@@ -65,7 +81,12 @@ class AgendamentoVacinaController extends Controller
         }
 
         $agendamento->update($request->all());
-        return response()->json($agendamento);
+        
+        return response()->json($agendamento->load([
+            'aplicacao.paciente',
+            'aplicacao.profissional',
+            'aplicacao.estoque.vacina'
+        ]));
     }
 
     public function destroy($id)
@@ -75,13 +96,12 @@ class AgendamentoVacinaController extends Controller
         return response()->noContent();
     }
 
-    // método extra para enviar notificação manualmente
     public function enviarNotificacao($pacienteId, $vacinaId)
     {
         $paciente = Paciente::findOrFail($pacienteId);
         $vacina   = Vacina::findOrFail($vacinaId);
 
-        $mensagem = "Olá {$paciente->nome}, sua próxima dose da vacina {$vacina->nome} está agendada para {$vacina->data_agendada}.";
+        $mensagem = "Olá {$paciente->nome}, sua próxima dose da vacina {$vacina->nome} está agendada.";
 
         Mail::to($paciente->email)->send(new NotificacaoVacinaMail($mensagem));
 

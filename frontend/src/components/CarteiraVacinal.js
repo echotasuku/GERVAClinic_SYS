@@ -604,7 +604,7 @@ const CarteiraVacinal = () => {
 
 
     // =====================================================
-    // FORMATAR DATA
+    // FORMATAR DATA (VERSÃO BLINDADA)
     // =====================================================
 
     const formatarData = (data) => {
@@ -613,25 +613,15 @@ const CarteiraVacinal = () => {
             return 'Não informado';
         }
 
-
-        /*
-         * Evita problemas de fuso horário
-         * ao trabalhar apenas com YYYY-MM-DD.
-         */
-
-        const partes =
-            data.split('-');
-
-
-        if (partes.length === 3) {
-
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-
+        try {
+            // O timeZone: 'UTC' é crucial para a data não "voltar" um dia
+            // por causa da conversão de fuso horário do navegador
+            return new Date(data).toLocaleDateString('pt-BR', {
+                timeZone: 'UTC'
+            });
+        } catch (error) {
+            return data; // Retorna o original se algo der muito errado
         }
-
-
-        return data;
-
     };
 
 

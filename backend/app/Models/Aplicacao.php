@@ -18,6 +18,18 @@ class Aplicacao extends Model
         'observacoes',
         'data_aplicacao',
         'hora_aplicacao',
+        'preco_unitario',       
+        'desconto_percentual',   
+        'desconto_valor',       
+        'valor_final',           
+    ];
+
+    protected $casts = [
+        'preco_unitario' => 'decimal:2',
+        'desconto_percentual' => 'decimal:2',
+        'desconto_valor' => 'decimal:2',
+        'valor_final' => 'decimal:2',
+        'data_aplicacao' => 'date',
     ];
 
     public function profissional()

@@ -771,7 +771,7 @@ const Fornecedores = () => {
             {/* TABELA */}
             <div className="table-responsive">
                 <table className="fornecedores-table table table-striped table-hover">
-                    <thead className="table-dark">
+                    <thead className="table-header-primary">
                         <tr>
                             <th>Nome</th>
                             <th>Cidade/UF</th>

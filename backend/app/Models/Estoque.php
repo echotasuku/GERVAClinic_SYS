@@ -13,7 +13,8 @@ class Estoque extends Model
 
     protected $fillable = [
         'lote',
-        'preco',
+        'preco_unitario',
+        'valor_total',
         'quantidade_estoque',
         'data_validade',
         'hora',

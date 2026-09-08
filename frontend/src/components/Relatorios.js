@@ -91,7 +91,6 @@ function Relatorios() {
     // =========================================================
 
     const transformarEmArray = (data) => {
-
         if (Array.isArray(data)) {
             return data;
         }
@@ -120,9 +119,7 @@ function Relatorios() {
     // =========================================================
 
     const carregarDados = useCallback(async () => {
-
         try {
-
             setLoading(true);
             setErro('');
 
@@ -153,14 +150,12 @@ function Relatorios() {
             }
 
             const data = await response.json();
-
             const dadosArray = transformarEmArray(data);
 
             setDados(dadosArray);
             setDadosFiltrados(dadosArray);
 
         } catch (error) {
-
             console.error(
                 'Erro ao carregar relatórios:',
                 error
@@ -168,15 +163,11 @@ function Relatorios() {
 
             setDados([]);
             setDadosFiltrados([]);
-
             setErro(error.message);
 
         } finally {
-
             setLoading(false);
-
         }
-
     }, []);
 
     // =========================================================
@@ -184,16 +175,13 @@ function Relatorios() {
     // =========================================================
 
     const carregarDadosAuxiliares = useCallback(async () => {
-
         try {
-
             const headers = getHeaders();
 
             const [
                 profissionaisResponse,
                 estoqueResponse
             ] = await Promise.all([
-
                 fetch(
                     'http://127.0.0.1:8080/api/profissionais',
                     {
@@ -209,7 +197,6 @@ function Relatorios() {
                         headers
                     }
                 )
-
             ]);
 
             // -------------------------------------------------
@@ -217,7 +204,6 @@ function Relatorios() {
             // -------------------------------------------------
 
             if (profissionaisResponse.ok) {
-
                 const profissionaisData =
                     await profissionaisResponse.json();
 
@@ -227,7 +213,6 @@ function Relatorios() {
                 setProfissionais(listaProfissionais);
 
             } else {
-
                 console.error(
                     'Erro ao buscar profissionais:',
                     profissionaisResponse.status
@@ -241,7 +226,6 @@ function Relatorios() {
             // -------------------------------------------------
 
             if (estoqueResponse.ok) {
-
                 const estoqueData =
                     await estoqueResponse.json();
 
@@ -251,7 +235,6 @@ function Relatorios() {
                 setEstoques(listaEstoques);
 
             } else {
-
                 console.error(
                     'Erro ao buscar estoque:',
                     estoqueResponse.status
@@ -261,7 +244,6 @@ function Relatorios() {
             }
 
         } catch (error) {
-
             console.error(
                 'Erro ao carregar dados auxiliares:',
                 error
@@ -270,7 +252,6 @@ function Relatorios() {
             setProfissionais([]);
             setEstoques([]);
         }
-
     }, []);
 
     // =========================================================
@@ -278,25 +259,19 @@ function Relatorios() {
     // =========================================================
 
     useEffect(() => {
-
         if (debounceRef.current) {
             clearTimeout(debounceRef.current);
         }
 
         debounceRef.current = setTimeout(() => {
-
             setTermoBuscaDebounced(termoBusca);
-
         }, 300);
 
         return () => {
-
             if (debounceRef.current) {
                 clearTimeout(debounceRef.current);
             }
-
         };
-
     }, [termoBusca]);
 
     // =========================================================
@@ -304,7 +279,6 @@ function Relatorios() {
     // =========================================================
 
     const filtrarDados = useCallback(() => {
-
         let filtrados = [...dados];
 
         // =====================================================
@@ -312,14 +286,12 @@ function Relatorios() {
         // =====================================================
 
         if (termoBuscaDebounced.trim() !== '') {
-
             const termo =
                 termoBuscaDebounced
                     .toLowerCase()
                     .trim();
 
             filtrados = filtrados.filter(item => {
-
                 const paciente =
                     item.paciente?.nome?.toLowerCase() || '';
 
@@ -350,7 +322,6 @@ function Relatorios() {
                     data.includes(termo) ||
                     hora.includes(termo)
                 );
-
             });
         }
 
@@ -360,7 +331,6 @@ function Relatorios() {
 
         const tiposFiltro = filtroCombinado.reduce(
             (acc, filtro) => {
-
                 if (!acc[filtro.type]) {
                     acc[filtro.type] = [];
                 }
@@ -368,7 +338,6 @@ function Relatorios() {
                 acc[filtro.type].push(filtro.value);
 
                 return acc;
-
             },
             {}
         );
@@ -383,7 +352,6 @@ function Relatorios() {
         // =====================================================
 
         if (filtroCombinado.length > 0) {
-
             filtrados = filtrados.filter(item => {
 
                 // -------------------------------------------------
@@ -391,7 +359,6 @@ function Relatorios() {
                 // -------------------------------------------------
 
                 if (tiposFiltro.paciente) {
-
                     const pacienteEncontrado =
                         tiposFiltro.paciente.some(
                             id =>
@@ -409,7 +376,6 @@ function Relatorios() {
                 // -------------------------------------------------
 
                 if (tiposFiltro.vacina) {
-
                     const vacinaEncontrada =
                         tiposFiltro.vacina.some(
                             id =>
@@ -439,9 +405,7 @@ function Relatorios() {
     // =========================================================
 
     useEffect(() => {
-
         filtrarDados();
-
     }, [filtrarDados]);
 
     // =========================================================
@@ -449,11 +413,9 @@ function Relatorios() {
     // =========================================================
 
     const limparFiltros = () => {
-
         setTermoBusca('');
         setTermoBuscaDebounced('');
         setFiltroCombinado([]);
-
     };
 
     // =========================================================
@@ -461,10 +423,8 @@ function Relatorios() {
     // =========================================================
 
     const removerFiltroBusca = () => {
-
         setTermoBusca('');
         setTermoBuscaDebounced('');
-
     };
 
     // =========================================================
@@ -472,7 +432,6 @@ function Relatorios() {
     // =========================================================
 
     const removerFiltroCombinado = (filtro) => {
-
         setFiltroCombinado(
             filtrosAtuais =>
                 filtrosAtuais.filter(
@@ -483,7 +442,6 @@ function Relatorios() {
                         )
                 )
         );
-
     };
 
     // =========================================================
@@ -499,10 +457,8 @@ function Relatorios() {
     // =========================================================
 
     useEffect(() => {
-
         carregarDados();
         carregarDadosAuxiliares();
-
     }, [
         carregarDados,
         carregarDadosAuxiliares
@@ -510,36 +466,10 @@ function Relatorios() {
 
     // =========================================================
     // EXPORTAR RELATÓRIO
-    //
-    // O React envia os filtros atuais para o Laravel.
-    //
-    // Sem filtros:
-    // /api/relatorios/exportar
-    //
-    // Com busca:
-    // /api/relatorios/exportar?busca=Ana
-    //
-    // Com paciente:
-    // /api/relatorios/exportar?pacientes[]=1
-    //
-    // Com vacina:
-    // /api/relatorios/exportar?vacinas[]=2
-    //
-    // Com vários filtros:
-    // /api/relatorios/exportar?
-    // pacientes[]=1&
-    // vacinas[]=2&
-    // busca=Ana
     // =========================================================
 
     const handleExport = async () => {
-
         try {
-
-            // -------------------------------------------------
-            // Criar parâmetros da URL
-            // -------------------------------------------------
-
             const params = new URLSearchParams();
 
             // -------------------------------------------------
@@ -547,7 +477,6 @@ function Relatorios() {
             // -------------------------------------------------
 
             if (termoBuscaDebounced.trim() !== '') {
-
                 params.append(
                     'busca',
                     termoBuscaDebounced.trim()
@@ -559,9 +488,7 @@ function Relatorios() {
             // -------------------------------------------------
 
             filtroCombinado.forEach(filtro => {
-
                 if (filtro.type === 'paciente') {
-
                     params.append(
                         'pacientes[]',
                         filtro.value
@@ -569,13 +496,11 @@ function Relatorios() {
                 }
 
                 if (filtro.type === 'vacina') {
-
                     params.append(
                         'vacinas[]',
                         filtro.value
                     );
                 }
-
             });
 
             // -------------------------------------------------
@@ -585,9 +510,7 @@ function Relatorios() {
             const queryString = params.toString();
 
             const url = queryString
-
                 ? `http://127.0.0.1:8080/api/relatorios/exportar?${queryString}`
-
                 : 'http://127.0.0.1:8080/api/relatorios/exportar';
 
             console.log(
@@ -600,11 +523,8 @@ function Relatorios() {
             // -------------------------------------------------
 
             const response = await fetch(url, {
-
                 method: 'GET',
-
                 headers: getHeaders()
-
             });
 
             // -------------------------------------------------
@@ -612,21 +532,18 @@ function Relatorios() {
             // -------------------------------------------------
 
             if (response.status === 401) {
-
                 throw new Error(
                     'Sessão expirada. Faça login novamente.'
                 );
             }
 
             if (response.status === 403) {
-
                 throw new Error(
                     'Você não possui permissão para exportar o relatório.'
                 );
             }
 
             if (!response.ok) {
-
                 throw new Error(
                     'Erro ao gerar o relatório.'
                 );
@@ -649,9 +566,7 @@ function Relatorios() {
                 document.createElement('a');
 
             a.href = downloadUrl;
-
-            a.download =
-                'relatorio-aplicacoes.pdf';
+            a.download = 'relatorio-aplicacoes.pdf';
 
             document.body.appendChild(a);
 
@@ -662,7 +577,6 @@ function Relatorios() {
             window.URL.revokeObjectURL(downloadUrl);
 
         } catch (error) {
-
             console.error(
                 'Erro ao exportar PDF:',
                 error
@@ -677,13 +591,10 @@ function Relatorios() {
     // =========================================================
 
     const abrirEdicao = (item) => {
-
         setErro('');
-
         setAplicacaoEditando(item);
 
         setFormulario({
-
             id_profissional:
                 item.id_profissional ||
                 item.profissional_id ||
@@ -705,7 +616,6 @@ function Relatorios() {
                 item.hora_aplicacao
                     ? item.hora_aplicacao.slice(0, 5)
                     : ''
-
         });
 
         setShowModal(true);
@@ -716,7 +626,6 @@ function Relatorios() {
     // =========================================================
 
     const fecharModal = () => {
-
         if (salvando) {
             return;
         }
@@ -724,7 +633,6 @@ function Relatorios() {
         setShowModal(false);
         setAplicacaoEditando(null);
         setErro('');
-
     };
 
     // =========================================================
@@ -732,20 +640,15 @@ function Relatorios() {
     // =========================================================
 
     const handleChange = (e) => {
-
         const {
             name,
             value
         } = e.target;
 
         setFormulario(prev => ({
-
             ...prev,
-
             [name]: value
-
         }));
-
     };
 
     // =========================================================
@@ -753,26 +656,19 @@ function Relatorios() {
     // =========================================================
 
     const salvarEdicao = async (e) => {
-
         e.preventDefault();
 
         setErro('');
         setSalvando(true);
 
         try {
-
             const response = await fetch(
-
                 `http://127.0.0.1:8080/api/aplicacoes/${aplicacaoEditando.id}`,
-
                 {
                     method: 'PUT',
-
                     headers: getHeaders(),
-
                     body: JSON.stringify(formulario)
                 }
-
             );
 
             const resultado =
@@ -781,21 +677,17 @@ function Relatorios() {
                     .catch(() => ({}));
 
             if (!response.ok) {
-
                 if (response.status === 401) {
-
                     setErro(
                         'Sessão expirada. Faça login novamente.'
                     );
 
                 } else if (response.status === 403) {
-
                     setErro(
                         'Você não possui permissão para editar esta vacinação.'
                     );
 
                 } else if (response.status === 422) {
-
                     const primeiraMensagem =
                         Object.values(
                             resultado.errors ||
@@ -803,18 +695,13 @@ function Relatorios() {
                         )[0];
 
                     setErro(
-
                         Array.isArray(primeiraMensagem)
-
                             ? primeiraMensagem[0]
-
                             : resultado.message ||
                               'Verifique os dados informados.'
-
                     );
 
                 } else {
-
                     setErro(
                         resultado.message ||
                         'Não foi possível atualizar a vacinação.'
@@ -825,11 +712,9 @@ function Relatorios() {
             }
 
             await carregarDados();
-
             fecharModal();
 
         } catch (error) {
-
             console.error(
                 'Erro ao editar vacinação:',
                 error
@@ -840,9 +725,7 @@ function Relatorios() {
             );
 
         } finally {
-
             setSalvando(false);
-
         }
     };
 
@@ -851,7 +734,6 @@ function Relatorios() {
     // =========================================================
 
     const excluirAplicacao = async (id) => {
-
         const confirmar =
             window.confirm(
                 'Tem certeza que deseja excluir esta vacinação?'
@@ -862,19 +744,13 @@ function Relatorios() {
         }
 
         try {
-
             const response = await fetch(
-
                 `http://127.0.0.1:8080/api/aplicacoes/${id}`,
-
                 {
                     method: 'DELETE',
-
                     headers: {
-
                         Authorization:
                             `Bearer ${localStorage.getItem('auth_token')}`,
-
                         Accept:
                             'application/json'
                     }
@@ -882,21 +758,18 @@ function Relatorios() {
             );
 
             if (response.status === 401) {
-
                 throw new Error(
                     'Sessão expirada. Faça login novamente.'
                 );
             }
 
             if (response.status === 403) {
-
                 throw new Error(
                     'Você não possui permissão para excluir esta vacinação.'
                 );
             }
 
             if (!response.ok) {
-
                 const resultado =
                     await response
                         .json()
@@ -911,7 +784,6 @@ function Relatorios() {
             await carregarDados();
 
         } catch (error) {
-
             console.error(
                 'Erro ao excluir vacinação:',
                 error
@@ -923,8 +795,6 @@ function Relatorios() {
 
     // =========================================================
     // OPÇÕES DO FILTRO COMBINADO
-    //
-    // SOMENTE pacientes e vacinas que possuem registros.
     // =========================================================
 
     const getFiltroCombinadoOptions = useCallback(() => {
@@ -934,18 +804,14 @@ function Relatorios() {
         // -----------------------------------------------------
 
         const pacientesComRegistros = dados
-
             .filter(
                 item =>
                     item.paciente &&
                     item.paciente.nome
             )
-
             .reduce(
                 (acc, item) => {
-
                     if (!acc.has(item.paciente_id)) {
-
                         acc.set(
                             item.paciente_id,
                             item.paciente
@@ -953,7 +819,6 @@ function Relatorios() {
                     }
 
                     return acc;
-
                 },
                 new Map()
             );
@@ -963,18 +828,14 @@ function Relatorios() {
         // -----------------------------------------------------
 
         const vacinasComRegistros = dados
-
             .filter(
                 item =>
                     item.estoque &&
                     item.estoque.vacina
             )
-
             .reduce(
                 (acc, item) => {
-
                     if (!acc.has(item.estoque_id)) {
-
                         acc.set(
                             item.estoque_id,
                             item.estoque
@@ -982,7 +843,6 @@ function Relatorios() {
                     }
 
                     return acc;
-
                 },
                 new Map()
             );
@@ -995,19 +855,11 @@ function Relatorios() {
             Array.from(
                 pacientesComRegistros.values()
             )
-
-            .map(paciente => ({
-
-                value:
-                    paciente.id,
-
-                label:
-                    paciente.nome,
-
-                type:
-                    'paciente'
-
-            }));
+                .map(paciente => ({
+                    value: paciente.id,
+                    label: paciente.nome,
+                    type: 'paciente'
+                }));
 
         // -----------------------------------------------------
         // OPÇÕES DE VACINA
@@ -1017,19 +869,12 @@ function Relatorios() {
             Array.from(
                 vacinasComRegistros.values()
             )
-
-            .map(estoque => ({
-
-                value:
-                    estoque.id,
-
-                label:
-                    `${estoque.vacina?.nome || 'Vacina'} - Lote: ${estoque.lote || 'N/A'}`,
-
-                type:
-                    'vacina'
-
-            }));
+                .map(estoque => ({
+                    value: estoque.id,
+                    label:
+                        `${estoque.vacina?.nome || 'Vacina'} - Lote: ${estoque.lote || 'N/A'}`,
+                    type: 'vacina'
+                }));
 
         return [
             ...pacienteOptions,
@@ -1043,32 +888,17 @@ function Relatorios() {
     // =========================================================
 
     const formatOptionLabel = (option) => {
-
         const typeMap = {
-
-            paciente:
-                'Paciente',
-
-            vacina:
-                'Vacina'
-
+            paciente: 'Paciente',
+            vacina: 'Vacina'
         };
 
         return (
-
             <span>
-
                 <span className="option-type-prefix">
-
-                    {typeMap[option.type] ||
-                     option.type}:
-
-                </span>
-
-                {' '}
-
+                    {typeMap[option.type] || option.type}:
+                </span>{' '}
                 {option.label}
-
             </span>
         );
     };
@@ -1078,99 +908,54 @@ function Relatorios() {
     // =========================================================
 
     const filtroStyles = {
-
         control: (provided, state) => ({
-
             ...provided,
-
-            minHeight:
-                '38px',
-
-            height:
-                'auto',
-
+            minHeight: '38px',
+            height: 'auto',
             borderColor:
                 state.isFocused
                     ? '#86b7fe'
                     : '#ced4da',
-
             boxShadow:
                 state.isFocused
                     ? '0 0 0 0.25rem rgba(13, 110, 253, 0.25)'
                     : null,
-
             '&:hover': {
-
-                borderColor:
-                    '#86b7fe'
+                borderColor: '#86b7fe'
             }
-
         }),
 
         menu: (provided) => ({
-
             ...provided,
-
-            zIndex:
-                1050
-
+            zIndex: 1050
         }),
 
         menuPortal: (provided) => ({
-
             ...provided,
-
-            zIndex:
-                9999
-
+            zIndex: 9999
         }),
 
         multiValue: (provided) => ({
-
             ...provided,
-
-            backgroundColor:
-                '#e7f5ff',
-
-            borderRadius:
-                '4px',
-
-            margin:
-                '2px 4px'
-
+            backgroundColor: '#e7f5ff',
+            borderRadius: '4px',
+            margin: '2px 4px'
         }),
 
         multiValueLabel: (provided) => ({
-
             ...provided,
-
-            color:
-                '#1971c2',
-
-            fontSize:
-                '12px',
-
-            padding:
-                '2px 6px'
-
+            color: '#1971c2',
+            fontSize: '12px',
+            padding: '2px 6px'
         }),
 
         multiValueRemove: (provided) => ({
-
             ...provided,
-
-            color:
-                '#1971c2',
-
+            color: '#1971c2',
             '&:hover': {
-
-                backgroundColor:
-                    '#a5d8ff',
-
-                color:
-                    '#1971c2'
+                backgroundColor: '#a5d8ff',
+                color: '#1971c2'
             }
-
         })
     };
 
@@ -1182,19 +967,30 @@ function Relatorios() {
         getFiltroCombinadoOptions();
 
     // =========================================================
+    // FORMATAR DATA (NOVA FUNÇÃO ADICIONADA)
+    // =========================================================
+
+    const formatarData = (data) => {
+        if (!data) {
+            return 'Não informado';
+        }
+        try {
+            return new Date(data).toLocaleDateString('pt-BR', {
+                timeZone: 'UTC'
+            });
+        } catch (error) {
+            return data;
+        }
+    };
+
+    // =========================================================
     // RENDER
     // =========================================================
 
     return (
+        <Container fluid className="py-4">
 
-        <Container
-            fluid
-            className="py-4"
-        >
-
-            <Card
-                className="shadow-sm border-0"
-            >
+            <Card className="shadow-sm border-0">
 
                 <Card.Body>
 
@@ -1207,19 +1003,12 @@ function Relatorios() {
                         <div>
 
                             <h2 className="fw-bold mb-1">
-
-                                <FaSyringe
-                                    className="me-2 text-primary"
-                                />
-
+                                <FaSyringe className="me-2 text-primary" />
                                 Relatórios de Vacinação
-
                             </h2>
 
                             <p className="text-muted mb-0">
-
                                 Consulte e gerencie as vacinações registradas.
-
                             </p>
 
                         </div>
@@ -1229,13 +1018,8 @@ function Relatorios() {
                             onClick={handleExport}
                             className="export-btn"
                         >
-
-                            <FaFilePdf
-                                className="me-2"
-                            />
-
+                            <FaFilePdf className="me-2" />
                             Exportar Relatório
-
                         </Button>
 
                     </div>
@@ -1245,17 +1029,13 @@ function Relatorios() {
                     ================================================= */}
 
                     {erro && (
-
                         <Alert
                             variant="danger"
                             dismissible
                             onClose={() => setErro('')}
                         >
-
                             {erro}
-
                         </Alert>
-
                     )}
 
                     {/* =================================================
@@ -1264,9 +1044,7 @@ function Relatorios() {
 
                     <div className="filtros-container">
 
-                        <Row
-                            className="align-items-center g-2 filtro-row"
-                        >
+                        <Row className="align-items-center g-2 filtro-row">
 
                             {/* -------------------------------------------------
                                 BUSCA
@@ -1277,11 +1055,7 @@ function Relatorios() {
                                 <div className="input-group">
 
                                     <span className="input-group-text">
-
-                                        <FiSearch
-                                            size={18}
-                                        />
-
+                                        <FiSearch size={18} />
                                     </span>
 
                                     <input
@@ -1307,58 +1081,22 @@ function Relatorios() {
                             <Col md={5}>
 
                                 <Select
-
-                                    options={
-                                        filtroCombinadoOptions
-                                    }
-
-                                    value={
-                                        filtroCombinado
-                                    }
-
-                                    onChange={
-                                        setFiltroCombinado
-                                    }
-
-                                    placeholder={
-                                        'Filtrar por paciente ou vacina...'
-                                    }
-
+                                    options={filtroCombinadoOptions}
+                                    value={filtroCombinado}
+                                    onChange={setFiltroCombinado}
+                                    placeholder="Filtrar por paciente ou vacina..."
                                     isClearable
-
                                     isMulti
-
                                     closeMenuOnSelect={false}
-
-                                    /*
-                                     * Alterado para true:
-                                     * opções já selecionadas deixam
-                                     * de aparecer novamente no menu.
-                                     */
                                     hideSelectedOptions={true}
-
                                     isSearchable
-
-                                    styles={
-                                        filtroStyles
-                                    }
-
-                                    classNamePrefix={
-                                        'react-select'
-                                    }
-
+                                    styles={filtroStyles}
+                                    classNamePrefix="react-select"
                                     noOptionsMessage={() =>
                                         'Nenhuma opção disponível'
                                     }
-
-                                    menuPortalTarget={
-                                        document.body
-                                    }
-
-                                    formatOptionLabel={
-                                        formatOptionLabel
-                                    }
-
+                                    menuPortalTarget={document.body}
+                                    formatOptionLabel={formatOptionLabel}
                                 />
 
                             </Col>
@@ -1374,9 +1112,7 @@ function Relatorios() {
                                     onClick={limparFiltros}
                                     className="w-100 filtro-limpar-btn"
                                 >
-
                                     Limpar Filtros
-
                                 </Button>
 
                             </Col>
@@ -1392,9 +1128,7 @@ function Relatorios() {
                             <div className="filtros-badges">
 
                                 <small className="text-muted me-1">
-
                                     Filtros ativos:
-
                                 </small>
 
                                 {/* -------------------------------------------------
@@ -1403,35 +1137,23 @@ function Relatorios() {
 
                                 {termoBuscaDebounced.trim() !== '' && (
 
-                                    <span
-                                        className="badge-filtro badge-busca"
-                                    >
+                                    <span className="badge-filtro badge-busca">
 
                                         <span className="badge-tipo">
-
                                             Busca:
-
                                         </span>
 
                                         <span className="badge-valor">
-
                                             "{termoBuscaDebounced}"
-
                                         </span>
 
                                         <button
                                             type="button"
                                             className="badge-remover"
-                                            onClick={
-                                                removerFiltroBusca
-                                            }
+                                            onClick={removerFiltroBusca}
                                             title="Remover busca"
                                         >
-
-                                            <FiX
-                                                size={12}
-                                            />
-
+                                            <FiX size={12} />
                                         </button>
 
                                     </span>
@@ -1457,19 +1179,15 @@ function Relatorios() {
                                         >
 
                                             <span className="badge-tipo">
-
                                                 {
                                                     filtro.type === 'paciente'
                                                         ? 'Paciente:'
                                                         : 'Vacina:'
                                                 }
-
                                             </span>
 
                                             <span className="badge-valor">
-
                                                 {filtro.label}
-
                                             </span>
 
                                             <button
@@ -1482,11 +1200,7 @@ function Relatorios() {
                                                 }
                                                 title="Remover filtro"
                                             >
-
-                                                <FiX
-                                                    size={12}
-                                                />
-
+                                                <FiX size={12} />
                                             </button>
 
                                         </span>
@@ -1506,9 +1220,7 @@ function Relatorios() {
 
                             <small className="text-muted">
 
-                                {dadosFiltrados.length}
-
-                                {' '}
+                                {dadosFiltrados.length}{' '}
 
                                 {dadosFiltrados.length === 1
                                     ? 'vacinação encontrada'
@@ -1528,37 +1240,24 @@ function Relatorios() {
 
                         <div className="text-center py-5">
 
-                            <Spinner
-                                animation="border"
-                            />
+                            <Spinner animation="border" />
 
                             <p className="mt-2 text-muted">
-
                                 Carregando dados...
-
                             </p>
 
                         </div>
 
                     ) : dadosFiltrados.length === 0 ? (
 
-                        /* =================================================
-                           NENHUM RESULTADO
-                        ================================================= */
-
                         <Alert
                             variant="info"
                             className="mt-3"
                         >
-
                             {temFiltrosAtivos
-
                                 ? 'Nenhuma vacinação encontrada com os filtros aplicados.'
-
                                 : 'Nenhuma vacinação registrada.'
-
                             }
-
                         </Alert>
 
                     ) : (
@@ -1577,7 +1276,7 @@ function Relatorios() {
                                 className="align-middle relatorios-table"
                             >
 
-                                <thead className="table-light">
+                                <thead className="table-header-primary">
 
                                     <tr>
 
@@ -1618,66 +1317,47 @@ function Relatorios() {
                                     {dadosFiltrados.map(
                                         item => (
 
-                                            <tr
-                                                key={item.id}
-                                            >
+                                            <tr key={item.id}>
 
                                                 <td>
-
                                                     {
                                                         item.paciente?.nome ||
                                                         'Não informado'
                                                     }
-
                                                 </td>
 
                                                 <td>
-
                                                     {
                                                         item.estoque?.vacina?.nome ||
                                                         'Não informado'
                                                     }
-
                                                 </td>
 
                                                 <td>
-
                                                     {
                                                         item.estoque?.lote ||
                                                         'Não informado'
                                                     }
+                                                </td>
 
+                                                {/* ✅ ALTERAÇÃO AQUI: Usando a função formatarData */}
+                                                <td>
+                                                    {formatarData(item.data_aplicacao)}
                                                 </td>
 
                                                 <td>
-
-                                                    {
-                                                        item.data_aplicacao ||
-                                                        'Não informado'
-                                                    }
-
-                                                </td>
-
-                                                <td>
-
                                                     {
                                                         item.hora_aplicacao
-                                                            ? item.hora_aplicacao.slice(
-                                                                0,
-                                                                5
-                                                            )
+                                                            ? item.hora_aplicacao.slice(0, 5)
                                                             : 'Não informado'
                                                     }
-
                                                 </td>
 
                                                 <td>
-
                                                     {
                                                         item.profissional?.nome ||
                                                         'Não informado'
                                                     }
-
                                                 </td>
 
                                                 <td className="text-center">
@@ -1695,9 +1375,7 @@ function Relatorios() {
                                                                 )
                                                             }
                                                         >
-
                                                             <FaEdit />
-
                                                         </button>
 
                                                         {/* EXCLUIR */}
@@ -1711,9 +1389,7 @@ function Relatorios() {
                                                                 )
                                                             }
                                                         >
-
                                                             <FaTrash />
-
                                                         </button>
 
                                                     </div>
@@ -1752,9 +1428,7 @@ function Relatorios() {
 
                     <Modal.Title>
 
-                        <FaEdit
-                            className="me-2 text-primary"
-                        />
+                        <FaEdit className="me-2 text-primary" />
 
                         Editar Vacinação
 
@@ -1762,29 +1436,21 @@ function Relatorios() {
 
                 </Modal.Header>
 
-                <Form
-                    onSubmit={salvarEdicao}
-                >
+                <Form onSubmit={salvarEdicao}>
 
                     <Modal.Body>
 
                         {erro && (
-
                             <Alert variant="danger">
-
                                 {erro}
-
                             </Alert>
-
                         )}
 
                         {/* =================================================
                             PACIENTE
                         ================================================= */}
 
-                        <Form.Group
-                            className="mb-3"
-                        >
+                        <Form.Group className="mb-3">
 
                             <Form.Label>
                                 Paciente
@@ -1810,9 +1476,7 @@ function Relatorios() {
 
                             <Col md={6}>
 
-                                <Form.Group
-                                    className="mb-3"
-                                >
+                                <Form.Group className="mb-3">
 
                                     <Form.Label>
                                         Profissional responsável
@@ -1823,9 +1487,7 @@ function Relatorios() {
                                         value={
                                             formulario.id_profissional
                                         }
-                                        onChange={
-                                            handleChange
-                                        }
+                                        onChange={handleChange}
                                         required
                                     >
 
@@ -1872,9 +1534,7 @@ function Relatorios() {
 
                             <Col md={6}>
 
-                                <Form.Group
-                                    className="mb-3"
-                                >
+                                <Form.Group className="mb-3">
 
                                     <Form.Label>
                                         Vacina / Lote
@@ -1885,9 +1545,7 @@ function Relatorios() {
                                         value={
                                             formulario.estoque_id
                                         }
-                                        onChange={
-                                            handleChange
-                                        }
+                                        onChange={handleChange}
                                         required
                                     >
 
@@ -1947,9 +1605,7 @@ function Relatorios() {
 
                             <Col md={6}>
 
-                                <Form.Group
-                                    className="mb-3"
-                                >
+                                <Form.Group className="mb-3">
 
                                     <Form.Label>
                                         Data da aplicação
@@ -1961,9 +1617,7 @@ function Relatorios() {
                                         value={
                                             formulario.data_aplicacao
                                         }
-                                        onChange={
-                                            handleChange
-                                        }
+                                        onChange={handleChange}
                                         required
                                     />
 
@@ -1977,9 +1631,7 @@ function Relatorios() {
 
                             <Col md={6}>
 
-                                <Form.Group
-                                    className="mb-3"
-                                >
+                                <Form.Group className="mb-3">
 
                                     <Form.Label>
                                         Hora da aplicação
@@ -1991,9 +1643,7 @@ function Relatorios() {
                                         value={
                                             formulario.hora_aplicacao
                                         }
-                                        onChange={
-                                            handleChange
-                                        }
+                                        onChange={handleChange}
                                         required
                                     />
 
@@ -2020,9 +1670,7 @@ function Relatorios() {
                                 value={
                                     formulario.observacoes
                                 }
-                                onChange={
-                                    handleChange
-                                }
+                                onChange={handleChange}
                             />
 
                         </Form.Group>
@@ -2040,9 +1688,7 @@ function Relatorios() {
                             onClick={fecharModal}
                             disabled={salvando}
                         >
-
                             Cancelar
-
                         </Button>
 
                         <Button
@@ -2054,7 +1700,6 @@ function Relatorios() {
                             {salvando ? (
 
                                 <>
-
                                     <Spinner
                                         size="sm"
                                         animation="border"
@@ -2062,19 +1707,14 @@ function Relatorios() {
                                     />
 
                                     Salvando...
-
                                 </>
 
                             ) : (
 
                                 <>
-
-                                    <FaEdit
-                                        className="me-2"
-                                    />
+                                    <FaEdit className="me-2" />
 
                                     Salvar alterações
-
                                 </>
 
                             )}

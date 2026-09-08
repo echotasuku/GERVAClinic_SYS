@@ -24,9 +24,9 @@ const tipoIcones = {
 // ==========================================
 
 const chipCores = {
-    paciente:     { bg: '#e7f1ff', cor: '#0d6efd', borda: '#b6d4fe' },
+    paciente: { bg: '#e7f1ff', cor: '#0d6efd', borda: '#b6d4fe' },
     profissional: { bg: '#e6f4ea', cor: '#198754', borda: '#a3cfbb' },
-    vacina:       { bg: '#f0e7fb', cor: '#6f42c1', borda: '#d4bdf5' }
+    vacina: { bg: '#f0e7fb', cor: '#6f42c1', borda: '#d4bdf5' }
 };
 
 // ==========================================
@@ -61,6 +61,9 @@ const Aplicacoes = () => {
         id_profissional: '',
         paciente_id: '',
         estoque_id: '',
+        preco_unitario: '',
+        desconto_percentual: '',
+        desconto_valor: '',
         observacoes: '',
         data_aplicacao: '',
         hora_aplicacao: ''
@@ -244,7 +247,7 @@ const Aplicacoes = () => {
     ];
 
     // ==========================================
-    // LABEL DAS OPÇÕES (com ✓ quando selecionada)
+    // LABEL DAS OPÇÕES
     // ==========================================
 
     const formatOptionLabel = (option, { context, selectValue } = {}) => {
@@ -279,207 +282,84 @@ const Aplicacoes = () => {
     };
 
     // ==========================================
-    // ESTILOS DO SELECT DE FILTRO
+    // ESTOQUE SELECIONADO
     // ==========================================
 
-    const filtroStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            minHeight: '42px',
-            borderColor: state.isFocused ? '#86b7fe' : '#ced4da',
-            boxShadow: state.isFocused
-                ? '0 0 0 0.25rem rgba(13, 110, 253, 0.15)'
-                : 'none',
-            '&:hover': { borderColor: '#86b7fe' },
-            cursor: 'pointer',
-            borderRadius: '0.5rem',
-            backgroundColor: '#fff'
-        }),
+    const estoqueSelecionado = estoques.find(
+        (estoque) =>
+            String(estoque.id) ===
+            String(novaAplicacao.estoque_id)
+    );
 
-        valueContainer: (provided) => ({
-            ...provided,
-            padding: '2px 8px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '4px'
-        }),
+    const precoUnitarioSelecionado =
+        estoqueSelecionado?.preco_unitario !== null &&
+        estoqueSelecionado?.preco_unitario !== undefined
+            ? parseFloat(estoqueSelecionado.preco_unitario)
+            : null;
 
-        input: (provided, state) => ({
-            ...provided,
-            color: '#212529',
-            width: state.selectProps.menuIsOpen ? '100%' : '1px',
-            opacity: state.selectProps.menuIsOpen ? 1 : 0,
-            pointerEvents: state.selectProps.menuIsOpen ? 'auto' : 'none'
-        }),
+    // ==========================================
+    // CÁLCULOS FINANCEIROS
+    // ==========================================
 
-        placeholder: (provided) => ({
-            ...provided,
-            color: '#6c757d',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: '100%'
-        }),
+    const calcularDesconto = () => {
+        if (
+            precoUnitarioSelecionado === null ||
+            isNaN(precoUnitarioSelecionado)
+        ) {
+            return 0;
+        }
 
-        multiValue: (provided, state) => {
-            const c = chipCores[state.data.type] || chipCores.paciente;
-            return {
-                ...provided,
-                backgroundColor: c.bg,
-                border: `1px solid ${c.borda}`,
-                borderRadius: 20,
-                padding: '3px 8px',
-                margin: '2px',
-                display: 'flex',
-                alignItems: 'center'
-            };
-        },
+        if (
+            novaAplicacao.desconto_percentual !== null &&
+            novaAplicacao.desconto_percentual !== ''
+        ) {
+            const percentual = parseFloat(
+                String(novaAplicacao.desconto_percentual).replace(',', '.')
+            );
 
-        multiValueLabel: (provided, state) => {
-            const c = chipCores[state.data.type] || chipCores.paciente;
-            return {
-                ...provided,
-                color: c.cor,
-                fontSize: '0.83rem',
-                fontWeight: 600,
-                padding: 0
-            };
-        },
-
-        multiValueRemove: (provided, state) => {
-            const c = chipCores[state.data.type] || chipCores.paciente;
-            return {
-                ...provided,
-                color: c.cor,
-                cursor: 'pointer',
-                padding: '0 4px',
-                borderRadius: 4,
-                ':hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                    color: c.cor
-                }
-            };
-        },
-
-        dropdownIndicator: (provided) => ({
-            ...provided,
-            color: '#6c757d',
-            ':hover': { color: '#0d6efd' }
-        }),
-
-        clearIndicator: (provided) => ({
-            ...provided,
-            color: '#6c757d',
-            ':hover': { color: '#dc3545' }
-        }),
-
-        menu: (provided) => ({
-            ...provided,
-            zIndex: 1050,
-            borderRadius: '0.5rem',
-            boxShadow: '0 0.5rem 1rem rgba(0, 0, 0, 0.15)',
-            overflow: 'hidden',
-            marginTop: '4px',
-            border: '1px solid #dee2e6'
-        }),
-
-        menuList: (provided) => ({
-            ...provided,
-            maxHeight: '280px',
-            padding: '8px'
-        }),
-
-        option: (provided, state) => ({
-            ...provided,
-            borderRadius: '6px',
-            marginBottom: '4px',
-            padding: '10px 12px',
-            cursor: 'pointer',
-            backgroundColor: state.isSelected
-                ? '#0d6efd'
-                : state.isFocused
-                    ? '#e7f1ff'
-                    : 'transparent',
-            color: state.isSelected ? '#fff' : '#212529',
-            fontWeight: state.isSelected ? '600' : '400',
-            ':active': {
-                backgroundColor: state.isSelected ? '#0b5ed7' : '#cfe2ff'
+            if (!isNaN(percentual)) {
+                return precoUnitarioSelecionado * (percentual / 100);
             }
-        }),
+        }
 
-        menuPortal: (provided) => ({
-            ...provided,
-            zIndex: 9999
-        })
+        if (
+            novaAplicacao.desconto_valor !== null &&
+            novaAplicacao.desconto_valor !== ''
+        ) {
+            const valor = parseFloat(
+                String(novaAplicacao.desconto_valor).replace(',', '.')
+            );
+
+            if (!isNaN(valor)) {
+                return valor;
+            }
+        }
+
+        return 0;
     };
 
-    // ==========================================
-    // ESTILOS DOS SELECTS DO MODAL
-    // (TEXTO SEMPRE VISÍVEL - COR ESCURA FORÇADA)
-    // ==========================================
+    const descontoCalculado = calcularDesconto();
 
-    const modalSelectStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            minHeight: '38px',
-            borderColor: state.isFocused ? '#86b7fe' : '#ced4da',
-            boxShadow: state.isFocused
-                ? '0 0 0 0.25rem rgba(13, 110, 253, 0.15)'
-                : 'none',
-            '&:hover': { borderColor: '#86b7fe' },
-            cursor: 'pointer',
-            borderRadius: '0.375rem',
-            backgroundColor: '#fff'
-        }),
+    const valorFinalCalculado =
+        precoUnitarioSelecionado !== null
+            ? Math.max(
+                0,
+                precoUnitarioSelecionado - descontoCalculado
+            )
+            : null;
 
-        input: (provided) => ({
-            ...provided,
-            color: '#212529 !important'
-        }),
+    const formatarMoeda = (valor) => {
+        if (
+            valor === null ||
+            valor === undefined ||
+            isNaN(Number(valor))
+        ) {
+            return '-';
+        }
 
-        singleValue: (provided) => ({
-            ...provided,
-            color: '#212529 !important',
-            fontWeight: 500
-        }),
-
-        placeholder: (provided) => ({
-            ...provided,
-            color: '#6c757d'
-        }),
-
-        menu: (provided) => ({
-            ...provided,
-            zIndex: 1060,
-            borderRadius: '0.5rem',
-            overflow: 'hidden',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-            marginTop: '4px',
-            backgroundColor: '#fff'
-        }),
-
-        menuList: (provided) => ({
-            ...provided,
-            maxHeight: '220px',
-            padding: '6px'
-        }),
-
-        option: (provided, state) => ({
-            ...provided,
-            borderRadius: '6px',
-            marginBottom: '2px',
-            padding: '8px 10px',
-            cursor: 'pointer',
-            backgroundColor: state.isSelected
-                ? '#0d6efd'
-                : state.isFocused
-                    ? '#e7f1ff'
-                    : 'transparent',
-            color: state.isSelected ? '#fff' : '#212529',
-            ':active': {
-                backgroundColor: state.isSelected ? '#0b5ed7' : '#cfe2ff'
-            }
-        })
+        return `R$ ${Number(valor)
+            .toFixed(2)
+            .replace('.', ',')}`;
     };
 
     // ==========================================
@@ -493,11 +373,20 @@ const Aplicacoes = () => {
             const termo = termoBusca.toLowerCase().trim();
 
             filtrados = filtrados.filter((aplicacao) => {
-                const nomePaciente = aplicacao.paciente?.nome?.toLowerCase() || '';
-                const nomeProfissional = aplicacao.profissional?.nome?.toLowerCase() || '';
-                const nomeVacina = aplicacao.estoque?.vacina?.nome?.toLowerCase() || '';
-                const lote = aplicacao.estoque?.lote?.toLowerCase() || '';
-                const observacoes = aplicacao.observacoes?.toLowerCase() || '';
+                const nomePaciente =
+                    aplicacao.paciente?.nome?.toLowerCase() || '';
+
+                const nomeProfissional =
+                    aplicacao.profissional?.nome?.toLowerCase() || '';
+
+                const nomeVacina =
+                    aplicacao.estoque?.vacina?.nome?.toLowerCase() || '';
+
+                const lote =
+                    aplicacao.estoque?.lote?.toLowerCase() || '';
+
+                const observacoes =
+                    aplicacao.observacoes?.toLowerCase() || '';
 
                 return (
                     nomePaciente.includes(termo) ||
@@ -510,7 +399,6 @@ const Aplicacoes = () => {
         }
 
         if (filtrosSelecionados.length > 0) {
-
             const pacientesSelecionados = filtrosSelecionados
                 .filter((f) => f.type === 'paciente')
                 .map((f) => String(f.value));
@@ -524,22 +412,31 @@ const Aplicacoes = () => {
                 .map((f) => String(f.value));
 
             filtrados = filtrados.filter((aplicacao) => {
-
                 if (pacientesSelecionados.length > 0) {
                     const pacienteId = String(aplicacao.paciente_id);
-                    if (!pacientesSelecionados.includes(pacienteId)) return false;
+
+                    if (!pacientesSelecionados.includes(pacienteId)) {
+                        return false;
+                    }
                 }
 
                 if (profissionaisSelecionados.length > 0) {
                     const profissionalId = String(
-                        aplicacao.id_profissional ?? aplicacao.profissional_id
+                        aplicacao.id_profissional ??
+                        aplicacao.profissional_id
                     );
-                    if (!profissionaisSelecionados.includes(profissionalId)) return false;
+
+                    if (!profissionaisSelecionados.includes(profissionalId)) {
+                        return false;
+                    }
                 }
 
                 if (vacinasSelecionadas.length > 0) {
                     const estoqueId = String(aplicacao.estoque_id);
-                    if (!vacinasSelecionadas.includes(estoqueId)) return false;
+
+                    if (!vacinasSelecionadas.includes(estoqueId)) {
+                        return false;
+                    }
                 }
 
                 return true;
@@ -568,7 +465,8 @@ const Aplicacoes = () => {
                 (filtro) =>
                     !(
                         filtro.type === filtroParaRemover.type &&
-                        String(filtro.value) === String(filtroParaRemover.value)
+                        String(filtro.value) ===
+                        String(filtroParaRemover.value)
                     )
             )
         );
@@ -584,23 +482,67 @@ const Aplicacoes = () => {
     // ==========================================
 
     const handleInputChange = (e, fieldName) => {
-
         if (e && e.value !== undefined && fieldName) {
-            setNovaAplicacao((prev) => ({ ...prev, [fieldName]: e.value }));
+            setNovaAplicacao((prev) => ({
+                ...prev,
+                [fieldName]: e.value
+            }));
 
             if (errors[fieldName]) {
-                setErrors((prev) => ({ ...prev, [fieldName]: null }));
+                setErrors((prev) => ({
+                    ...prev,
+                    [fieldName]: null
+                }));
             }
+
             return;
         }
 
         if (e && e.target) {
             const { name, value } = e.target;
 
-            setNovaAplicacao((prev) => ({ ...prev, [name]: value }));
+            if (name === 'desconto_percentual') {
+                setNovaAplicacao((prev) => ({
+                    ...prev,
+                    desconto_percentual: value,
+                    desconto_valor: ''
+                }));
+
+                setErrors((prev) => ({
+                    ...prev,
+                    desconto_percentual: null,
+                    desconto_valor: null
+                }));
+
+                return;
+            }
+
+            if (name === 'desconto_valor') {
+                setNovaAplicacao((prev) => ({
+                    ...prev,
+                    desconto_valor: value,
+                    desconto_percentual: ''
+                }));
+
+                setErrors((prev) => ({
+                    ...prev,
+                    desconto_percentual: null,
+                    desconto_valor: null
+                }));
+
+                return;
+            }
+
+            setNovaAplicacao((prev) => ({
+                ...prev,
+                [name]: value
+            }));
 
             if (errors[name]) {
-                setErrors((prev) => ({ ...prev, [name]: null }));
+                setErrors((prev) => ({
+                    ...prev,
+                    [name]: null
+                }));
             }
         }
     };
@@ -615,16 +557,81 @@ const Aplicacoes = () => {
             paciente_id,
             estoque_id,
             data_aplicacao,
-            hora_aplicacao
+            hora_aplicacao,
+            desconto_percentual,
+            desconto_valor
         } = novaAplicacao;
 
         const newErrors = {};
 
-        if (!id_profissional) newErrors.id_profissional = 'Selecione um profissional.';
-        if (!paciente_id) newErrors.paciente_id = 'Selecione um paciente.';
-        if (!estoque_id) newErrors.estoque_id = 'Selecione uma vacina do estoque.';
-        if (!data_aplicacao) newErrors.data_aplicacao = 'A data da aplicação é obrigatória.';
-        if (!hora_aplicacao) newErrors.hora_aplicacao = 'A hora da aplicação é obrigatória.';
+        if (!id_profissional) {
+            newErrors.id_profissional =
+                'Selecione um profissional.';
+        }
+
+        if (!paciente_id) {
+            newErrors.paciente_id =
+                'Selecione um paciente.';
+        }
+
+        if (!estoque_id) {
+            newErrors.estoque_id =
+                'Selecione uma vacina do estoque.';
+        }
+
+        if (!data_aplicacao) {
+            newErrors.data_aplicacao =
+                'A data da aplicação é obrigatória.';
+        }
+
+        if (!hora_aplicacao) {
+            newErrors.hora_aplicacao =
+                'A hora da aplicação é obrigatória.';
+        }
+
+        if (
+            desconto_percentual !== '' &&
+            desconto_percentual !== null &&
+            desconto_valor !== '' &&
+            desconto_valor !== null
+        ) {
+            newErrors.desconto_percentual =
+                'Informe o desconto em percentual ou em reais, não os dois.';
+        }
+
+        if (
+            desconto_percentual !== '' &&
+            desconto_percentual !== null
+        ) {
+            const percentual = parseFloat(
+                String(desconto_percentual).replace(',', '.')
+            );
+
+            if (isNaN(percentual) || percentual < 0 || percentual > 100) {
+                newErrors.desconto_percentual =
+                    'Informe um percentual entre 0 e 100.';
+            }
+        }
+
+        if (
+            desconto_valor !== '' &&
+            desconto_valor !== null
+        ) {
+            const valor = parseFloat(
+                String(desconto_valor).replace(',', '.')
+            );
+
+            if (isNaN(valor) || valor < 0) {
+                newErrors.desconto_valor =
+                    'Informe um valor de desconto válido.';
+            } else if (
+                precoUnitarioSelecionado !== null &&
+                valor > precoUnitarioSelecionado
+            ) {
+                newErrors.desconto_valor =
+                    'O desconto não pode ser maior que o preço unitário.';
+            }
+        }
 
         setErrors(newErrors);
 
@@ -642,10 +649,69 @@ const Aplicacoes = () => {
 
         const formData = new FormData();
 
-        for (const key in novaAplicacao) {
-            if (novaAplicacao[key] !== null && novaAplicacao[key] !== '') {
-                formData.append(key, novaAplicacao[key]);
-            }
+        formData.append(
+            'id_profissional',
+            novaAplicacao.id_profissional
+        );
+
+        formData.append(
+            'paciente_id',
+            novaAplicacao.paciente_id
+        );
+
+        formData.append(
+            'estoque_id',
+            novaAplicacao.estoque_id
+        );
+
+        formData.append(
+            'data_aplicacao',
+            novaAplicacao.data_aplicacao
+        );
+
+        formData.append(
+            'hora_aplicacao',
+            novaAplicacao.hora_aplicacao
+        );
+
+        if (novaAplicacao.observacoes) {
+            formData.append(
+                'observacoes',
+                novaAplicacao.observacoes
+            );
+        }
+
+        // ✅ ENVIA OS VALORES CALCULADOS
+        if (precoUnitarioSelecionado !== null) {
+            formData.append('preco_unitario', precoUnitarioSelecionado.toFixed(2));
+        }
+
+        if (descontoCalculado > 0) {
+            formData.append('desconto_aplicado', descontoCalculado.toFixed(2));
+        }
+
+        if (valorFinalCalculado !== null) {
+            formData.append('valor_final', valorFinalCalculado.toFixed(2));
+        }
+
+        if (
+            novaAplicacao.desconto_percentual !== '' &&
+            novaAplicacao.desconto_percentual !== null
+        ) {
+            formData.append(
+                'desconto_percentual',
+                String(novaAplicacao.desconto_percentual).replace(',', '.')
+            );
+        }
+
+        if (
+            novaAplicacao.desconto_valor !== '' &&
+            novaAplicacao.desconto_valor !== null
+        ) {
+            formData.append(
+                'desconto_valor',
+                String(novaAplicacao.desconto_valor).replace(',', '.')
+            );
         }
 
         try {
@@ -665,7 +731,10 @@ const Aplicacoes = () => {
                     { headers }
                 );
 
-                showNotification('Aplicação atualizada com sucesso!', 'success');
+                showNotification(
+                    'Aplicação atualizada com sucesso!',
+                    'success'
+                );
             } else {
                 await axios.post(
                     'http://127.0.0.1:8080/api/aplicacoes',
@@ -673,19 +742,47 @@ const Aplicacoes = () => {
                     { headers }
                 );
 
-                showNotification('Aplicação registrada com sucesso!', 'success');
+                showNotification(
+                    'Aplicação registrada com sucesso!',
+                    'success'
+                );
             }
 
             await fetchAplicacoes();
             fecharModal();
 
         } catch (error) {
-            console.error('Erro ao criar/editar aplicação:', error);
-            showNotification('Erro ao salvar aplicação', 'error');
+            console.error(
+                'Erro ao criar/editar aplicação:',
+                error
+            );
 
-            if (error.response?.data?.errors) {
-                setErrors(error.response.data.errors);
+            let mensagem = 'Erro ao salvar aplicação.';
+
+            if (error.response?.data?.message) {
+                mensagem = error.response.data.message;
+            } else if (error.response?.data?.errors) {
+                const erros = error.response.data.errors;
+                const mensagens = [];
+
+                Object.keys(erros).forEach((chave) => {
+                    if (Array.isArray(erros[chave])) {
+                        mensagens.push(...erros[chave]);
+                    } else if (typeof erros[chave] === 'string') {
+                        mensagens.push(erros[chave]);
+                    }
+                });
+
+                if (mensagens.length > 0) {
+                    mensagem = mensagens.join('. ');
+                    setErrors(erros);
+                }
             }
+
+            showNotification(
+                mensagem,
+                'error'
+            );
         }
     };
 
@@ -693,18 +790,23 @@ const Aplicacoes = () => {
     // ABRIR / FECHAR MODAL
     // ==========================================
 
+    const dadosIniciaisAplicacao = {
+        id_profissional: '',
+        paciente_id: '',
+        estoque_id: '',
+        preco_unitario: '',
+        desconto_percentual: '',
+        desconto_valor: '',
+        observacoes: '',
+        data_aplicacao: '',
+        hora_aplicacao: ''
+    };
+
     const abrirModal = () => {
         setShowModal(true);
         setModoEdicao(false);
         setAplicacaoParaEdicao(null);
-        setNovaAplicacao({
-            id_profissional: '',
-            paciente_id: '',
-            estoque_id: '',
-            observacoes: '',
-            data_aplicacao: '',
-            hora_aplicacao: ''
-        });
+        setNovaAplicacao(dadosIniciaisAplicacao);
         setErrors({});
     };
 
@@ -712,14 +814,7 @@ const Aplicacoes = () => {
         setShowModal(false);
         setModoEdicao(false);
         setAplicacaoParaEdicao(null);
-        setNovaAplicacao({
-            id_profissional: '',
-            paciente_id: '',
-            estoque_id: '',
-            observacoes: '',
-            data_aplicacao: '',
-            hora_aplicacao: ''
-        });
+        setNovaAplicacao(dadosIniciaisAplicacao);
         setErrors({});
     };
 
@@ -728,16 +823,58 @@ const Aplicacoes = () => {
     // ==========================================
 
     const handleEditarAplicacao = (aplicacao) => {
+        const descontoPercentual =
+            aplicacao.desconto_percentual !== null &&
+            aplicacao.desconto_percentual !== undefined
+                ? String(aplicacao.desconto_percentual).replace('.', ',')
+                : '';
+
+        const descontoValor =
+            descontoPercentual === '' &&
+            aplicacao.desconto_valor !== null &&
+            aplicacao.desconto_valor !== undefined
+                ? String(aplicacao.desconto_valor).replace('.', ',')
+                : '';
+
+        const precoUnitario =
+            aplicacao.preco_unitario !== null &&
+            aplicacao.preco_unitario !== undefined
+                ? String(aplicacao.preco_unitario).replace('.', ',')
+                : '';
+
         setNovaAplicacao({
             id_profissional:
-                aplicacao.id_profissional || aplicacao.profissional_id || '',
-            paciente_id: aplicacao.paciente_id || '',
-            estoque_id: aplicacao.estoque_id || '',
-            observacoes: aplicacao.observacoes || '',
-            data_aplicacao: aplicacao.data_aplicacao
-                ? aplicacao.data_aplicacao.split('T')[0]
-                : '',
-            hora_aplicacao: aplicacao.hora_aplicacao || ''
+                aplicacao.id_profissional ||
+                aplicacao.profissional_id ||
+                '',
+
+            paciente_id:
+                aplicacao.paciente_id || '',
+
+            estoque_id:
+                aplicacao.estoque_id || '',
+
+            preco_unitario:
+                precoUnitario,
+
+            desconto_percentual:
+                descontoPercentual,
+
+            desconto_valor:
+                descontoValor,
+
+            observacoes:
+                aplicacao.observacoes || '',
+
+            data_aplicacao:
+                aplicacao.data_aplicacao
+                    ? aplicacao.data_aplicacao.split('T')[0]
+                    : '',
+
+            hora_aplicacao:
+                aplicacao.hora_aplicacao
+                    ? aplicacao.hora_aplicacao.substring(0, 5)
+                    : ''
         });
 
         setAplicacaoParaEdicao(aplicacao);
@@ -751,7 +888,11 @@ const Aplicacoes = () => {
     // ==========================================
 
     const handleExcluirAplicacao = async (id) => {
-        if (!window.confirm('Tem certeza que deseja excluir esta aplicação?')) {
+        if (
+            !window.confirm(
+                'Tem certeza que deseja excluir esta aplicação?'
+            )
+        ) {
             return;
         }
 
@@ -760,15 +901,31 @@ const Aplicacoes = () => {
 
             await axios.delete(
                 `http://127.0.0.1:8080/api/aplicacoes/${id}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
             );
 
             await fetchAplicacoes();
-            showNotification('Aplicação excluída com sucesso!', 'success');
+
+            showNotification(
+                'Aplicação excluída com sucesso!',
+                'success'
+            );
 
         } catch (error) {
-            console.error('Erro ao excluir aplicação:', error);
-            showNotification('Erro ao excluir aplicação', 'error');
+            console.error(
+                'Erro ao excluir aplicação:',
+                error
+            );
+
+            showNotification(
+                'Erro ao excluir aplicação',
+                'error'
+            );
         }
     };
 
@@ -782,55 +939,89 @@ const Aplicacoes = () => {
             profissional: 'Profissional',
             vacina: 'Vacina'
         };
+
         return tipos[type] || type;
+    };
+
+    // ==========================================
+    // FORMATAÇÃO FINANCEIRA DA TABELA
+    // ==========================================
+
+    const formatarDescontoTabela = (aplicacao) => {
+        if (
+            aplicacao.desconto_percentual !== null &&
+            aplicacao.desconto_percentual !== undefined
+        ) {
+            return `${Number(
+                aplicacao.desconto_percentual
+            )
+                .toFixed(2)
+                .replace('.', ',')}%`;
+        }
+
+        if (
+            aplicacao.desconto_valor !== null &&
+            aplicacao.desconto_valor !== undefined &&
+            Number(aplicacao.desconto_valor) > 0
+        ) {
+            return formatarMoeda(
+                aplicacao.desconto_valor
+            );
+        }
+
+        return '-';
     };
 
     return (
         <div className="aplicacoes-container">
 
-            {/* NOTIFICAÇÃO */}
             {notification.show && (
                 <div className={`notification ${notification.type}`}>
                     {notification.message}
                 </div>
             )}
 
-            {/* CABEÇALHO */}
             <div className="header-aplicacoes">
                 <h2>Aplicações de Vacinas</h2>
-                <Button variant="primary" onClick={abrirModal}>
+
+                <Button
+                    variant="primary"
+                    onClick={abrirModal}
+                >
                     Registrar Aplicação
                 </Button>
             </div>
 
-            {/* FILTROS */}
             <div className="filtros-container">
 
                 <Row className="filtro-row g-2">
 
-                    {/* BUSCA */}
                     <Col md={4}>
                         <div className="input-group">
                             <span className="input-group-text">
                                 <FiSearch size={18} />
                             </span>
+
                             <Form.Control
                                 type="text"
                                 placeholder="Buscar por paciente, profissional, vacina ou lote..."
                                 value={termoBusca}
-                                onChange={(e) => setTermoBusca(e.target.value)}
+                                onChange={(e) =>
+                                    setTermoBusca(e.target.value)
+                                }
                                 className="input-busca"
                             />
                         </div>
                     </Col>
 
-                    {/* FILTRO MULTIPLO */}
                     <Col md={5}>
                         <Select
                             options={filtroCombinadoOptions}
                             value={filtrosSelecionados}
                             onChange={handleFiltroChange}
-                            getOptionValue={(option) => `${option.type}-${option.value}`}
+                            getOptionValue={(option) =>
+                                `${option.type}-${option.value}`
+                            }
                             components={filtroComponents}
                             isMulti
                             closeMenuOnSelect={false}
@@ -838,16 +1029,20 @@ const Aplicacoes = () => {
                             isClearable
                             isSearchable
                             placeholder="Filtrar..."
-                            classNamePrefix="react-select"
-                            styles={filtroStyles}
+                            className="filtro-select"
+                            classNamePrefix="react-select-filtro"
                             menuPortalTarget={document.body}
-                            noOptionsMessage={() => 'Nenhuma opção encontrada'}
+                            noOptionsMessage={() =>
+                                'Nenhuma opção encontrada'
+                            }
                             formatOptionLabel={formatOptionLabel}
                         />
                     </Col>
 
-                    {/* LIMPAR - agora com md={3} para o texto caber */}
-                    <Col md={3} className="filtro-botao-col">
+                    <Col
+                        md={3}
+                        className="filtro-botao-col"
+                    >
                         <button
                             type="button"
                             className="filtro-limpar-btn"
@@ -855,24 +1050,34 @@ const Aplicacoes = () => {
                             title="Limpar todos os filtros"
                         >
                             <FiRotateCcw size={15} />
-                            <span>Limpar Filtros</span>
+                            <span>
+                                Limpar Filtros
+                            </span>
                         </button>
                     </Col>
 
                 </Row>
 
-                {/* BADGES */}
-                {(filtrosSelecionados.length > 0 || termoBusca) && (
+                {(filtrosSelecionados.length > 0 ||
+                    termoBusca) && (
                     <div className="filtros-badges">
 
                         {termoBusca && (
                             <div className="badge-filtro badge-busca">
-                                <span className="badge-tipo">Busca:</span>
-                                <span className="badge-valor">{termoBusca}</span>
+                                <span className="badge-tipo">
+                                    Busca:
+                                </span>
+
+                                <span className="badge-valor">
+                                    {termoBusca}
+                                </span>
+
                                 <button
                                     type="button"
                                     className="badge-remover"
-                                    onClick={() => setTermoBusca('')}
+                                    onClick={() =>
+                                        setTermoBusca('')
+                                    }
                                     title="Remover busca"
                                 >
                                     <FiX size={12} />
@@ -880,38 +1085,55 @@ const Aplicacoes = () => {
                             </div>
                         )}
 
-                        {filtrosSelecionados.map((filtro) => (
-                            <div
-                                key={`${filtro.type}-${filtro.value}`}
-                                className={`badge-filtro badge-${filtro.type}`}
-                            >
-                                <span className="badge-icone">{tipoIcones[filtro.type]}</span>
-                                <span className="badge-tipo">{getTipoBadge(filtro.type)}:</span>
-                                <span className="badge-valor">{filtro.label}</span>
-                                <button
-                                    type="button"
-                                    className="badge-remover"
-                                    onClick={() => removerFiltro(filtro)}
-                                    title={`Remover filtro de ${getTipoBadge(filtro.type)}`}
+                        {filtrosSelecionados.map(
+                            (filtro) => (
+                                <div
+                                    key={`${filtro.type}-${filtro.value}`}
+                                    className={`badge-filtro badge-${filtro.type}`}
                                 >
-                                    <FiX size={12} />
-                                </button>
-                            </div>
-                        ))}
+                                    <span className="badge-icone">
+                                        {tipoIcones[filtro.type]}
+                                    </span>
+
+                                    <span className="badge-tipo">
+                                        {getTipoBadge(
+                                            filtro.type
+                                        )}
+                                        :
+                                    </span>
+
+                                    <span className="badge-valor">
+                                        {filtro.label}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        className="badge-remover"
+                                        onClick={() =>
+                                            removerFiltro(
+                                                filtro
+                                            )
+                                        }
+                                        title={`Remover filtro de ${getTipoBadge(filtro.type)}`}
+                                    >
+                                        <FiX size={12} />
+                                    </button>
+                                </div>
+                            )
+                        )}
 
                     </div>
                 )}
 
-                {/* CONTADOR */}
                 <div className="mt-2">
                     <small className="text-muted">
-                        {aplicacoesFiltrados.length} aplicação(ões) encontrada(s)
+                        {aplicacoesFiltrados.length}{' '}
+                        aplicação(ões) encontrada(s)
                     </small>
                 </div>
 
             </div>
 
-            {/* MODAL */}
             <Modal
                 show={showModal}
                 onHide={fecharModal}
@@ -921,141 +1143,426 @@ const Aplicacoes = () => {
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {modoEdicao ? 'Editar Aplicação' : 'Registrar Aplicação de Vacina'}
+                        {modoEdicao
+                            ? 'Editar Aplicação'
+                            : 'Registrar Aplicação de Vacina'}
                     </Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
-                    <Form noValidate onSubmit={handleFormSubmit}>
+                    <Form
+                        noValidate
+                        onSubmit={handleFormSubmit}
+                    >
 
-                        {/* PROFISSIONAL + PACIENTE */}
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="6" controlId="formProfissional">
-                                <Form.Label>Profissional</Form.Label>
+
+                            <Form.Group
+                                as={Col}
+                                md="6"
+                                controlId="formProfissional"
+                            >
+                                <Form.Label>
+                                    Profissional
+                                </Form.Label>
+
                                 <Select
                                     name="id_profissional"
                                     options={profissionaisOptions}
                                     value={
                                         profissionaisOptions.find(
-                                            (opt) => String(opt.value) === String(novaAplicacao.id_profissional)
+                                            (opt) =>
+                                                String(opt.value) ===
+                                                String(
+                                                    novaAplicacao.id_profissional
+                                                )
                                         ) || null
                                     }
-                                    onChange={(option) => handleInputChange(option, 'id_profissional')}
+                                    onChange={(option) =>
+                                        handleInputChange(
+                                            option,
+                                            'id_profissional'
+                                        )
+                                    }
                                     placeholder="Selecione o profissional"
-                                    classNamePrefix="react-select"
-                                    styles={modalSelectStyles}
+                                    className="modal-select"
+                                    classNamePrefix="react-select-modal"
                                     isClearable
                                 />
+
                                 {!!errors.id_profissional && (
                                     <div className="text-danger small mt-1">
-                                        {errors.id_profissional}
+                                        {
+                                            errors.id_profissional
+                                        }
                                     </div>
                                 )}
                             </Form.Group>
 
-                            <Form.Group as={Col} md="6" controlId="formPaciente">
-                                <Form.Label>Paciente</Form.Label>
+                            <Form.Group
+                                as={Col}
+                                md="6"
+                                controlId="formPaciente"
+                            >
+                                <Form.Label>
+                                    Paciente
+                                </Form.Label>
+
                                 <Select
                                     name="paciente_id"
                                     options={pacientesOptions}
                                     value={
                                         pacientesOptions.find(
-                                            (opt) => String(opt.value) === String(novaAplicacao.paciente_id)
+                                            (opt) =>
+                                                String(opt.value) ===
+                                                String(
+                                                    novaAplicacao.paciente_id
+                                                )
                                         ) || null
                                     }
-                                    onChange={(option) => handleInputChange(option, 'paciente_id')}
+                                    onChange={(option) =>
+                                        handleInputChange(
+                                            option,
+                                            'paciente_id'
+                                        )
+                                    }
                                     placeholder="Selecione o paciente"
-                                    classNamePrefix="react-select"
-                                    styles={modalSelectStyles}
+                                    className="modal-select"
+                                    classNamePrefix="react-select-modal"
                                     isClearable
                                 />
+
                                 {!!errors.paciente_id && (
                                     <div className="text-danger small mt-1">
-                                        {errors.paciente_id}
+                                        {
+                                            errors.paciente_id
+                                        }
                                     </div>
                                 )}
                             </Form.Group>
+
                         </Row>
 
-                        {/* VACINA + DATA + HORA */}
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="formEstoque">
-                                <Form.Label>Vacina (Lote)</Form.Label>
+
+                            <Form.Group
+                                as={Col}
+                                md="4"
+                                controlId="formEstoque"
+                            >
+                                <Form.Label>
+                                    Vacina (Lote)
+                                </Form.Label>
+
                                 <Select
                                     name="estoque_id"
                                     options={estoquesOptions}
                                     value={
                                         estoquesOptions.find(
-                                            (opt) => String(opt.value) === String(novaAplicacao.estoque_id)
+                                            (opt) =>
+                                                String(opt.value) ===
+                                                String(
+                                                    novaAplicacao.estoque_id
+                                                )
                                         ) || null
                                     }
-                                    onChange={(option) => handleInputChange(option, 'estoque_id')}
+                                    onChange={(option) =>
+                                        handleInputChange(
+                                            option,
+                                            'estoque_id'
+                                        )
+                                    }
                                     placeholder="Selecione a vacina do estoque"
-                                    classNamePrefix="react-select"
-                                    styles={modalSelectStyles}
+                                    className="modal-select"
+                                    classNamePrefix="react-select-modal"
                                     isClearable
                                 />
+
                                 {!!errors.estoque_id && (
                                     <div className="text-danger small mt-1">
-                                        {errors.estoque_id}
+                                        {
+                                            errors.estoque_id
+                                        }
                                     </div>
                                 )}
                             </Form.Group>
 
-                            <Form.Group as={Col} md="4" controlId="formDataAplicacao">
-                                <Form.Label>Data da Aplicação</Form.Label>
+                            <Form.Group
+                                as={Col}
+                                md="4"
+                                controlId="formDataAplicacao"
+                            >
+                                <Form.Label>
+                                    Data da Aplicação
+                                </Form.Label>
+
                                 <Form.Control
                                     type="date"
                                     name="data_aplicacao"
-                                    value={novaAplicacao.data_aplicacao}
-                                    onChange={handleInputChange}
-                                    isInvalid={!!errors.data_aplicacao}
+                                    value={
+                                        novaAplicacao.data_aplicacao
+                                    }
+                                    onChange={
+                                        handleInputChange
+                                    }
+                                    isInvalid={
+                                        !!errors.data_aplicacao
+                                    }
                                     required
                                 />
+
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.data_aplicacao}
+                                    {
+                                        errors.data_aplicacao
+                                    }
                                 </Form.Control.Feedback>
                             </Form.Group>
 
-                            <Form.Group as={Col} md="4" controlId="formHoraAplicacao">
-                                <Form.Label>Hora da Aplicação</Form.Label>
+                            <Form.Group
+                                as={Col}
+                                md="4"
+                                controlId="formHoraAplicacao"
+                            >
+                                <Form.Label>
+                                    Hora da Aplicação
+                                </Form.Label>
+
                                 <Form.Control
                                     type="time"
                                     name="hora_aplicacao"
-                                    value={novaAplicacao.hora_aplicacao}
-                                    onChange={handleInputChange}
-                                    isInvalid={!!errors.hora_aplicacao}
+                                    value={
+                                        novaAplicacao.hora_aplicacao
+                                    }
+                                    onChange={
+                                        handleInputChange
+                                    }
+                                    isInvalid={
+                                        !!errors.hora_aplicacao
+                                    }
                                     required
                                 />
+
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.hora_aplicacao}
+                                    {
+                                        errors.hora_aplicacao
+                                    }
                                 </Form.Control.Feedback>
                             </Form.Group>
+
                         </Row>
+
+                        {/* INFORMAÇÕES FINANCEIRAS */}
+                        <div className="aplicacao-financeiro-box">
+
+                            <div className="aplicacao-financeiro-titulo">
+                                Informações Financeiras
+                            </div>
+
+                            <Row className="g-3">
+
+                                <Form.Group
+                                    as={Col}
+                                    md="4"
+                                    controlId="formPrecoUnitario"
+                                >
+                                    <Form.Label>
+                                        Preço Unitário
+                                    </Form.Label>
+
+                                    <Form.Control
+                                        type="text"
+                                        value={
+                                            precoUnitarioSelecionado !== null
+                                                ? formatarMoeda(
+                                                    precoUnitarioSelecionado
+                                                )
+                                                : ''
+                                        }
+                                        placeholder="Selecione uma vacina"
+                                        readOnly
+                                        disabled
+                                        className="campo-financeiro-readonly"
+                                    />
+
+                                    <Form.Text>
+                                        Preço definido no lote selecionado.
+                                    </Form.Text>
+                                </Form.Group>
+
+                                <Form.Group
+                                    as={Col}
+                                    md="4"
+                                    controlId="formDescontoPercentual"
+                                >
+                                    <Form.Label>
+                                        Desconto (%)
+                                    </Form.Label>
+
+                                    <div className="input-group">
+                                        <Form.Control
+                                            type="text"
+                                            name="desconto_percentual"
+                                            value={
+                                                novaAplicacao.desconto_percentual
+                                            }
+                                            onChange={
+                                                handleInputChange
+                                            }
+                                            placeholder="Ex: 10"
+                                            inputMode="decimal"
+                                            isInvalid={
+                                                !!errors.desconto_percentual
+                                            }
+                                        />
+
+                                        <span className="input-group-text">
+                                            %
+                                        </span>
+                                    </div>
+
+                                    {!!errors.desconto_percentual && (
+                                        <div className="text-danger small mt-1">
+                                            {
+                                                errors.desconto_percentual
+                                            }
+                                        </div>
+                                    )}
+                                </Form.Group>
+
+                                <Form.Group
+                                    as={Col}
+                                    md="4"
+                                    controlId="formDescontoValor"
+                                >
+                                    <Form.Label>
+                                        Desconto (R$)
+                                    </Form.Label>
+
+                                    <div className="input-group">
+                                        <span className="input-group-text">
+                                            R$
+                                        </span>
+
+                                        <Form.Control
+                                            type="text"
+                                            name="desconto_valor"
+                                            value={
+                                                novaAplicacao.desconto_valor
+                                            }
+                                            onChange={
+                                                handleInputChange
+                                            }
+                                            placeholder="Ex: 15,00"
+                                            inputMode="decimal"
+                                            isInvalid={
+                                                !!errors.desconto_valor
+                                            }
+                                        />
+                                    </div>
+
+                                    {!!errors.desconto_valor && (
+                                        <div className="text-danger small mt-1">
+                                            {
+                                                errors.desconto_valor
+                                            }
+                                        </div>
+                                    )}
+                                </Form.Group>
+
+                            </Row>
+
+                            <div className="aplicacao-financeiro-resumo">
+
+                                <div className="financeiro-resumo-item">
+                                    <span>
+                                        Preço da dose
+                                    </span>
+
+                                    <strong>
+                                        {formatarMoeda(
+                                            precoUnitarioSelecionado
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div className="financeiro-resumo-item">
+                                    <span>
+                                        Desconto aplicado
+                                    </span>
+
+                                    <strong>
+                                        {precoUnitarioSelecionado !== null
+                                            ? formatarMoeda(
+                                                descontoCalculado
+                                            )
+                                            : '-'}
+                                    </strong>
+                                </div>
+
+                                <div className="financeiro-resumo-item financeiro-valor-final">
+                                    <span>
+                                        Valor Final
+                                    </span>
+
+                                    <strong>
+                                        {formatarMoeda(
+                                            valorFinalCalculado
+                                        )}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div className="aplicacao-desconto-ajuda">
+                                Informe o desconto em percentual ou em reais. Ao preencher um dos campos, o outro será desconsiderado.
+                            </div>
+
+                        </div>
 
                         {/* OBSERVAÇÕES */}
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="12" controlId="formObservacoes">
-                                <Form.Label>Observações</Form.Label>
+                            <Form.Group
+                                as={Col}
+                                md="12"
+                                controlId="formObservacoes"
+                            >
+                                <Form.Label>
+                                    Observações
+                                </Form.Label>
+
                                 <Form.Control
                                     as="textarea"
                                     rows={3}
                                     name="observacoes"
                                     placeholder="Detalhes adicionais sobre a aplicação da vacina..."
-                                    value={novaAplicacao.observacoes}
-                                    onChange={handleInputChange}
+                                    value={
+                                        novaAplicacao.observacoes
+                                    }
+                                    onChange={
+                                        handleInputChange
+                                    }
                                 />
                             </Form.Group>
                         </Row>
 
-                        {/* BOTÕES */}
                         <div className="d-flex justify-content-end gap-2 mt-3">
-                            <Button variant="secondary" onClick={fecharModal}>
+
+                            <Button
+                                variant="secondary"
+                                onClick={fecharModal}
+                            >
                                 Cancelar
                             </Button>
-                            <Button variant="success" type="submit">
-                                {modoEdicao ? 'Atualizar' : 'Salvar'}
+
+                            <Button
+                                variant="success"
+                                type="submit"
+                            >
+                                {modoEdicao
+                                    ? 'Atualizar'
+                                    : 'Salvar'}
                             </Button>
+
                         </div>
 
                     </Form>
@@ -1065,7 +1572,8 @@ const Aplicacoes = () => {
             {/* TABELA */}
             <div className="table-responsive">
                 <table className="aplicacoes-table table table-striped table-hover">
-                    <thead className="table-dark">
+
+                    <thead className="table-header-primary">
                         <tr>
                             <th>Data</th>
                             <th>Hora</th>
@@ -1073,73 +1581,150 @@ const Aplicacoes = () => {
                             <th>Profissional</th>
                             <th>Vacina</th>
                             <th>Lote</th>
+                            <th>Preço Unitário</th>
+                            <th>Desconto</th>
+                            <th>Valor Final</th>
                             <th>Observações</th>
-                            <th className="text-center">Ações</th>
+                            <th className="text-center">
+                                Ações
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {aplicacoesFiltrados.length === 0 ? (
                             <tr>
-                                <td colSpan="8" className="text-center py-4">
+                                <td
+                                    colSpan="11"
+                                    className="text-center py-4"
+                                >
                                     <div className="text-muted">
+
                                         <p className="mb-1">
-                                            {termoBusca || filtrosSelecionados.length > 0
+                                            {termoBusca ||
+                                            filtrosSelecionados.length > 0
                                                 ? 'Nenhuma aplicação encontrada com os filtros aplicados.'
                                                 : 'Nenhuma aplicação de vacina registrada.'}
                                         </p>
-                                        <small>Tente ajustar os filtros de busca</small>
+
+                                        <small>
+                                            Tente ajustar os filtros de busca
+                                        </small>
+
                                     </div>
                                 </td>
                             </tr>
                         ) : (
-                            aplicacoesFiltrados.map((aplicacao) => (
-                                <tr key={aplicacao.id}>
-                                    <td>
-                                        {aplicacao.data_aplicacao
-                                            ? new Date(aplicacao.data_aplicacao).toLocaleDateString(
-                                                'pt-BR',
-                                                { timeZone: 'UTC' }
-                                            )
-                                            : '-'}
-                                    </td>
-                                    <td>{aplicacao.hora_aplicacao || '-'}</td>
-                                    <td>{aplicacao.paciente?.nome || 'Desconhecido'}</td>
-                                    <td>{aplicacao.profissional?.nome || 'Desconhecido'}</td>
-                                    <td>
-                                        {aplicacao.estoque?.vacina?.nome ||
-                                            aplicacao.estoque?.nome ||
-                                            'Desconhecido'}
-                                    </td>
-                                    <td>{aplicacao.estoque?.lote || '-'}</td>
-                                    <td>{aplicacao.observacoes || '-'}</td>
-                                  <td className="actions-cell">
-    <div className="linha-acoes">
-        <button
-            type="button"
-            className="btn-acao btn-acao-editar"
-            onClick={() => handleEditarAplicacao(aplicacao)}
-            title="Editar aplicação"
-        >
-            <FiEdit2 size={14} />
-            <span>Editar</span>
-        </button>
+                            aplicacoesFiltrados.map(
+                                (aplicacao) => (
+                                    <tr key={aplicacao.id}>
 
-        <button
-            type="button"
-            className="btn-acao btn-acao-excluir"
-            onClick={() => handleExcluirAplicacao(aplicacao.id)}
-            title="Excluir aplicação"
-        >
-            <FiTrash2 size={14} />
-            <span>Excluir</span>
-        </button>
-    </div>
-</td>
-                                </tr>
-                            ))
+                                        <td>
+                                            {aplicacao.data_aplicacao
+                                                ? new Date(
+                                                    aplicacao.data_aplicacao
+                                                ).toLocaleDateString(
+                                                    'pt-BR',
+                                                    {
+                                                        timeZone: 'UTC'
+                                                    }
+                                                )
+                                                : '-'}
+                                        </td>
+
+                                        <td>
+                                            {aplicacao.hora_aplicacao ||
+                                                '-'}
+                                        </td>
+
+                                        <td>
+                                            {aplicacao.paciente?.nome ||
+                                                'Desconhecido'}
+                                        </td>
+
+                                        <td>
+                                            {aplicacao.profissional?.nome ||
+                                                'Desconhecido'}
+                                        </td>
+
+                                        <td>
+                                            {aplicacao.estoque?.vacina?.nome ||
+                                                aplicacao.estoque?.nome ||
+                                                'Desconhecido'}
+                                        </td>
+
+                                        <td>
+                                            {aplicacao.estoque?.lote ||
+                                                '-'}
+                                        </td>
+
+                                        <td>
+                                            {formatarMoeda(
+                                                aplicacao.preco_unitario
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            {formatarDescontoTabela(
+                                                aplicacao
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            {formatarMoeda(
+                                                aplicacao.valor_final
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            {aplicacao.observacoes ||
+                                                '-'}
+                                        </td>
+
+                                        <td className="actions-cell">
+                                            <div className="linha-acoes">
+
+                                                <button
+                                                    type="button"
+                                                    className="btn-acao btn-acao-editar"
+                                                    onClick={() =>
+                                                        handleEditarAplicacao(
+                                                            aplicacao
+                                                        )
+                                                    }
+                                                    title="Editar aplicação"
+                                                >
+                                                    <FiEdit2 size={14} />
+                                                    <span>
+                                                        Editar
+                                                    </span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="btn-acao btn-acao-excluir"
+                                                    onClick={() =>
+                                                        handleExcluirAplicacao(
+                                                            aplicacao.id
+                                                        )
+                                                    }
+                                                    title="Excluir aplicação"
+                                                >
+                                                    <FiTrash2 size={14} />
+                                                    <span>
+                                                        Excluir
+                                                    </span>
+                                                </button>
+
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                )
+                            )
                         )}
                     </tbody>
+
                 </table>
             </div>
 

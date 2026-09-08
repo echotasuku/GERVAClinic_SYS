@@ -14,14 +14,14 @@ class NotificacaoController extends Controller
             ->get()
             ->map(function ($notificacao) {
                 return [
-                    'id' => $notificacao->id,
-                    'tipo' => $notificacao->data['tipo'] ?? 'desconhecido',
-                    'mensagem' => $notificacao->data['mensagem'] ?? 'Sem mensagem',
-                    'lida' => !is_null($notificacao->read_at),
-                    'created_at' => $notificacao->created_at
+                    'id'         => $notificacao->id,
+                    'tipo'       => $notificacao->data['tipo'] ?? 'desconhecido',
+                    'mensagem'   => $notificacao->data['mensagem'] ?? 'Sem mensagem',
+                    'lida'       => !is_null($notificacao->read_at),
+                    'created_at' => $notificacao->created_at,
                 ];
             });
-            
+
         return response()->json($notificacoes);
     }
 
@@ -33,36 +33,47 @@ class NotificacaoController extends Controller
             ->get()
             ->map(function ($notificacao) {
                 return [
-                    'id' => $notificacao->id,
-                    'tipo' => $notificacao->data['tipo'] ?? 'desconhecido',
-                    'mensagem' => $notificacao->data['mensagem'] ?? 'Sem mensagem',
-                    'created_at' => $notificacao->created_at
+                    'id'         => $notificacao->id,
+                    'tipo'       => $notificacao->data['tipo'] ?? 'desconhecido',
+                    'mensagem'   => $notificacao->data['mensagem'] ?? 'Sem mensagem',
+                    'created_at' => $notificacao->created_at,
                 ];
             });
-            
+
         return response()->json($notificacoes);
     }
 
-    // Marcar como lida (some do dropdown)
+    // Marcar como lida
     public function marcarComoLida($id)
     {
         $notificacao = auth()->user()->notifications()->findOrFail($id);
         $notificacao->markAsRead();
+
         return response()->json(['ok' => true]);
     }
 
-    // Deletar uma notificação
+    // ✅ NOVO: Marcar TODAS como lidas
+    public function marcarTodasComoLida()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+
+        return response()->json(['ok' => true]);
+    }
+
+    // Excluir uma notificação
     public function destroy($id)
     {
         $notificacao = auth()->user()->notifications()->findOrFail($id);
         $notificacao->delete();
+
         return response()->json(['ok' => true]);
     }
 
-    // Deletar TODAS as notificações
+    // Excluir TODAS as notificações
     public function destroyAll()
     {
         auth()->user()->notifications()->delete();
+
         return response()->json(['ok' => true]);
     }
 }

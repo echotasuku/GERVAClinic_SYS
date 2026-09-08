@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
-import { FiSearch, FiX } from 'react-icons/fi';
+import {
+    FiSearch, FiX, FiEdit2, FiTrash2, FiRotateCcw
+} from 'react-icons/fi';
 import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Vacinas.css';
 
 const Vacinas = () => {
-    // ===== ESTADOS =====
+    // ==========================================
+    // ESTADOS
+    // ==========================================
+
     const [vacinas, setVacinas] = useState([]);
     const [vacinasFiltrados, setVacinasFiltrados] = useState([]);
     const [fornecedores, setFornecedores] = useState([]);
@@ -34,17 +39,15 @@ const Vacinas = () => {
         type: ''
     });
 
-    // ===== ESTADOS DOS FILTROS =====
     const [termoBusca, setTermoBusca] = useState('');
     const [termoBuscaDebounced, setTermoBuscaDebounced] = useState('');
-
-    // Permite vários filtros selecionados
     const [filtrosSelecionados, setFiltrosSelecionados] = useState([]);
-
-    // Ref para o debounce
     const debounceRef = useRef(null);
 
-    // ===== NOTIFICAÇÕES =====
+    // ==========================================
+    // NOTIFICAÇÕES
+    // ==========================================
+
     const showNotification = useCallback((message, type = 'success') => {
         setNotification({
             show: true,
@@ -61,7 +64,10 @@ const Vacinas = () => {
         }, 5000);
     }, []);
 
-    // ===== REQUISIÇÕES API =====
+    // ==========================================
+    // REQUISIÇÕES API
+    // ==========================================
+
     const fetchFornecedores = useCallback(async () => {
         try {
             const token = localStorage.getItem('auth_token');
@@ -132,7 +138,10 @@ const Vacinas = () => {
         }
     }, [showNotification]);
 
-    // ===== EFFECTS =====
+    // ==========================================
+    // EFFECTS
+    // ==========================================
+
     useEffect(() => {
         fetchVacinas();
         fetchFornecedores();
@@ -143,7 +152,10 @@ const Vacinas = () => {
         fetchTiposVacinas
     ]);
 
-    // ===== DEBOUNCE =====
+    // ==========================================
+    // DEBOUNCE
+    // ==========================================
+
     useEffect(() => {
         if (debounceRef.current) {
             clearTimeout(debounceRef.current);
@@ -160,11 +172,13 @@ const Vacinas = () => {
         };
     }, [termoBusca]);
 
-    // ===== FUNÇÃO DE FILTRO =====
+    // ==========================================
+    // FUNÇÃO DE FILTRO
+    // ==========================================
+
     const filtrarVacinas = useCallback(() => {
         let filtrados = [...vacinas];
 
-        // Filtrar por termo de busca
         if (termoBuscaDebounced.trim() !== '') {
             const termo = termoBuscaDebounced
                 .toLowerCase()
@@ -191,18 +205,14 @@ const Vacinas = () => {
             });
         }
 
-        // Obtém os fornecedores selecionados
         const fornecedoresSelecionados = filtrosSelecionados
             .filter((filtro) => filtro.type === 'fornecedor')
             .map((filtro) => String(filtro.value));
 
-        // Obtém os tipos selecionados
         const tiposSelecionados = filtrosSelecionados
             .filter((filtro) => filtro.type === 'tipo')
             .map((filtro) => String(filtro.value));
 
-        // Filtrar por fornecedores
-        // Entre fornecedores, funciona como OU
         if (fornecedoresSelecionados.length > 0) {
             filtrados = filtrados.filter((vacina) =>
                 fornecedoresSelecionados.includes(
@@ -211,8 +221,6 @@ const Vacinas = () => {
             );
         }
 
-        // Filtrar por tipos
-        // Entre tipos, funciona como OU
         if (tiposSelecionados.length > 0) {
             filtrados = filtrados.filter((vacina) =>
                 tiposSelecionados.includes(
@@ -228,25 +236,25 @@ const Vacinas = () => {
         filtrosSelecionados
     ]);
 
-    // Executar a filtragem quando algum filtro mudar
     useEffect(() => {
         filtrarVacinas();
     }, [filtrarVacinas]);
 
-    // ===== LIMPAR FILTROS =====
+    // ==========================================
+    // LIMPAR FILTROS
+    // ==========================================
+
     const limparFiltros = () => {
         setTermoBusca('');
         setTermoBuscaDebounced('');
         setFiltrosSelecionados([]);
     };
 
-    // Remover filtro de busca
     const removerFiltroBusca = () => {
         setTermoBusca('');
         setTermoBuscaDebounced('');
     };
 
-    // Remover um filtro individual
     const removerFiltroCombinado = (filtroParaRemover) => {
         setFiltrosSelecionados((filtrosAtuais) =>
             filtrosAtuais.filter(
@@ -260,7 +268,10 @@ const Vacinas = () => {
         );
     };
 
-    // ===== HANDLERS =====
+    // ==========================================
+    // HANDLERS
+    // ==========================================
+
     const handleInputChange = (e) => {
         const {
             name,
@@ -286,7 +297,10 @@ const Vacinas = () => {
         setFiltrosSelecionados(selectedOptions || []);
     };
 
-    // ===== VALIDAÇÃO =====
+    // ==========================================
+    // VALIDAÇÃO
+    // ==========================================
+
     const validateForm = () => {
         const {
             nome,
@@ -339,7 +353,10 @@ const Vacinas = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // ===== ENVIO DO FORMULÁRIO =====
+    // ==========================================
+    // ENVIO DO FORMULÁRIO
+    // ==========================================
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -416,7 +433,10 @@ const Vacinas = () => {
         }
     };
 
-    // ===== MODAL =====
+    // ==========================================
+    // MODAL
+    // ==========================================
+
     const dadosIniciaisVacina = {
         nome: '',
         indicacao: '',
@@ -498,7 +518,10 @@ const Vacinas = () => {
         }
     };
 
-    // ===== OPÇÕES DO SELECT =====
+    // ==========================================
+    // OPÇÕES DO SELECT
+    // ==========================================
+
     const filtroCombinadoOptions = [
         {
             label: 'Fornecedores',
@@ -518,7 +541,6 @@ const Vacinas = () => {
         }
     ];
 
-    // Label exibida nas opções
     const formatOptionLabel = (option) => {
         return (
             <span>
@@ -538,35 +560,200 @@ const Vacinas = () => {
         );
     };
 
-    // ===== ESTILOS DO SELECT =====
-    // Mantém o tamanho original de 38px
+    // ==========================================
+    // ESTILOS DO SELECT
+    // ==========================================
+
     const filtroStyles = {
         control: (provided, state) => ({
             ...provided,
-            height: '38px',
-            minHeight: '38px',
-            width: '100%',
-            overflow: 'hidden',
-            borderColor: state.isFocused
-                ? '#86b7fe'
-                : '#ced4da',
+            minHeight: '42px',
+            height: '42px',
+            maxHeight: '42px',
+            borderColor: state.isFocused ? '#86b7fe' : '#ced4da',
             boxShadow: state.isFocused
-                ? '0 0 0 0.25rem rgba(13, 110, 253, 0.25)'
+                ? '0 0 0 0.25rem rgba(13, 110, 253, 0.15)'
                 : 'none',
-            '&:hover': {
-                borderColor: '#86b7fe'
+            '&:hover': { borderColor: '#86b7fe' },
+            cursor: 'pointer',
+            borderRadius: '0.5rem',
+            backgroundColor: '#fff',
+            padding: '0px',
+            display: 'flex',
+            alignItems: 'center'
+        }),
+
+        valueContainer: (provided) => ({
+            ...provided,
+            height: '42px',
+            maxHeight: '42px',
+            minHeight: '42px',
+            padding: '2px 8px',
+            overflow: 'hidden',
+            display: 'flex',
+            flexWrap: 'nowrap',
+            alignItems: 'center',
+            gap: '2px'
+        }),
+
+        inputContainer: (provided) => ({
+            ...provided,
+            height: '42px',
+            maxHeight: '42px',
+            minHeight: '42px',
+            padding: '0px',
+            margin: '0px',
+            display: 'flex',
+            alignItems: 'center'
+        }),
+
+        input: (provided) => ({
+            ...provided,
+            height: '42px',
+            maxHeight: '42px',
+            minHeight: '42px',
+            padding: '0px',
+            margin: '0px',
+            color: '#212529',
+            fontSize: '0.9rem',
+            lineHeight: '42px'
+        }),
+
+        placeholder: (provided) => ({
+            ...provided,
+            color: '#6c757d',
+            fontSize: '0.9rem',
+            margin: '0px',
+            padding: '0px',
+            lineHeight: '42px'
+        }),
+
+        singleValue: (provided) => ({
+            ...provided,
+            color: '#212529',
+            fontSize: '0.9rem',
+            margin: '0px',
+            padding: '0px',
+            lineHeight: '42px'
+        }),
+
+        multiValue: (provided) => ({
+            ...provided,
+            backgroundColor: '#e7f1ff',
+            border: '1px solid #b6d4fe',
+            borderRadius: '14px',
+            padding: '1px 4px',
+            margin: '0 1px',
+            fontSize: '0.7rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: 'auto',
+            minHeight: 'auto',
+            maxHeight: '24px'
+        }),
+
+        multiValueLabel: (provided) => ({
+            ...provided,
+            color: '#0d6efd',
+            fontSize: '0.7rem',
+            fontWeight: 600,
+            padding: '0 3px',
+            lineHeight: '1',
+            margin: '0px'
+        }),
+
+        multiValueRemove: (provided) => ({
+            ...provided,
+            color: '#0d6efd',
+            cursor: 'pointer',
+            padding: '0 2px',
+            borderRadius: '3px',
+            fontSize: '0.7rem',
+            display: 'flex',
+            alignItems: 'center',
+            height: 'auto',
+            lineHeight: '1',
+            marginLeft: '2px',
+            ':hover': {
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                color: '#0d6efd'
             }
+        }),
+
+        indicators: (provided) => ({
+            ...provided,
+            height: '42px',
+            maxHeight: '42px',
+            minHeight: '42px',
+            padding: '0px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0px'
+        }),
+
+        dropdownIndicator: (provided) => ({
+            ...provided,
+            height: '42px',
+            maxHeight: '42px',
+            minHeight: '42px',
+            padding: '0 8px',
+            color: '#6c757d',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 'auto',
+            ':hover': { color: '#0d6efd' }
+        }),
+
+        clearIndicator: (provided) => ({
+            ...provided,
+            height: '42px',
+            maxHeight: '42px',
+            minHeight: '42px',
+            padding: '0 8px',
+            color: '#6c757d',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 'auto',
+            ':hover': { color: '#dc3545' }
         }),
 
         menu: (provided) => ({
             ...provided,
             zIndex: 1050,
-            width: '100%'
+            borderRadius: '0.5rem',
+            boxShadow: '0 0.5rem 1rem rgba(0, 0, 0, 0.15)',
+            overflow: 'hidden',
+            marginTop: '4px',
+            border: '1px solid #dee2e6',
+            backgroundColor: '#fff'
         }),
 
-        menuPortal: (provided) => ({
+        menuList: (provided) => ({
             ...provided,
-            zIndex: 9999
+            maxHeight: '280px',
+            padding: '8px'
+        }),
+
+        option: (provided, state) => ({
+            ...provided,
+            borderRadius: '6px',
+            marginBottom: '4px',
+            padding: '10px 12px',
+            cursor: 'pointer',
+            backgroundColor: state.isSelected
+                ? '#0d6efd'
+                : state.isFocused
+                    ? '#e7f1ff'
+                    : 'transparent',
+            color: state.isSelected ? '#fff' : '#212529',
+            fontWeight: state.isSelected ? '600' : '400',
+            ':active': {
+                backgroundColor: state.isSelected ? '#0b5ed7' : '#cfe2ff'
+            }
         }),
 
         groupHeading: (provided) => ({
@@ -582,117 +769,46 @@ const Vacinas = () => {
             ...provided,
             paddingTop: 0,
             paddingBottom: '4px'
-        }),
-
-        // Mantém os filtros em uma única linha
-        valueContainer: (provided) => ({
-            ...provided,
-            height: '38px',
-            minHeight: '38px',
-            padding: '0 8px',
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'nowrap',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap'
-        }),
-
-        indicatorsContainer: (provided) => ({
-            ...provided,
-            height: '38px',
-            minHeight: '38px'
-        }),
-
-        dropdownIndicator: (provided) => ({
-            ...provided,
-            padding: '0 8px'
-        }),
-
-        clearIndicator: (provided) => ({
-            ...provided,
-            padding: '0 4px'
-        }),
-
-        input: (provided) => ({
-            ...provided,
-            margin: 0,
-            padding: 0,
-            minWidth: '30px'
-        }),
-
-        placeholder: (provided) => ({
-            ...provided,
-            margin: 0,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-        }),
-
-        // Mantém cada filtro selecionado compacto
-        multiValue: (provided) => ({
-            ...provided,
-            flex: '0 0 auto',
-            maxWidth: '130px',
-            margin: '2px 4px 2px 0',
-            overflow: 'hidden'
-        }),
-
-        multiValueLabel: (provided) => ({
-            ...provided,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '0.8rem',
-            padding: '2px 5px'
-        }),
-
-        multiValueRemove: (provided) => ({
-            ...provided,
-            padding: '0 3px'
-        }),
-
-        container: (provided) => ({
-            ...provided,
-            width: '100%'
         })
     };
 
-    // ===== FILTROS ATIVOS =====
     const temFiltrosAtivos =
         termoBuscaDebounced.trim() !== '' ||
         filtrosSelecionados.length > 0;
 
-    // ===== RENDER =====
+    // ==========================================
+    // RENDER
+    // ==========================================
+
     return (
         <div className="vacinas-container">
+
+            {/* NOTIFICAÇÃO */}
             {notification.show && (
-                <div
-                    className={`notification ${notification.type}`}
-                >
+                <div className={`notification ${notification.type}`}>
                     {notification.message}
                 </div>
             )}
 
-            <div className="header d-flex justify-content-between align-items-center mb-4">
+            {/* CABEÇALHO */}
+            <div className="header-vacinas">
                 <h2>Vacinas</h2>
-
-                <Button
-                    className="btn-add"
-                    onClick={abrirModal}
-                >
+                <Button variant="primary" onClick={abrirModal}>
                     Adicionar Vacina
                 </Button>
             </div>
 
-            {/* BARRA DE BUSCA E FILTROS */}
-            <div className="filtros-container mb-4">
-                <Row className="align-items-center g-2 filtro-row">
-                    <Col md={5}>
-                        <div className="input-group filtro-input-group">
-                            <span className="input-group-text filtro-icone">
-                                <FiSearch size={16} />
-                            </span>
+            {/* FILTROS */}
+            <div className="filtros-container">
 
+                <Row className="filtro-row g-2">
+
+                    {/* BUSCA */}
+                    <Col md={6}>
+                        <div className="input-group">
+                            <span className="input-group-text">
+                                <FiSearch size={18} />
+                            </span>
                             <Form.Control
                                 type="text"
                                 placeholder="Buscar por nome, indicação, laboratório ou fabricante..."
@@ -702,11 +818,12 @@ const Vacinas = () => {
                                         e.target.value
                                     )
                                 }
-                                className="filtro-input"
+                                className="input-busca"
                             />
                         </div>
                     </Col>
 
+                    {/* FILTRO MULTIPLO */}
                     <Col md={4}>
                         <Select
                             options={
@@ -716,7 +833,7 @@ const Vacinas = () => {
                             onChange={
                                 handleFiltroCombinadoChange
                             }
-                            placeholder="Selecione um fornecedor ou tipo..."
+                            placeholder="Filtrar por fornecedor ou tipo..."
                             isClearable
                             isMulti
                             closeMenuOnSelect={false}
@@ -734,28 +851,27 @@ const Vacinas = () => {
                         />
                     </Col>
 
-                    <Col md={3}>
-                        {temFiltrosAtivos && (
-                            <Button
-                                variant="outline-secondary"
-                                onClick={limparFiltros}
-                                className="w-100 filtro-botao"
-                            >
-                                Limpar Tudo
-                            </Button>
-                        )}
+                    {/* LIMPAR */}
+                    <Col md={2} className="filtro-botao-col">
+                        <button
+                            type="button"
+                            className="filtro-limpar-btn"
+                            onClick={limparFiltros}
+                            title="Limpar todos os filtros"
+                        >
+                            <FiRotateCcw size={15} />
+                            <span>Limpar</span>
+                        </button>
                     </Col>
+
                 </Row>
 
-                {/* BADGES DOS FILTROS ATIVOS */}
+                {/* BADGES */}
                 {temFiltrosAtivos && (
-                    <div className="filtros-badges mt-3 d-flex flex-wrap gap-2 align-items-center">
-                        <small className="text-muted me-1">
-                            Filtros ativos:
-                        </small>
+                    <div className="filtros-badges">
 
                         {termoBuscaDebounced.trim() !== '' && (
-                            <span className="badge-filtro badge-busca">
+                            <div className="badge-filtro badge-busca">
                                 <span className="badge-tipo">
                                     Busca:
                                 </span>
@@ -774,11 +890,11 @@ const Vacinas = () => {
                                 >
                                     <FiX size={12} />
                                 </button>
-                            </span>
+                            </div>
                         )}
 
                         {filtrosSelecionados.map((filtro) => (
-                            <span
+                            <div
                                 key={`${filtro.type}-${filtro.value}`}
                                 className={`badge-filtro ${
                                     filtro.type ===
@@ -810,16 +926,20 @@ const Vacinas = () => {
                                 >
                                     <FiX size={12} />
                                 </button>
-                            </span>
+                            </div>
                         ))}
+
                     </div>
                 )}
 
-                <div className="mt-2 d-flex justify-content-between align-items-center">
+                {/* CONTADOR */}
+                <div className="mt-2">
                     <small className="text-muted">
                         {vacinasFiltrados.length} vacina(s) encontrada(s)
+                        {temFiltrosAtivos && ' - Filtros aplicados'}
                     </small>
                 </div>
+
             </div>
 
             {/* MODAL */}
@@ -827,7 +947,7 @@ const Vacinas = () => {
                 show={showModal}
                 onHide={fecharModal}
                 centered
-                dialogClassName="custom-modal-widthvac"
+                dialogClassName="custom-modal-width"
                 className="vacinas-modal-theme"
             >
                 <Modal.Header closeButton>
@@ -863,7 +983,6 @@ const Vacinas = () => {
                                         handleInputChange
                                     }
                                     isInvalid={!!errors.nome}
-                                    required
                                 />
 
                                 <Form.Control.Feedback type="invalid">
@@ -893,7 +1012,6 @@ const Vacinas = () => {
                                     isInvalid={
                                         !!errors.indicacao
                                     }
-                                    required
                                 />
 
                                 <Form.Control.Feedback type="invalid">
@@ -924,7 +1042,6 @@ const Vacinas = () => {
                                     isInvalid={
                                         !!errors.fornecedor_id
                                     }
-                                    required
                                 >
                                     <option value="">
                                         Selecione...
@@ -971,7 +1088,6 @@ const Vacinas = () => {
                                     isInvalid={
                                         !!errors.tipos_vacinas_id
                                     }
-                                    required
                                 >
                                     <option value="">
                                         Selecione...
@@ -1017,7 +1133,6 @@ const Vacinas = () => {
                                     isInvalid={
                                         !!errors.laboratorio
                                     }
-                                    required
                                 />
 
                                 <Form.Control.Feedback type="invalid">
@@ -1047,7 +1162,6 @@ const Vacinas = () => {
                                     isInvalid={
                                         !!errors.fabricante
                                     }
-                                    required
                                 />
 
                                 <Form.Control.Feedback type="invalid">
@@ -1080,7 +1194,6 @@ const Vacinas = () => {
                                     isInvalid={
                                         !!errors.via_administracao
                                     }
-                                    required
                                 />
 
                                 <Form.Control.Feedback type="invalid">
@@ -1089,6 +1202,7 @@ const Vacinas = () => {
                             </Form.Group>
                         </Row>
 
+                        {/* BOTÕES */}
                         <div className="d-flex justify-content-end gap-2 mt-3">
                             <Button
                                 variant="secondary"
@@ -1102,7 +1216,7 @@ const Vacinas = () => {
                                 type="submit"
                             >
                                 {modoEdicao
-                                    ? 'Atualizar Vacina'
+                                    ? 'Atualizar'
                                     : 'Salvar'}
                             </Button>
                         </div>
@@ -1112,8 +1226,8 @@ const Vacinas = () => {
 
             {/* TABELA */}
             <div className="table-responsive">
-                <table className="vacinas-table">
-                    <thead>
+                <table className="vacinas-table table table-striped table-hover">
+                    <thead className="table-header-primary">
                         <tr>
                             <th>Nome</th>
                             <th>Indicação</th>
@@ -1122,7 +1236,7 @@ const Vacinas = () => {
                             <th>Laboratório</th>
                             <th>Fabricante</th>
                             <th>Via Administração</th>
-                            <th>Ações</th>
+                            <th className="text-center">Ações</th>
                         </tr>
                     </thead>
 
@@ -1135,17 +1249,17 @@ const Vacinas = () => {
                                 >
                                     <div className="text-muted">
                                         <p className="mb-1">
-                                            {termoBuscaDebounced ||
-                                            filtrosSelecionados.length >
-                                                0
+                                            {temFiltrosAtivos
                                                 ? 'Nenhuma vacina encontrada com os filtros aplicados.'
                                                 : 'Nenhuma vacina cadastrada.'}
                                         </p>
 
-                                        <small>
-                                            Tente ajustar os filtros
-                                            de busca
-                                        </small>
+                                        {temFiltrosAtivos && (
+                                            <small>
+                                                Tente ajustar os filtros
+                                                de busca
+                                            </small>
+                                        )}
                                     </div>
                                 </td>
                             </tr>
@@ -1192,30 +1306,36 @@ const Vacinas = () => {
                                         {vacina.via_administracao}
                                     </td>
 
-                                    <td className="btn-actions">
-                                        <Button
-                                            variant="info"
-                                            className="btn-edit me-2"
-                                            onClick={() =>
-                                                handleEditarVacina(
-                                                    vacina
-                                                )
-                                            }
-                                        >
-                                            Editar
-                                        </Button>
+                                    <td className="actions-cell">
+                                        <div className="linha-acoes">
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-editar"
+                                                onClick={() =>
+                                                    handleEditarVacina(
+                                                        vacina
+                                                    )
+                                                }
+                                                title="Editar vacina"
+                                            >
+                                                <FiEdit2 size={14} />
+                                                <span>Editar</span>
+                                            </button>
 
-                                        <Button
-                                            variant="danger"
-                                            className="btn-delete"
-                                            onClick={() =>
-                                                handleExcluirVacina(
-                                                    vacina.id
-                                                )
-                                            }
-                                        >
-                                            Excluir
-                                        </Button>
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-excluir"
+                                                onClick={() =>
+                                                    handleExcluirVacina(
+                                                        vacina.id
+                                                    )
+                                                }
+                                                title="Excluir vacina"
+                                            >
+                                                <FiTrash2 size={14} />
+                                                <span>Excluir</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -1223,6 +1343,7 @@ const Vacinas = () => {
                     </tbody>
                 </table>
             </div>
+
         </div>
     );
 };

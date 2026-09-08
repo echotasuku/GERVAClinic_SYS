@@ -1,109 +1,561 @@
-.recomendacao-container {
-    padding: 20px;
-    max-width: 900px;
-    margin: 0 auto;
+/* ==========================================
+   CONTAINER GERAL
+========================================== */
+.recomendacaovacina-container {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.recomendacao-container h2 {
-    margin-bottom: 20px;
-    font-weight: bold;
+/* ==========================================
+   NOTIFICAÇÃO
+========================================== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    max-width: 400px;
+    word-break: break-word;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification.success {
+    background-color: #198754;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+.notification.warning {
+    background-color: #ffc107;
     color: #212529;
 }
 
-/* Tabela */
-.recomendacao-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
-.recomendacao-table th,
-.recomendacao-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-    vertical-align: middle;
-    font-size: 14px;
+/* ==========================================
+   CABEÇALHO
+========================================== */
+.header-recomendacaovacina {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dee2e6;
 }
 
-.recomendacao-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+.header-recomendacaovacina h2 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
 }
 
-.recomendacao-row:nth-child(even) {
-    background-color: #f9f9f9;
+/* ==========================================
+   FILTROS
+========================================== */
+.filtros-container {
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
 }
 
-.recomendacao-row:hover {
-    background-color: #f1f1f1;
+.filtro-row {
+    margin-bottom: 0.5rem;
 }
 
-.recomendacao-table .actions-cell {
-    text-align: center;
+.filtro-botao-col {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Alturas alinhadas (42px) */
+.filtros-container .input-group-text,
+.filtros-container .input-busca {
+    height: 42px;
+}
+
+.input-busca {
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    color: #6c757d;
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* Ícone de funil fixo no campo do filtro */
+.filtro-control-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 10px;
+    color: #0d6efd;
+    flex-shrink: 0;
+}
+
+/* Chips dentro do campo do filtro */
+.chip-conteudo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 160px;
+}
+
+.chip-icone {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.chip-texto {
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Modal */
-.custom-modal-width {
-    max-width: 650px;
-    width: 90%;
+/* ==========================================
+   BOTÃO LIMPAR FILTROS
+========================================== */
+.filtro-limpar-btn {
+    width: 100%;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.recomendacao-modal-theme .modal-header {
-    background-color: #212529;
-    color: white;
-    border-bottom: 1px solid #000;
-    border-radius: 0;
+.filtro-limpar-btn:hover {
+    background-color: #fdecee;
+    border-color: #f5c2c7;
+    color: #dc3545;
 }
 
-.recomendacao-modal-theme .modal-title {
-    color: white;
+/* ==========================================
+   GARANTIA DE LEGIBILIDADE DOS SELECTS
+========================================== */
+.react-select__control {
+    background-color: #fff !important;
 }
 
-.recomendacao-modal-theme .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
+.react-select__single-value {
+    color: #212529 !important;
 }
 
-.recomendacao-modal-theme .modal-content {
-    border-radius: 0;
-    border: none;
-    padding-top: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.react-select__input {
+    color: #212529 !important;
 }
 
-.recomendacao-modal-theme .modal-body {
-    padding: 1.2rem;
+.react-select__placeholder {
+    color: #6c757d !important;
 }
 
-/* Inputs compactos */
-.recomendacao-modal-theme .form-control,
-.recomendacao-modal-theme .form-select {
-    max-width: 250px;
-    font-size: 14px;
-    padding: 6px 10px;
-    display: inline-block;
+.react-select__option {
+    color: #212529;
 }
 
-/* Observações ocupa mais espaço */
-.recomendacao-modal-theme textarea {
-    max-width: 100%;
-    min-height: 80px;
-    font-size: 14px;
+.react-select__option--is-selected {
+    color: #fff !important;
 }
 
-/* Status destacado na tabela */
-.recomendacao-table td:nth-child(4) {
-    text-align: center;
+.react-select__menu {
+    background-color: #fff !important;
+}
+
+/* ==========================================
+   BADGES DOS FILTROS
+========================================== */
+.filtros-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.badge-filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.badge-busca {
+    background-color: #6c757d;
+}
+
+.badge-paciente {
+    background-color: #0d6efd;
+}
+
+.badge-vacina {
+    background-color: #6f42c1;
+}
+
+.badge-status {
+    background-color: #198754;
+}
+
+.badge-icone {
+    display: inline-flex;
+    align-items: center;
+}
+
+.badge-tipo {
+    opacity: 0.9;
     font-weight: 600;
 }
 
-.recomendacao-table td:nth-child(4).status-pendente {
-    color: #ffc107;
-    /* amarelo */
+.badge-valor {
+    font-weight: 500;
 }
 
-.recomendacao-table td:nth-child(4).status-aplicada {
-    color: #198754;
-    /* verde */
+.badge-remover {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.badge-remover:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================
+ /* ==========================================
+   TABELA — PADRONIZADA
+========================================== */
+ .recomendacaovacina-table {
+     background-color: #fff;
+     border-radius: 10px;
+     overflow: hidden;
+     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+ }
+
+ /* ==========================================
+   CABEÇALHO DA TABELA — AZUL #0D6EFD
+========================================== */
+ .recomendacaovacina-table thead,
+ .recomendacaovacina-table thead.table-header-primary,
+ .recomendacaovacina-table.table>thead {
+     background-color: #0d6efd !important;
+ }
+
+ .recomendacaovacina-table thead tr,
+ .recomendacaovacina-table thead.table-header-primary tr {
+     background-color: #0d6efd !important;
+ }
+
+ .recomendacaovacina-table thead th,
+ .recomendacaovacina-table thead.table-header-primary th,
+ .recomendacaovacina-table.table>thead>tr>th {
+     background-color: #0d6efd !important;
+     color: #ffffff !important;
+     font-weight: 600;
+     font-size: 0.9rem;
+     padding: 12px;
+     white-space: nowrap;
+     border: none !important;
+     vertical-align: middle;
+ }
+
+ /* ==========================================
+   CORPO DA TABELA
+========================================== */
+ .recomendacaovacina-table tbody td {
+     padding: 12px;
+     vertical-align: middle;
+     font-size: 0.9rem;
+     color: #495057;
+ }
+
+ .recomendacaovacina-table tbody tr:hover {
+     background-color: #E6F0FA !important;
+ }
+/* ==========================================
+   STATUS BADGES
+========================================== */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-pendente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-realizada {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-cancelada {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* ==========================================
+   BOTÕES DE AÇÃO (EDITAR / EXCLUIR)
+========================================== */
+.linha-acoes {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-acao {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    padding: 7px 14px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.83rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-acao svg {
+    flex-shrink: 0;
+}
+
+.btn-acao-editar {
+    background-color: #e7f1ff !important;
+    color: #0d6efd !important;
+}
+
+.btn-acao-editar:hover {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+.btn-acao-excluir {
+    background-color: #fdecee !important;
+    color: #dc3545 !important;
+}
+
+.btn-acao-excluir:hover {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.25);
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+.custom-modal-width {
+    max-width: 800px;
+}
+
+.recomendacaovacina-modal-theme .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.recomendacaovacina-modal-theme .modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.recomendacaovacina-modal-theme .modal-title {
+    font-weight: 600;
+    color: #212529;
+}
+
+.recomendacaovacina-modal-theme .modal-body {
+    padding: 1.5rem;
+}
+
+.recomendacaovacina-modal-theme .form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.35rem;
+}
+
+.recomendacaovacina-modal-theme .form-control {
+    border-radius: 0.375rem;
+    color: #212529;
+    background-color: #fff;
+}
+
+.recomendacaovacina-modal-theme .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.recomendacaovacina-modal-theme .form-select {
+    border-radius: 0.375rem;
+    color: #212529;
+    background-color: #fff;
+}
+
+.recomendacaovacina-modal-theme .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* ==========================================
+   OPÇÕES DO MENU DO FILTRO
+========================================== */
+.option-label-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+
+.option-label-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.option-type-prefix {
+    font-weight: 600;
+    opacity: 0.75;
+    font-size: 0.875em;
+}
+
+.option-check {
+    font-weight: 700;
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   SCROLLBAR DO MENU (PORTAL)
+========================================== */
+.react-select__menu-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+    background: #c2c9d1;
+    border-radius: 4px;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb:hover {
+    background: #a8b0b9;
+}
+
+.react-select__menu-list {
+    scrollbar-width: thin;
+    scrollbar-color: #c2c9d1 #f1f1f1;
+}
+
+/* ==========================================
+   RESPONSIVO
+========================================== */
+@media (max-width: 768px) {
+    .recomendacaovacina-container {
+        padding: 1rem;
+    }
+
+    .header-recomendacaovacina {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .header-recomendacaovacina h2 {
+        text-align: center;
+    }
+
+    .custom-modal-width {
+        max-width: 95% !important;
+        margin: 1rem auto;
+    }
+
+    .linha-acoes {
+        flex-direction: column;
+    }
+
+    .btn-acao {
+        width: 100%;
+        justify-content: center;
+    }
 }

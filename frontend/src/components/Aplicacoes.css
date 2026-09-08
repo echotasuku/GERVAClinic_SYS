@@ -139,7 +139,6 @@
 
 /* ==========================================
    BOTÃO LIMPAR FILTROS
-   (ESTÁTICO - NÃO SE MEXE NO HOVER)
 ========================================== */
 .filtro-limpar-btn {
     width: 100%;
@@ -155,12 +154,10 @@
     font-size: 0.875rem;
     font-weight: 600;
     white-space: nowrap;
-    /* texto nunca corta */
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Hover só muda cor — SEM movimento, SEM sombra, SEM rotação */
 .filtro-limpar-btn:hover {
     background-color: #fdecee;
     border-color: #f5c2c7;
@@ -168,8 +165,227 @@
 }
 
 /* ==========================================
+   SELECT DE FILTRO - ESTILOS COMPLETOS
+========================================== */
+.filtro-select {
+    min-height: 42px;
+}
+
+.react-select-filtro__control {
+    min-height: 42px;
+    border-color: #ced4da;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.react-select-filtro__control:hover {
+    border-color: #86b7fe;
+}
+
+.react-select-filtro__control--is-focused {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.react-select-filtro__value-container {
+    padding: 2px 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.react-select-filtro__input {
+    color: #212529;
+}
+
+.react-select-filtro__placeholder {
+    color: #6c757d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.react-select-filtro__multi-value {
+    border-radius: 20px;
+    padding: 3px 8px;
+    margin: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* Cores dos chips por tipo */
+.react-select-filtro__multi-value[data-type="paciente"] {
+    background-color: #e7f1ff;
+    border: 1px solid #b6d4fe;
+}
+
+.react-select-filtro__multi-value[data-type="profissional"] {
+    background-color: #e6f4ea;
+    border: 1px solid #a3cfbb;
+}
+
+.react-select-filtro__multi-value[data-type="vacina"] {
+    background-color: #f0e7fb;
+    border: 1px solid #d4bdf5;
+}
+
+.react-select-filtro__multi-value-label {
+    font-size: 0.83rem;
+    font-weight: 600;
+    padding: 0;
+}
+
+.react-select-filtro__multi-value-remove {
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.react-select-filtro__multi-value-remove:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.react-select-filtro__dropdown-indicator {
+    color: #6c757d;
+}
+
+.react-select-filtro__dropdown-indicator:hover {
+    color: #0d6efd;
+}
+
+.react-select-filtro__clear-indicator {
+    color: #6c757d;
+}
+
+.react-select-filtro__clear-indicator:hover {
+    color: #dc3545;
+}
+
+.react-select-filtro__menu {
+    z-index: 1050;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    margin-top: 4px;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+}
+
+.react-select-filtro__menu-list {
+    max-height: 280px;
+    padding: 8px;
+}
+
+.react-select-filtro__option {
+    border-radius: 6px;
+    margin-bottom: 4px;
+    padding: 10px 12px;
+    cursor: pointer;
+    color: #212529;
+    font-weight: 400;
+}
+
+.react-select-filtro__option--is-selected {
+    background-color: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+}
+
+.react-select-filtro__option--is-focused {
+    background-color: #e7f1ff;
+}
+
+.react-select-filtro__option:active {
+    background-color: #cfe2ff;
+}
+
+.react-select-filtro__option--is-selected:active {
+    background-color: #0b5ed7;
+}
+
+/* ==========================================
+   SELECT DO MODAL - ESTILOS COMPLETOS
+========================================== */
+.modal-select {
+    min-height: 38px;
+}
+
+.react-select-modal__control {
+    min-height: 38px;
+    border-color: #ced4da;
+    border-radius: 0.375rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.react-select-modal__control:hover {
+    border-color: #86b7fe;
+}
+
+.react-select-modal__control--is-focused {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.react-select-modal__input {
+    color: #212529 !important;
+}
+
+.react-select-modal__single-value {
+    color: #212529 !important;
+    font-weight: 500;
+}
+
+.react-select-modal__placeholder {
+    color: #6c757d;
+}
+
+.react-select-modal__menu {
+    z-index: 1060;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    margin-top: 4px;
+    background-color: #fff;
+}
+
+.react-select-modal__menu-list {
+    max-height: 220px;
+    padding: 6px;
+}
+
+.react-select-modal__option {
+    border-radius: 6px;
+    margin-bottom: 2px;
+    padding: 8px 10px;
+    cursor: pointer;
+    color: #212529;
+}
+
+.react-select-modal__option--is-selected {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.react-select-modal__option--is-focused {
+    background-color: #e7f1ff;
+}
+
+.react-select-modal__option:active {
+    background-color: #cfe2ff;
+}
+
+.react-select-modal__option--is-selected:active {
+    background-color: #0b5ed7;
+}
+
+/* ==========================================
    GARANTIA DE LEGIBILIDADE DOS SELECTS
-   (texto NUNCA fica branco/invisível)
 ========================================== */
 .react-select__control {
     background-color: #fff !important;
@@ -294,13 +510,36 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.aplicacoes-table thead th {
+/* ==========================================
+   CABEÇALHO DA TABELA
+========================================== */
+.aplicacoes-table thead,
+.aplicacoes-table thead.table-header-primary,
+.aplicacoes-table.table>thead {
+    background-color: #0d6efd !important;
+}
+
+.aplicacoes-table thead tr,
+.aplicacoes-table thead.table-header-primary tr {
+    background-color: #0d6efd !important;
+}
+
+.aplicacoes-table thead th,
+.aplicacoes-table thead.table-header-primary th,
+.aplicacoes-table.table>thead>tr>th {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
     font-weight: 600;
     font-size: 0.9rem;
     padding: 12px;
     white-space: nowrap;
+    border: none !important;
+    vertical-align: middle;
 }
 
+/* ==========================================
+   CORPO DA TABELA
+========================================== */
 .aplicacoes-table tbody td {
     padding: 12px;
     vertical-align: middle;
@@ -309,15 +548,11 @@
 }
 
 .aplicacoes-table tbody tr:hover {
-    background-color: #f1f3f5;
+    background-color: #E6F0FA !important;
 }
 
 /* ==========================================
-   BOTÕES DE AÇÃO (EDITAR / EXCLUIR)
-========================================== */
-/* ==========================================
-   BOTÕES DE AÇÃO (EDITAR / EXCLUIR)
-   Classes renomeadas + !important = CSS antigo não interfere mais
+   BOTÕES DE AÇÃO
 ========================================== */
 .linha-acoes {
     display: flex !important;
@@ -332,13 +567,11 @@
     justify-content: center !important;
     gap: 6px;
     width: auto !important;
-    /* nunca mais cortado */
     height: auto !important;
     max-width: none !important;
     padding: 7px 14px !important;
     border: none !important;
     border-radius: 8px !important;
-    /* formato pílula */
     font-size: 0.83rem !important;
     font-weight: 600 !important;
     line-height: 1.2 !important;
@@ -351,7 +584,7 @@
     flex-shrink: 0;
 }
 
-/* EDITAR — azul suave, hover azul sólido */
+/* EDITAR */
 .btn-acao-editar {
     background-color: #e7f1ff !important;
     color: #0d6efd !important;
@@ -363,7 +596,7 @@
     box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
 }
 
-/* EXCLUIR — vermelho suave, hover vermelho sólido */
+/* EXCLUIR */
 .btn-acao-excluir {
     background-color: #fdecee !important;
     color: #dc3545 !important;
@@ -453,29 +686,118 @@
 }
 
 /* ==========================================
-   SCROLLBAR DO MENU (PORTAL)
+   SCROLLBAR DO MENU
 ========================================== */
-.react-select__menu-list::-webkit-scrollbar {
+.react-select__menu-list::-webkit-scrollbar,
+.react-select-filtro__menu-list::-webkit-scrollbar,
+.react-select-modal__menu-list::-webkit-scrollbar {
     width: 8px;
 }
 
-.react-select__menu-list::-webkit-scrollbar-track {
+.react-select__menu-list::-webkit-scrollbar-track,
+.react-select-filtro__menu-list::-webkit-scrollbar-track,
+.react-select-modal__menu-list::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
 }
 
-.react-select__menu-list::-webkit-scrollbar-thumb {
+.react-select__menu-list::-webkit-scrollbar-thumb,
+.react-select-filtro__menu-list::-webkit-scrollbar-thumb,
+.react-select-modal__menu-list::-webkit-scrollbar-thumb {
     background: #c2c9d1;
     border-radius: 4px;
 }
 
-.react-select__menu-list::-webkit-scrollbar-thumb:hover {
+.react-select__menu-list::-webkit-scrollbar-thumb:hover,
+.react-select-filtro__menu-list::-webkit-scrollbar-thumb:hover,
+.react-select-modal__menu-list::-webkit-scrollbar-thumb:hover {
     background: #a8b0b9;
 }
 
-.react-select__menu-list {
+.react-select__menu-list,
+.react-select-filtro__menu-list,
+.react-select-modal__menu-list {
     scrollbar-width: thin;
     scrollbar-color: #c2c9d1 #f1f1f1;
+}
+
+/* ==========================================
+   INFORMAÇÕES FINANCEIRAS
+========================================== */
+.aplicacao-financeiro-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.aplicacao-financeiro-titulo {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #212529;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.campo-financeiro-readonly {
+    background-color: #e9ecef;
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.aplicacao-financeiro-resumo {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.financeiro-resumo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.financeiro-resumo-item:last-child {
+    border-bottom: none;
+}
+
+.financeiro-resumo-item span {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.financeiro-resumo-item strong {
+    color: #212529;
+    font-size: 1rem;
+}
+
+.financeiro-valor-final {
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid #dee2e6;
+}
+
+.financeiro-valor-final span {
+    font-weight: 600;
+    color: #212529;
+}
+
+.financeiro-valor-final strong {
+    font-size: 1.1rem;
+    color: #198754;
+}
+
+.aplicacao-desconto-ajuda {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
 }
 
 /* ==========================================

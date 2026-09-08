@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
-import { FiSearch } from 'react-icons/fi';
+import {
+    FiSearch, FiX, FiEdit2, FiTrash2, FiRotateCcw
+} from 'react-icons/fi';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './TipoVacina.css';
 
-
 const TipoVacina = () => {
+    // ==========================================
+    // ESTADOS
+    // ==========================================
+
     const [tiposVacinas, setTiposVacinas] = useState([]);
     const [tiposVacinasFiltrados, setTiposVacinasFiltrados] = useState([]);
     const [novoTipoVacina, setNovoTipoVacina] = useState({ nome: '', descricao: '' });
@@ -20,10 +25,12 @@ const TipoVacina = () => {
         type: ''
     });
 
-    // Estado para busca
     const [termoBusca, setTermoBusca] = useState('');
 
-    // ===== NOTIFICAÇÕES =====
+    // ==========================================
+    // NOTIFICAÇÕES
+    // ==========================================
+
     const showNotification = useCallback((message, type = 'success') => {
         setNotification({
             show: true,
@@ -39,7 +46,10 @@ const TipoVacina = () => {
         }, 5000);
     }, []);
 
-    // ===== REQUISIÇÕES API =====
+    // ==========================================
+    // REQUISIÇÕES API
+    // ==========================================
+
     const fetchTiposVacinas = useCallback(async () => {
         try {
             const token = localStorage.getItem('auth_token');
@@ -54,12 +64,18 @@ const TipoVacina = () => {
         }
     }, [showNotification]);
 
-    // ===== EFFECTS =====
+    // ==========================================
+    // EFFECTS
+    // ==========================================
+
     useEffect(() => {
         fetchTiposVacinas();
     }, [fetchTiposVacinas]);
 
-    // ===== FUNÇÃO DE BUSCA =====
+    // ==========================================
+    // FUNÇÃO DE BUSCA
+    // ==========================================
+
     const filtrarTiposVacinas = useCallback(() => {
         let filtrados = [...tiposVacinas];
 
@@ -75,17 +91,26 @@ const TipoVacina = () => {
         setTiposVacinasFiltrados(filtrados);
     }, [tiposVacinas, termoBusca]);
 
-    // ===== EFETUAR BUSCA QUANDO O TERMO MUDAR =====
+    // ==========================================
+    // EFETUAR BUSCA QUANDO O TERMO MUDAR
+    // ==========================================
+
     useEffect(() => {
         filtrarTiposVacinas();
     }, [filtrarTiposVacinas]);
 
-    // ===== LIMPAR BUSCA =====
+    // ==========================================
+    // LIMPAR BUSCA
+    // ==========================================
+
     const limparBusca = () => {
         setTermoBusca('');
     };
 
-    // ===== HANDLERS =====
+    // ==========================================
+    // HANDLERS
+    // ==========================================
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNovoTipoVacina({ ...novoTipoVacina, [name]: value });
@@ -93,6 +118,10 @@ const TipoVacina = () => {
             setErrors(prevErrors => ({ ...prevErrors, [name]: null }));
         }
     };
+
+    // ==========================================
+    // VALIDAR FORMULÁRIO
+    // ==========================================
 
     const validateForm = () => {
         const newErrors = {};
@@ -105,6 +134,10 @@ const TipoVacina = () => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
+    // ==========================================
+    // ENVIAR FORMULÁRIO
+    // ==========================================
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
@@ -152,6 +185,30 @@ const TipoVacina = () => {
         }
     };
 
+    // ==========================================
+    // ABRIR / FECHAR MODAL
+    // ==========================================
+
+    const abrirModal = () => {
+        setShowModal(true);
+        setModoEdicao(false);
+        setNovoTipoVacina({ nome: '', descricao: '' });
+        setTipoVacinaParaEdicao(null);
+        setErrors({});
+    };
+
+    const fecharModal = () => {
+        setShowModal(false);
+        setModoEdicao(false);
+        setTipoVacinaParaEdicao(null);
+        setNovoTipoVacina({ nome: '', descricao: '' });
+        setErrors({});
+    };
+
+    // ==========================================
+    // EDITAR
+    // ==========================================
+
     const handleEditarTipoVacina = (tipoVacina) => {
         setNovoTipoVacina({ 
             nome: tipoVacina.nome, 
@@ -161,6 +218,10 @@ const TipoVacina = () => {
         setModoEdicao(true);
         setShowModal(true);
     };
+
+    // ==========================================
+    // EXCLUIR
+    // ==========================================
 
     const handleExcluirTipoVacina = async (tipoVacina) => {
         if (!window.confirm(`Tem certeza que deseja excluir o tipo "${tipoVacina.nome}"?`)) {
@@ -180,81 +241,112 @@ const TipoVacina = () => {
         }
     };
 
-    const abrirModal = () => {
-        setShowModal(true);
-        setModoEdicao(false);
-        setNovoTipoVacina({ nome: '', descricao: '' });
-        setTipoVacinaParaEdicao(null);
-        setErrors({});
-    };
-
-    const fecharModal = () => {
-        setShowModal(false);
-        setModoEdicao(false);
-        setTipoVacinaParaEdicao(null);
-        setNovoTipoVacina({ nome: '', descricao: '' });
-        setErrors({});
-    };
+    // ==========================================
+    // RENDER
+    // ==========================================
 
     return (
-        <div className="container py-4 tipos-vacinas-page">
+        <div className="tipovacina-container">
+
+            {/* NOTIFICAÇÃO */}
             {notification.show && (
                 <div className={`notification ${notification.type}`}>
                     {notification.message}
                 </div>
             )}
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            {/* CABEÇALHO */}
+            <div className="header-tipovacina">
                 <h2>Tipos de Vacinas</h2>
-                <Button variant="primary" onClick={abrirModal}>Adicionar Tipo</Button>
+                <Button variant="primary" onClick={abrirModal}>
+                    Adicionar Tipo
+                </Button>
             </div>
 
-            {/* Barra de Busca */}
-            <div className="filtros-container mb-4">
-                <Row className="align-items-center g-2">
+            {/* FILTROS */}
+            <div className="filtros-container">
+
+                <Row className="filtro-row g-2">
+
+                    {/* BUSCA */}
                     <Col md={9}>
-                        <div className="input-group filtro-input-group">
-                            <span className="input-group-text filtro-icone">
-                                <FiSearch size={16} />
+                        <div className="input-group">
+                            <span className="input-group-text">
+                                <FiSearch size={18} />
                             </span>
                             <Form.Control
                                 type="text"
                                 placeholder="Buscar por nome ou descrição..."
                                 value={termoBusca}
                                 onChange={(e) => setTermoBusca(e.target.value)}
-                                className="filtro-input"
+                                className="input-busca"
                             />
                         </div>
                     </Col>
-                    <Col md={3}>
-                        <Button 
-                            variant="outline-secondary" 
+
+                    {/* LIMPAR */}
+                    <Col md={3} className="filtro-botao-col">
+                        <button
+                            type="button"
+                            className="filtro-limpar-btn"
                             onClick={limparBusca}
-                            className="w-100 filtro-botao"
+                            title="Limpar busca"
                         >
-                            Limpar
-                        </Button>
+                            <FiRotateCcw size={15} />
+                            <span>Limpar</span>
+                        </button>
                     </Col>
+
                 </Row>
+
+                {/* BADGES */}
+                {termoBusca && (
+                    <div className="filtros-badges">
+                        <div className="badge-filtro badge-busca">
+                            <span className="badge-tipo">Busca:</span>
+                            <span className="badge-valor">{termoBusca}</span>
+                            <button
+                                type="button"
+                                className="badge-remover"
+                                onClick={() => setTermoBusca('')}
+                                title="Remover busca"
+                            >
+                                <FiX size={12} />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* CONTADOR */}
                 <div className="mt-2">
                     <small className="text-muted">
                         {tiposVacinasFiltrados.length} tipo(s) de vacina encontrado(s)
                         {termoBusca && ` - Busca: "${termoBusca}"`}
                     </small>
                 </div>
+
             </div>
 
-            {/* Modal de Cadastro/Edição */}
-            <Modal show={showModal} onHide={fecharModal} centered>
+            {/* MODAL */}
+            <Modal
+                show={showModal}
+                onHide={fecharModal}
+                centered
+                dialogClassName="custom-modal-width"
+                className="tipovacina-modal-theme"
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>
                         {modoEdicao ? 'Editar Tipo de Vacina' : 'Adicionar Novo Tipo'}
                     </Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
                     <Form noValidate onSubmit={handleFormSubmit}>
-                        <Row>
-                            <Form.Group as={Col} md="6" className="mb-3">
+
+                        {/* NOME E DESCRIÇÃO */}
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="6" controlId="formNome">
                                 <Form.Label>Nome</Form.Label>
                                 <Form.Control
                                     type="text"
@@ -263,14 +355,13 @@ const TipoVacina = () => {
                                     value={novoTipoVacina.nome}
                                     onChange={handleInputChange}
                                     isInvalid={!!errors.nome}
-                                    required
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {errors.nome}
                                 </Form.Control.Feedback>
                             </Form.Group>
 
-                            <Form.Group as={Col} md="6" className="mb-3">
+                            <Form.Group as={Col} md="6" controlId="formDescricao">
                                 <Form.Label>Descrição</Form.Label>
                                 <Form.Control
                                     type="text"
@@ -279,7 +370,6 @@ const TipoVacina = () => {
                                     value={novoTipoVacina.descricao}
                                     onChange={handleInputChange}
                                     isInvalid={!!errors.descricao}
-                                    required
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {errors.descricao}
@@ -287,6 +377,7 @@ const TipoVacina = () => {
                             </Form.Group>
                         </Row>
 
+                        {/* BOTÕES */}
                         <div className="d-flex justify-content-end gap-2 mt-3">
                             <Button variant="secondary" onClick={fecharModal}>
                                 Cancelar
@@ -295,20 +386,22 @@ const TipoVacina = () => {
                                 {modoEdicao ? 'Atualizar' : 'Adicionar'}
                             </Button>
                         </div>
+
                     </Form>
                 </Modal.Body>
             </Modal>
 
-            {/* Tabela de Tipos de Vacinas */}
+            {/* TABELA */}
             <div className="table-responsive">
-                <table className="tipos-vacinas-table">
-                    <thead>
+                <table className="tipovacina-table table table-striped table-hover">
+                    <thead className="table-header-primary">
                         <tr>
                             <th>Nome</th>
                             <th>Descrição</th>
                             <th className="text-center">Ações</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {tiposVacinasFiltrados.length === 0 ? (
                             <tr>
@@ -329,21 +422,27 @@ const TipoVacina = () => {
                                     <td>{tipoVacina.nome}</td>
                                     <td>{tipoVacina.descricao}</td>
                                     <td className="actions-cell">
-                                        <Button 
-                                            variant="info" 
-                                            size="sm" 
-                                            onClick={() => handleEditarTipoVacina(tipoVacina)}
-                                        >
-                                            Editar
-                                        </Button>
-                                        <Button 
-                                            variant="danger" 
-                                            size="sm" 
-                                            onClick={() => handleExcluirTipoVacina(tipoVacina)} 
-                                            className="ms-2"
-                                        >
-                                            Excluir
-                                        </Button>
+                                        <div className="linha-acoes">
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-editar"
+                                                onClick={() => handleEditarTipoVacina(tipoVacina)}
+                                                title="Editar tipo de vacina"
+                                            >
+                                                <FiEdit2 size={14} />
+                                                <span>Editar</span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-excluir"
+                                                onClick={() => handleExcluirTipoVacina(tipoVacina)}
+                                                title="Excluir tipo de vacina"
+                                            >
+                                                <FiTrash2 size={14} />
+                                                <span>Excluir</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -351,6 +450,7 @@ const TipoVacina = () => {
                     </tbody>
                 </table>
             </div>
+
         </div>
     );
 };

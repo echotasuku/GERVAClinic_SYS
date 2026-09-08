@@ -6,6 +6,7 @@ use App\Models\Estoque;
 use App\Models\User;
 use App\Models\Vacina;
 use App\Notifications\AlertaSistema;
+use App\Notifications\AlertaSistemaEmail;
 use App\Events\NovoAlerta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -21,21 +22,44 @@ class EstoqueController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'lote' => 'required|string|max:255',
-            'preco' => 'nullable|numeric|min:0',
-            'quantidade_estoque' => 'required|integer|min:1',
-            'data_validade' => 'required|date|after:today',
+            'lote'                  => 'required|string|max:255',
+            'preco_unitario'        => 'nullable|numeric|min:0',
+            'quantidade_estoque'    => 'required|integer|min:1',
+            'data_validade'         => 'required|date|after:today',
             'temperatura_recebimento' => 'nullable|numeric',
-            'hora' => 'nullable|date_format:H:i',
-            'vacina_id' => 'required|exists:vacinas,id',
+            'hora'                  => 'nullable|date_format:H:i',
+            'vacina_id'             => 'required|exists:vacinas,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $estoque = Estoque::create($request->all());
+        $dados = [
+            'lote' => $request->lote,
+            'preco_unitario' => $request->preco_unitario,
+            'quantidade_estoque' => $request->quantidade_estoque,
+            'data_validade' => $request->data_validade,
+            'temperatura_recebimento' => $request->temperatura_recebimento,
+            'hora' => $request->hora,
+            'vacina_id' => $request->vacina_id,
+        ];
+
+        if (
+            $request->filled('preco_unitario') &&
+            $request->preco_unitario !== null
+        ) {
+            $dados['valor_total'] =
+                (float) $request->quantidade_estoque *
+                (float) $request->preco_unitario;
+        } else {
+            $dados['valor_total'] = null;
+        }
+
+        $estoque = Estoque::create($dados);
+
         $this->verificarEDispararAlertas();
+
         return response()->json($estoque, 201);
     }
 
@@ -50,21 +74,44 @@ class EstoqueController extends Controller
         $estoque = Estoque::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'lote' => 'required|string|max:255',
-            'preco' => 'nullable|numeric|min:0',
-            'quantidade_estoque' => 'required|integer|min:1',
-            'data_validade' => 'required|date|after:today',
-            'hora' => 'nullable|date_format:H:i',
+            'lote'                  => 'required|string|max:255',
+            'preco_unitario'        => 'nullable|numeric|min:0',
+            'quantidade_estoque'    => 'required|integer|min:1',
+            'data_validade'         => 'required|date|after:today',
+            'hora'                  => 'nullable|date_format:H:i',
             'temperatura_recebimento' => 'nullable|numeric',
-            'vacina_id' => 'required|exists:vacinas,id',
+            'vacina_id'             => 'required|exists:vacinas,id',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $estoque->update($request->all());
+        $dados = [
+            'lote' => $request->lote,
+            'preco_unitario' => $request->preco_unitario,
+            'quantidade_estoque' => $request->quantidade_estoque,
+            'data_validade' => $request->data_validade,
+            'hora' => $request->hora,
+            'temperatura_recebimento' => $request->temperatura_recebimento,
+            'vacina_id' => $request->vacina_id,
+        ];
+
+        if (
+            $request->filled('preco_unitario') &&
+            $request->preco_unitario !== null
+        ) {
+            $dados['valor_total'] =
+                (float) $request->quantidade_estoque *
+                (float) $request->preco_unitario;
+        } else {
+            $dados['valor_total'] = null;
+        }
+
+        $estoque->update($dados);
+
         $this->verificarEDispararAlertas();
+
         return response()->json($estoque);
     }
 
@@ -73,6 +120,7 @@ class EstoqueController extends Controller
         $estoque = Estoque::findOrFail($id);
         $estoque->delete();
         $this->verificarEDispararAlertas();
+
         return response()->noContent();
     }
 
@@ -81,38 +129,47 @@ class EstoqueController extends Controller
         $usuarios = User::where('role', 'admin')->get();
         $todosAlertas = [];
 
-        
+        // ALERTA: ESTOQUE BAIXO
         $estoqueBaixo = Estoque::with('vacina')
             ->where('quantidade_estoque', '<', 10)
             ->get();
 
         foreach ($estoqueBaixo as $item) {
             $alerta = [
-                'tipo' => 'estoque_baixo',
-                'mensagem' => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades"
+                'tipo'       => 'estoque_baixo',
+                'mensagem'   => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades",
+                'link'       => '/estoque',
+                'recurso_id' => $item->id,
             ];
+
             $todosAlertas[] = $alerta;
 
             foreach ($usuarios as $usuario) {
                 $usuario->notify(new AlertaSistema($alerta));
+                $usuario->notify(new AlertaSistemaEmail($alerta));
             }
         }
 
-        
+        // ALERTA: VALIDADE PRÓXIMA
         $validadeProxima = Estoque::with('vacina')
             ->whereDate('data_validade', '<=', now()->addDays(30))
             ->get();
 
         foreach ($validadeProxima as $item) {
             $dias = now()->diffInDays($item->data_validade);
+
             $alerta = [
-                'tipo' => 'validade_proxima',
-                'mensagem' => "Validade próxima: {$item->vacina->nome} - vence em {$dias} dias"
+                'tipo'       => 'validade_proxima',
+                'mensagem'   => "Validade próxima: {$item->vacina->nome} - vence em {$dias} dias",
+                'link'       => '/estoque',
+                'recurso_id' => $item->id,
             ];
+
             $todosAlertas[] = $alerta;
 
             foreach ($usuarios as $usuario) {
                 $usuario->notify(new AlertaSistema($alerta));
+                $usuario->notify(new AlertaSistemaEmail($alerta));
             }
         }
 
@@ -121,6 +178,7 @@ class EstoqueController extends Controller
         }
     }
 
+    // Rota: /api/alertas — Lista apenas leitura
     public function verificarAlertas()
     {
         $alertas = [];
@@ -131,8 +189,10 @@ class EstoqueController extends Controller
 
         foreach ($estoqueBaixo as $item) {
             $alertas[] = [
-                'tipo' => 'estoque_baixo',
-                'mensagem' => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades"
+                'tipo'       => 'estoque_baixo',
+                'mensagem'   => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades",
+                'link'       => '/estoque',
+                'recurso_id' => $item->id,
             ];
         }
 
@@ -142,8 +202,10 @@ class EstoqueController extends Controller
 
         foreach ($validadeProxima as $item) {
             $alertas[] = [
-                'tipo' => 'validade_proxima',
-                'mensagem' => "Validade próxima: {$item->vacina->nome}"
+                'tipo'       => 'validade_proxima',
+                'mensagem'   => "Validade próxima: {$item->vacina->nome}",
+                'link'       => '/estoque',
+                'recurso_id' => $item->id,
             ];
         }
 

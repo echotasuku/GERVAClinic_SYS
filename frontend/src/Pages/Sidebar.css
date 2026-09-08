@@ -1,24 +1,79 @@
+/* ==========================================
+   SIDEBAR BASE
+========================================== */
 .sidebar {
-    background-color: #343a40;
+    background-color: #1E3A8A;
     width: 200px;
     height: 100%;
     position: fixed;
     top: 0;
     left: 0;
     overflow-x: hidden;
-    padding-top: 20px;
+    padding-top: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
 }
 
+/* ==========================================
+   INFORMAÇÕES DO USUÁRIO LOGADO
+========================================== */
+.user-info-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.user-icon {
+    font-size: 28px;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+}
+
+.user-greeting {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.user-role {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* ==========================================
+   ITENS DA SIDEBAR
+========================================== */
 .sidebar-item {
     text-decoration: none;
     color: white;
     display: block;
-    padding: 10px;
+    padding: 12px 15px;
     transition: background-color 0.3s;
+    cursor: pointer;
 }
 
 .sidebar-item:hover {
-    background-color: #495057;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.ativo {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left: 3px solid #ffffff;
 }
 
 .sidebar-item-content {
@@ -27,23 +82,34 @@
 }
 
 .sidebar-icon {
-    margin-right: 10px;
+    margin-right: 12px;
     color: white;
+    font-size: 16px;
+    min-width: 20px;
 }
 
 .sidebar-text {
     flex: 1;
+    font-size: 15px;
 }
 
 .sidebar-item.logout {
     cursor: pointer;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.sidebar-item.logout:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+/* ==========================================
+   NOTIFICAÇÕES
+========================================== */
 .bell-container {
     display: flex;
     justify-content: flex-end;
-    padding-right: 15px;
-    margin-bottom: 15px;
+    padding: 12px 15px;
     position: relative;
 }
 
@@ -51,20 +117,25 @@
     cursor: pointer;
     font-size: 18px;
     color: white;
+    transition: transform 0.2s;
+}
+
+.bell-click:hover {
+    transform: scale(1.1);
 }
 
 .notification-dot {
     position: absolute;
-    top: -8px;
-    right: 8px;
-    min-width: 18px;
-    height: 18px;
+    top: 6px;
+    right: 10px;
+    min-width: 16px;
+    height: 16px;
     background-color: #ff4444;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid white;
+    border: 2px solid #1E3A8A;
 }
 
 .notification-count {
@@ -90,7 +161,7 @@
 }
 
 .notification-dropdown::before {
-    content: 'Notificacoes';
+    content: 'Notificações';
     display: block;
     padding: 12px 15px;
     background-color: #f8f9fa;
@@ -196,7 +267,7 @@
 }
 
 /* ==========================================
-   GRUPOS RECOLHÍVEIS (estilo SUAP)
+   GRUPOS RECOLHÍVEIS
 ========================================== */
 .sidebar-group {
     margin: 4px 0;
@@ -205,6 +276,10 @@
 .sidebar-group-header {
     cursor: pointer;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
 }
 
 .sidebar-group-header .sidebar-item-content {
@@ -224,10 +299,9 @@
     transform: rotate(180deg);
 }
 
-/* Grupo que contém a página atual fica destacado (verde-água, como no SUAP) */
 .sidebar-group-header.ativo .sidebar-icon,
 .sidebar-group-header.ativo .sidebar-text {
-    color: #2474c0;
+    color: #ecedee;
 }
 
 /* Container dos subitens (animação de abrir/fechar) */
@@ -242,12 +316,12 @@
     max-height: 500px;
 }
 
-/* Subitens (sem ícone, indentados, com linha separadora — igual SUAP) */
+/* Subitens (sem ícone, indentados, com linha separadora) */
 .sidebar-subitem {
     display: block;
     padding: 10px 16px 10px 48px;
     color: #cbd5e1;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     text-decoration: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;

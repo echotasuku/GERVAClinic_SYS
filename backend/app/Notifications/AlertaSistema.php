@@ -27,8 +27,10 @@ class AlertaSistema extends Notification implements ShouldBroadcast
     public function toArray($notifiable)
     {
         return [
-            'tipo' => $this->dados['tipo'],
-            'mensagem' => $this->dados['mensagem'],
+            'tipo'       => $this->dados['tipo'],
+            'mensagem'   => $this->dados['mensagem'],
+            'link'       => $this->dados['link'] ?? null,        // ✅ Novo: link de redirecionamento
+            'recurso_id' => $this->dados['recurso_id'] ?? null,  // ✅ Novo: ID do recurso relacionado
             'created_at' => now()->toDateTimeString(),
         ];
     }
@@ -36,9 +38,11 @@ class AlertaSistema extends Notification implements ShouldBroadcast
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'id' => $this->id,
-            'tipo' => $this->dados['tipo'],
-            'mensagem' => $this->dados['mensagem'],
+            'id'         => $this->id,
+            'tipo'       => $this->dados['tipo'],
+            'mensagem'   => $this->dados['mensagem'],
+            'link'       => $this->dados['link'] ?? null,        // ✅ Novo: link de redirecionamento
+            'recurso_id' => $this->dados['recurso_id'] ?? null,  // ✅ Novo: ID do recurso relacionado
             'created_at' => now()->toDateTimeString(),
         ]);
     }

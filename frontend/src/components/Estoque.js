@@ -1,12 +1,11 @@
+
 import React, {
     useState,
     useEffect,
     useCallback,
     useRef
 } from 'react';
-
 import axios from 'axios';
-
 import {
     Button,
     Modal,
@@ -14,45 +13,39 @@ import {
     Col,
     Row
 } from 'react-bootstrap';
-
 import InputMask from 'react-input-mask';
 import Select from 'react-select';
 import {
     FiSearch,
-    FiX
+    FiX,
+    FiRotateCcw,
+    FiTrash2,
+    FiEdit2
 } from 'react-icons/fi';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Estoque.css';
 
 const Estoque = () => {
     // =====================================================
-    // ESTADOS
+    // ESTADOS — NÃO ALTERADOS
     // =====================================================
-
     const [estoques, setEstoques] = useState([]);
-    const [estoquesFiltrados, setEstoquesFiltrados] =
-        useState([]);
-
+    const [estoquesFiltrados, setEstoquesFiltrados] = useState([]);
     const [vacinas, setVacinas] = useState([]);
-
     const [novoEstoque, setNovoEstoque] = useState({
         lote: '',
-        preco: '',
+        preco_unitario: '',
+        valor_total: '',
         quantidade_estoque: '',
         data_validade: '',
         hora: '',
         temperatura_recebimento: '',
         vacina_id: ''
     });
-
     const [showModal, setShowModal] = useState(false);
     const [modoEdicao, setModoEdicao] = useState(false);
-    const [estoqueParaEdicao, setEstoqueParaEdicao] =
-        useState(null);
-
+    const [estoqueParaEdicao, setEstoqueParaEdicao] = useState(null);
     const [errors, setErrors] = useState({});
-
     const [notification, setNotification] = useState({
         show: false,
         message: '',
@@ -60,112 +53,57 @@ const Estoque = () => {
     });
 
     // =====================================================
-    // FILTROS
+    // FILTROS — NÃO ALTERADOS
     // =====================================================
-
     const [termoBusca, setTermoBusca] = useState('');
-    const [termoBuscaDebounced, setTermoBuscaDebounced] =
-        useState('');
-
-    // Permite selecionar várias vacinas
-    const [
-        filtrosVacinasSelecionados,
-        setFiltrosVacinasSelecionados
-    ] = useState([]);
-
+    const [termoBuscaDebounced, setTermoBuscaDebounced] = useState('');
+    const [filtrosVacinasSelecionados, setFiltrosVacinasSelecionados] = useState([]);
     const debounceRef = useRef(null);
 
     // =====================================================
-    // NOTIFICAÇÕES
+    // NOTIFICAÇÕES — NÃO ALTERADAS
     // =====================================================
-
     const showNotification = useCallback(
         (message, type = 'success') => {
-            setNotification({
-                show: true,
-                message,
-                type
-            });
-
+            setNotification({ show: true, message, type });
             setTimeout(() => {
-                setNotification({
-                    show: false,
-                    message: '',
-                    type: ''
-                });
+                setNotification({ show: false, message: '', type: '' });
             }, 5000);
         },
         []
     );
 
     // =====================================================
-    // BUSCAR ESTOQUES
+    // BUSCAS — NÃO ALTERADAS
     // =====================================================
-
     const fetchEstoques = useCallback(async () => {
         try {
-            const token =
-                localStorage.getItem('auth_token');
-
+            const token = localStorage.getItem('auth_token');
             const response = await axios.get(
                 'http://127.0.0.1:8080/api/estoque',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
-
             setEstoques(response.data);
             setEstoquesFiltrados(response.data);
         } catch (error) {
-            console.error(
-                'Erro ao buscar estoque:',
-                error
-            );
-
-            showNotification(
-                'Erro ao carregar estoque',
-                'error'
-            );
+            console.error('Erro ao buscar estoque:', error);
+            showNotification('Erro ao carregar estoque', 'error');
         }
     }, [showNotification]);
-
-    // =====================================================
-    // BUSCAR VACINAS
-    // =====================================================
 
     const fetchVacinas = useCallback(async () => {
         try {
-            const token =
-                localStorage.getItem('auth_token');
-
+            const token = localStorage.getItem('auth_token');
             const response = await axios.get(
                 'http://127.0.0.1:8080/api/vacinas',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
-
             setVacinas(response.data);
         } catch (error) {
-            console.error(
-                'Erro ao buscar vacinas:',
-                error
-            );
-
-            showNotification(
-                'Erro ao carregar vacinas',
-                'error'
-            );
+            console.error('Erro ao buscar vacinas:', error);
+            showNotification('Erro ao carregar vacinas', 'error');
         }
     }, [showNotification]);
-
-    // =====================================================
-    // CARREGAMENTO INICIAL
-    // =====================================================
 
     useEffect(() => {
         fetchEstoques();
@@ -173,158 +111,96 @@ const Estoque = () => {
     }, [fetchEstoques, fetchVacinas]);
 
     // =====================================================
-    // DEBOUNCE DA BUSCA
+    // DEBOUNCE — NÃO ALTERADO
     // =====================================================
-
     useEffect(() => {
-        if (debounceRef.current) {
-            clearTimeout(debounceRef.current);
-        }
-
+        if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
             setTermoBuscaDebounced(termoBusca);
         }, 300);
-
         return () => {
-            if (debounceRef.current) {
-                clearTimeout(debounceRef.current);
-            }
+            if (debounceRef.current) clearTimeout(debounceRef.current);
         };
     }, [termoBusca]);
 
     // =====================================================
-    // FILTRAR ESTOQUES
+    // FILTRAR — NÃO ALTERADO
     // =====================================================
-
     const filtrarEstoques = useCallback(() => {
         let filtrados = [...estoques];
-
-        // Busca por vacina ou lote
         if (termoBuscaDebounced.trim() !== '') {
-            const termo = termoBuscaDebounced
-                .toLowerCase()
-                .trim();
-
+            const termo = termoBuscaDebounced.toLowerCase().trim();
             filtrados = filtrados.filter((item) => {
-                const nomeVacina =
-                    item.vacina?.nome?.toLowerCase() || '';
-
-                const lote =
-                    item.lote?.toLowerCase() || '';
-
-                return (
-                    nomeVacina.includes(termo) ||
-                    lote.includes(termo)
-                );
+                const nomeVacina = item.vacina?.nome?.toLowerCase() || '';
+                const lote = item.lote?.toLowerCase() || '';
+                return nomeVacina.includes(termo) || lote.includes(termo);
             });
         }
-
-        // IDs das vacinas selecionadas
-        const idsVacinasSelecionadas =
-            filtrosVacinasSelecionados.map((filtro) =>
-                String(filtro.value)
-            );
-
-        // Filtro por várias vacinas
+        const idsVacinasSelecionadas = filtrosVacinasSelecionados.map((f) => String(f.value));
         if (idsVacinasSelecionadas.length > 0) {
             filtrados = filtrados.filter((item) =>
-                idsVacinasSelecionadas.includes(
-                    String(item.vacina_id)
-                )
+                idsVacinasSelecionadas.includes(String(item.vacina_id))
             );
         }
-
         setEstoquesFiltrados(filtrados);
-    }, [
-        estoques,
-        termoBuscaDebounced,
-        filtrosVacinasSelecionados
-    ]);
+    }, [estoques, termoBuscaDebounced, filtrosVacinasSelecionados]);
 
     useEffect(() => {
         filtrarEstoques();
     }, [filtrarEstoques]);
 
     // =====================================================
-    // ALTERAÇÃO DOS CAMPOS
+    // MANIPULAÇÃO DE CAMPOS
     // =====================================================
-
     const handleInputChange = (e) => {
-        const {
-            name,
-            value
-        } = e.target;
+        const { name, value } = e.target;
 
-        if (name === 'preco') {
-            const valorLimpo = value.replace(
-                /[^0-9,]/g,
-                ''
-            );
+        if (name === 'preco_unitario') {
+            const valorLimpo = value.replace(/[^0-9,]/g, '');
 
-            setNovoEstoque((estadoAnterior) => ({
-                ...estadoAnterior,
+            setNovoEstoque((prev) => ({
+                ...prev,
                 [name]: valorLimpo
             }));
         } else if (name === 'quantidade_estoque') {
-            const valorLimpo = value.replace(
-                /\D/g,
-                ''
-            );
+            const valorLimpo = value.replace(/\D/g, '');
 
-            setNovoEstoque((estadoAnterior) => ({
-                ...estadoAnterior,
+            setNovoEstoque((prev) => ({
+                ...prev,
                 [name]: valorLimpo
             }));
         } else {
-            setNovoEstoque((estadoAnterior) => ({
-                ...estadoAnterior,
+            setNovoEstoque((prev) => ({
+                ...prev,
                 [name]: value
             }));
         }
 
         if (errors[name]) {
-            setErrors((errosAnteriores) => ({
-                ...errosAnteriores,
+            setErrors((prev) => ({
+                ...prev,
                 [name]: null
             }));
         }
     };
 
-    // =====================================================
-    // SELECT DO FORMULÁRIO
-    // =====================================================
-
     const handleSelectChange = (selectedOption) => {
-        setNovoEstoque((estadoAnterior) => ({
-            ...estadoAnterior,
-            vacina_id: selectedOption
-                ? selectedOption.value
-                : ''
+        setNovoEstoque((prev) => ({
+            ...prev,
+            vacina_id: selectedOption ? selectedOption.value : ''
         }));
 
         if (errors.vacina_id) {
-            setErrors((errosAnteriores) => ({
-                ...errosAnteriores,
+            setErrors((prev) => ({
+                ...prev,
                 vacina_id: null
             }));
         }
     };
 
-    // =====================================================
-    // SELECT DOS FILTROS
-    // =====================================================
-
-    const handleFiltroVacinaChange = (
-        selectedOptions
-    ) => {
-        setFiltrosVacinasSelecionados(
-            selectedOptions || []
-        );
+    const handleFiltroVacinaChange = (selectedOptions) => {
+        setFiltrosVacinasSelecionados(selectedOptions || []);
     };
-
-    // =====================================================
-    // REMOVER FILTROS
-    // =====================================================
 
     const limparFiltros = () => {
         setTermoBusca('');
@@ -338,13 +214,8 @@ const Estoque = () => {
     };
 
     const removerFiltroVacina = (filtro) => {
-        setFiltrosVacinasSelecionados(
-            (filtrosAtuais) =>
-                filtrosAtuais.filter(
-                    (filtroAtual) =>
-                        String(filtroAtual.value) !==
-                        String(filtro.value)
-                )
+        setFiltrosVacinasSelecionados((atuais) =>
+            atuais.filter((f) => String(f.value) !== String(filtro.value))
         );
     };
 
@@ -353,13 +224,44 @@ const Estoque = () => {
         filtrosVacinasSelecionados.length > 0;
 
     // =====================================================
+    // CÁLCULO DO VALOR TOTAL
+    // =====================================================
+    const calcularValorTotal = () => {
+        const quantidade = parseInt(novoEstoque.quantidade_estoque);
+
+        if (!quantidade || quantidade <= 0) {
+            return '';
+        }
+
+        if (
+            !novoEstoque.preco_unitario ||
+            novoEstoque.preco_unitario.trim() === ''
+        ) {
+            return '';
+        }
+
+        const precoLimpo = novoEstoque.preco_unitario
+            .replace(/\./g, '')
+            .replace(',', '.');
+
+        const precoNumerico = parseFloat(precoLimpo);
+
+        if (isNaN(precoNumerico) || precoNumerico < 0) {
+            return '';
+        }
+
+        return (quantidade * precoNumerico).toFixed(2);
+    };
+
+    const valorTotalCalculado = calcularValorTotal();
+
+    // =====================================================
     // VALIDAÇÃO
     // =====================================================
-
     const validateForm = () => {
         const {
             lote,
-            preco,
+            preco_unitario,
             quantidade_estoque,
             data_validade,
             vacina_id
@@ -368,8 +270,7 @@ const Estoque = () => {
         const novosErros = {};
 
         if (!vacina_id) {
-            novosErros.vacina_id =
-                'Selecione uma vacina.';
+            novosErros.vacina_id = 'Selecione uma vacina.';
         }
 
         if (
@@ -388,9 +289,7 @@ const Estoque = () => {
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
-            const dataSelecionada =
-                new Date(data_validade);
-
+            const dataSelecionada = new Date(data_validade);
             dataSelecionada.setHours(0, 0, 0, 0);
 
             if (dataSelecionada <= hoje) {
@@ -407,16 +306,18 @@ const Estoque = () => {
                 'A quantidade deve ser maior que zero.';
         }
 
-        if (preco && preco.trim() !== '') {
-            const precoLimpo = preco.replace(',', '.');
-            const precoNumerico =
-                parseFloat(precoLimpo);
+        if (
+            preco_unitario &&
+            preco_unitario.trim() !== ''
+        ) {
+            const precoLimpo = preco_unitario.replace(',', '.');
+            const precoNumerico = parseFloat(precoLimpo);
 
             if (
                 isNaN(precoNumerico) ||
                 precoNumerico < 0
             ) {
-                novosErros.preco =
+                novosErros.preco_unitario =
                     'Digite um preço válido (ex: 150,00)';
             }
         }
@@ -427,19 +328,15 @@ const Estoque = () => {
     };
 
     // =====================================================
-    // SALVAR ESTOQUE
+    // SALVAR
     // =====================================================
-
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateForm()) {
-            return;
-        }
+        if (!validateForm()) return;
 
         try {
-            const token =
-                localStorage.getItem('auth_token');
+            const token = localStorage.getItem('auth_token');
 
             const headers = {
                 Authorization: `Bearer ${token}`,
@@ -451,59 +348,63 @@ const Estoque = () => {
                 quantidade_estoque: parseInt(
                     novoEstoque.quantidade_estoque
                 ),
-                data_validade:
-                    novoEstoque.data_validade,
-
-                // NOVO CAMPO
+                data_validade: novoEstoque.data_validade,
                 hora: novoEstoque.hora || null,
-
-                vacina_id: parseInt(
-                    novoEstoque.vacina_id
-                )
+                vacina_id: parseInt(novoEstoque.vacina_id)
             };
 
-            if (
-                novoEstoque.preco &&
-                novoEstoque.preco.trim() !== ''
-            ) {
-                const precoLimpo =
-                    novoEstoque.preco
-                        .replace(/\./g, '')
-                        .replace(',', '.');
+            // =================================================
+            // PREÇO UNITÁRIO
+            // =================================================
 
-                const precoNumerico =
-                    parseFloat(precoLimpo);
+            if (
+                novoEstoque.preco_unitario &&
+                novoEstoque.preco_unitario.trim() !== ''
+            ) {
+                const precoLimpo = novoEstoque.preco_unitario
+                    .replace(/\./g, '')
+                    .replace(',', '.');
+
+                const precoNumerico = parseFloat(precoLimpo);
 
                 if (
                     !isNaN(precoNumerico) &&
                     precoNumerico >= 0
                 ) {
-                    dadosParaEnviar.preco =
+                    dadosParaEnviar.preco_unitario =
                         precoNumerico;
                 }
             }
+
+            // =================================================
+            // TEMPERATURA
+            // =================================================
 
             if (
                 novoEstoque.temperatura_recebimento &&
                 novoEstoque.temperatura_recebimento.trim() !== ''
             ) {
-                const temperaturaLimpa =
+                const tempLimpa =
                     novoEstoque.temperatura_recebimento
                         .replace(',', '.');
 
-                const temperaturaNumerica =
-                    parseFloat(temperaturaLimpa);
+                const tempNumerica =
+                    parseFloat(tempLimpa);
 
-                if (!isNaN(temperaturaNumerica)) {
+                if (!isNaN(tempNumerica)) {
                     dadosParaEnviar.temperatura_recebimento =
-                        temperaturaNumerica;
+                        tempNumerica;
                 }
             }
 
-            if (
-                modoEdicao &&
-                estoqueParaEdicao
-            ) {
+            // =================================================
+            // VALOR TOTAL
+            //
+            // NÃO enviamos valor_total.
+            // O backend calcula e salva esse valor.
+            // =================================================
+
+            if (modoEdicao && estoqueParaEdicao) {
                 await axios.put(
                     `http://127.0.0.1:8080/api/estoque/${estoqueParaEdicao.id}`,
                     dadosParaEnviar,
@@ -529,9 +430,10 @@ const Estoque = () => {
 
             await fetchEstoques();
             fecharModal();
+
         } catch (error) {
             console.error(
-                'Erro ao criar/editar estoque:',
+                'Erro ao salvar estoque:',
                 error
             );
 
@@ -555,9 +457,7 @@ const Estoque = () => {
                                 dadosErro[chave];
 
                             if (Array.isArray(valor)) {
-                                mensagens.push(
-                                    ...valor
-                                );
+                                mensagens.push(...valor);
                             } else if (
                                 typeof valor === 'string'
                             ) {
@@ -573,17 +473,20 @@ const Estoque = () => {
                 }
             }
 
-            showNotification(mensagem, 'error');
+            showNotification(
+                mensagem,
+                'error'
+            );
         }
     };
 
     // =====================================================
     // MODAL
     // =====================================================
-
     const dadosIniciaisEstoque = {
         lote: '',
-        preco: '',
+        preco_unitario: '',
+        valor_total: '',
         quantidade_estoque: '',
         data_validade: '',
         hora: '',
@@ -607,6 +510,9 @@ const Estoque = () => {
         setErrors({});
     };
 
+    // =====================================================
+    // EDITAR ESTOQUE
+    // =====================================================
     const handleEditarEstoque = (item) => {
         const dataFormatada =
             item.data_validade
@@ -614,24 +520,20 @@ const Estoque = () => {
                 : '';
 
         const precoFormatado =
-            item.preco !== null &&
-            item.preco !== undefined
-                ? item.preco
-                      .toString()
-                      .replace('.', ',')
+            item.preco_unitario !== null &&
+            item.preco_unitario !== undefined
+                ? item.preco_unitario
+                    .toString()
+                    .replace('.', ',')
                 : '';
 
         const temperaturaFormatada =
             item.temperatura_recebimento !== null &&
             item.temperatura_recebimento !== undefined
                 ? item.temperatura_recebimento
-                      .toString()
-                      .replace('.', ',')
+                    .toString()
+                    .replace('.', ',')
                 : '';
-
-        // =================================================
-        // NOVO: FORMATA A HORA PARA O INPUT type="time"
-        // =================================================
 
         let horaFormatada = '';
 
@@ -641,20 +543,49 @@ const Estoque = () => {
             item.hora !== ''
         ) {
             horaFormatada =
-                item.hora.toString().substring(0, 5);
+                item.hora
+                    .toString()
+                    .substring(0, 5);
+        }
+
+        const quantidade =
+            item.quantidade_estoque || '';
+
+        let valorTotalFormatado = '';
+
+        if (
+            item.valor_total !== null &&
+            item.valor_total !== undefined
+        ) {
+            valorTotalFormatado =
+                parseFloat(item.valor_total)
+                    .toFixed(2)
+                    .replace('.', ',');
+        } else if (
+            item.preco_unitario !== null &&
+            item.preco_unitario !== undefined &&
+            quantidade
+        ) {
+            const valorCalculado =
+                parseFloat(item.preco_unitario) *
+                parseInt(quantidade);
+
+            if (!isNaN(valorCalculado)) {
+                valorTotalFormatado =
+                    valorCalculado
+                        .toFixed(2)
+                        .replace('.', ',');
+            }
         }
 
         setNovoEstoque({
             ...item,
             data_validade: dataFormatada,
-
-            preco: precoFormatado,
-
+            preco_unitario: precoFormatado,
+            valor_total: valorTotalFormatado,
             hora: horaFormatada,
-
             temperatura_recebimento:
                 temperaturaFormatada,
-
             vacina_id: item.vacina_id
                 ? item.vacina_id.toString()
                 : ''
@@ -666,12 +597,15 @@ const Estoque = () => {
         setErrors({});
     };
 
+    // =====================================================
+    // EXCLUIR ESTOQUE
+    // =====================================================
     const handleExcluirEstoque = async (item) => {
-        const confirmar = window.confirm(
-            `Tem certeza que deseja excluir o lote ${item.lote}?`
-        );
-
-        if (!confirmar) {
+        if (
+            !window.confirm(
+                `Tem certeza que deseja excluir o lote ${item.lote}?`
+            )
+        ) {
             return;
         }
 
@@ -683,7 +617,8 @@ const Estoque = () => {
                 `http://127.0.0.1:8080/api/estoque/${item.id}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization:
+                            `Bearer ${token}`
                     }
                 }
             );
@@ -694,6 +629,7 @@ const Estoque = () => {
                 'Item excluído com sucesso!',
                 'success'
             );
+
         } catch (error) {
             console.error(
                 'Erro ao excluir estoque:',
@@ -708,9 +644,8 @@ const Estoque = () => {
     };
 
     // =====================================================
-    // OPÇÕES DOS SELECTS
+    // OPÇÕES DOS SELECTS — NÃO ALTERADAS
     // =====================================================
-
     const vacinaOptions = vacinas.map((vacina) => ({
         value: vacina.id,
         label: vacina.nome
@@ -718,35 +653,33 @@ const Estoque = () => {
 
     const selectedOption =
         vacinaOptions.find(
-            (option) =>
-                String(option.value) ===
+            (opt) =>
+                String(opt.value) ===
                 String(novoEstoque.vacina_id)
         ) || null;
 
     // =====================================================
-    // ESTILOS DOS SELECTS
+    // ESTILOS DOS SELECTS — NÃO ALTERADOS
     // =====================================================
-
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
             borderColor: errors.vacina_id
                 ? '#dc3545'
                 : state.isFocused
-                ? '#86b7fe'
-                : '#ced4da',
+                    ? '#86b7fe'
+                    : '#ced4da',
             boxShadow: errors.vacina_id
                 ? '0 0 0 0.25rem rgba(220, 53, 69, 0.25)'
                 : state.isFocused
-                ? '0 0 0 0.25rem rgba(13, 110, 253, 0.25)'
-                : null,
+                    ? '0 0 0 0.25rem rgba(0, 102, 179, 0.15)'
+                    : null,
             '&:hover': {
                 borderColor: errors.vacina_id
                     ? '#dc3545'
                     : '#86b7fe'
             }
         }),
-
         menu: (provided) => ({
             ...provided,
             zIndex: 1050
@@ -758,81 +691,33 @@ const Estoque = () => {
             ...provided,
             height: '38px',
             minHeight: '38px',
-            width: '100%',
-            overflow: 'hidden',
             borderColor: state.isFocused
                 ? '#86b7fe'
                 : '#ced4da',
             boxShadow: state.isFocused
-                ? '0 0 0 0.25rem rgba(13, 110, 253, 0.25)'
+                ? '0 0 0 0.25rem rgba(0, 102, 179, 0.15)'
                 : 'none',
             '&:hover': {
                 borderColor: '#86b7fe'
             }
         }),
-
         valueContainer: (provided) => ({
             ...provided,
             height: '38px',
-            minHeight: '38px',
-            padding: '0 8px',
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'nowrap',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap'
+            padding: '0 8px'
         }),
-
-        indicatorsContainer: (provided) => ({
-            ...provided,
-            height: '38px',
-            minHeight: '38px'
-        }),
-
         input: (provided) => ({
             ...provided,
-            margin: 0,
-            padding: 0,
-            minWidth: '30px'
+            margin: 0
         }),
-
         placeholder: (provided) => ({
             ...provided,
-            margin: 0,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            margin: 0
         }),
-
         multiValue: (provided) => ({
             ...provided,
-            flex: '0 0 auto',
-            maxWidth: '125px',
-            margin: '2px 4px 2px 0',
-            overflow: 'hidden'
+            margin: '2px 4px'
         }),
-
-        multiValueLabel: (provided) => ({
-            ...provided,
-            maxWidth: '100px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '0.8rem',
-            padding: '2px 5px'
-        }),
-
-        multiValueRemove: (provided) => ({
-            ...provided,
-            padding: '0 3px'
-        }),
-
-        menu: (provided) => ({
-            ...provided,
-            zIndex: 1050,
-            width: '100%'
-        }),
-
         menuPortal: (provided) => ({
             ...provided,
             zIndex: 9999
@@ -842,18 +727,16 @@ const Estoque = () => {
     // =====================================================
     // RENDER
     // =====================================================
-
     return (
         <div className="estoque-container">
             {notification.show && (
-                <div
-                    className={`notification ${notification.type}`}
-                >
+                <div className={`notification ${notification.type}`}>
                     {notification.message}
                 </div>
             )}
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            {/* CABEÇALHO */}
+            <div className="header-aplicacoes">
                 <h2>Gerenciamento de Estoque</h2>
 
                 <Button
@@ -864,12 +747,9 @@ const Estoque = () => {
                 </Button>
             </div>
 
-            {/* =================================================
-                BARRA DE BUSCA E FILTROS
-            ================================================== */}
-
-            <div className="filtros-container mb-4">
-                <Row className="align-items-center g-2 filtro-row">
+            {/* FILTROS */}
+            <div className="filtros-container">
+                <Row className="filtro-row g-2 align-items-center">
                     <Col md={5}>
                         <div className="input-group">
                             <span className="input-group-text">
@@ -920,20 +800,23 @@ const Estoque = () => {
                         md={2}
                         className="filtro-botao-col"
                     >
-                        <Button
-                            variant="outline-secondary"
+                        <button
+                            type="button"
+                            className="filtro-limpar-btn"
                             onClick={limparFiltros}
-                            className="w-100 filtro-limpar-btn"
+                            title="Limpar todos os filtros"
                         >
-                            Limpar Filtros
-                        </Button>
+                            <FiRotateCcw size={15} />
+                            <span>
+                                Limpar Filtros
+                            </span>
+                        </button>
                     </Col>
                 </Row>
 
-                {/* INSÍGNIAS DOS FILTROS */}
-
+                {/* BADGES DOS FILTROS */}
                 {temFiltrosAtivos && (
-                    <div className="filtros-badges mt-3 d-flex flex-wrap gap-2 align-items-center">
+                    <div className="filtros-badges mt-3">
                         <small className="text-muted me-1">
                             Filtros ativos:
                         </small>
@@ -964,7 +847,7 @@ const Estoque = () => {
                         {filtrosVacinasSelecionados.map(
                             (filtro) => (
                                 <span
-                                    key={filtro.value}
+                                    key={`${filtro.type}-${filtro.value}`}
                                     className="badge-filtro badge-vacina"
                                 >
                                     <span className="badge-tipo">
@@ -1001,16 +884,13 @@ const Estoque = () => {
                 </div>
             </div>
 
-            {/* =================================================
-                MODAL
-            ================================================== */}
-
+            {/* MODAL */}
             <Modal
                 show={showModal}
                 onHide={fecharModal}
                 centered
                 dialogClassName="custom-modal-width"
-                className="estoque-modal-theme"
+                className="aplicacoes-modal-theme"
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
@@ -1026,8 +906,8 @@ const Estoque = () => {
                         onSubmit={handleFormSubmit}
                     >
                         <Form.Group
-                            className="mb-3"
                             controlId="formVacinaId"
+                            className="mb-3"
                         >
                             <Form.Label>
                                 Vacina
@@ -1072,7 +952,9 @@ const Estoque = () => {
                                     mask="9999/9999-99"
                                     maskChar=""
                                     name="lote"
-                                    value={novoEstoque.lote}
+                                    value={
+                                        novoEstoque.lote
+                                    }
                                     onChange={
                                         handleInputChange
                                     }
@@ -1120,14 +1002,12 @@ const Estoque = () => {
                                 />
 
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.data_validade}
+                                    {
+                                        errors.data_validade
+                                    }
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
-
-                        {/* =================================================
-                            NOVA LINHA: HORA
-                        ================================================== */}
 
                         <Row className="mb-3">
                             <Form.Group
@@ -1149,18 +1029,12 @@ const Estoque = () => {
                                         handleInputChange
                                     }
                                 />
-
-                                {errors.hora && (
-                                    <div className="invalid-feedback d-block">
-                                        {errors.hora}
-                                    </div>
-                                )}
                             </Form.Group>
 
                             <Form.Group
                                 as={Col}
                                 md="6"
-                                controlId="formQuantidadeEstoque"
+                                controlId="formQuantidade"
                             >
                                 <Form.Label>
                                     Quantidade
@@ -1195,18 +1069,18 @@ const Estoque = () => {
                             <Form.Group
                                 as={Col}
                                 md="6"
-                                controlId="formPreco"
+                                controlId="formPrecoUnitario"
                             >
                                 <Form.Label>
-                                    Preço (R$)
+                                    Preço Unitário (R$)
                                 </Form.Label>
 
                                 <InputMask
                                     mask="9999999,99"
                                     maskChar=""
-                                    name="preco"
+                                    name="preco_unitario"
                                     value={
-                                        novoEstoque.preco
+                                        novoEstoque.preco_unitario
                                     }
                                     onChange={
                                         handleInputChange
@@ -1218,17 +1092,47 @@ const Estoque = () => {
                                             type="text"
                                             placeholder="Ex: 150,00"
                                             isInvalid={
-                                                !!errors.preco
+                                                !!errors.preco_unitario
                                             }
                                         />
                                     )}
                                 </InputMask>
 
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.preco}
+                                    {
+                                        errors.preco_unitario
+                                    }
                                 </Form.Control.Feedback>
                             </Form.Group>
 
+                            <Form.Group
+                                as={Col}
+                                md="6"
+                                controlId="formValorTotal"
+                            >
+                                <Form.Label>
+                                    Valor Total (R$)
+                                </Form.Label>
+
+                                <Form.Control
+                                    type="text"
+                                    value={
+                                        valorTotalCalculado
+                                            ? `R$ ${valorTotalCalculado.replace('.', ',')}`
+                                            : ''
+                                    }
+                                    placeholder="Calculado automaticamente"
+                                    readOnly
+                                    disabled
+                                />
+
+                                <Form.Text className="text-muted">
+                                    Quantidade × preço unitário
+                                </Form.Text>
+                            </Form.Group>
+                        </Row>
+
+                        <Row className="mb-3">
                             <Form.Group
                                 as={Col}
                                 md="6"
@@ -1260,17 +1164,16 @@ const Estoque = () => {
                             </Form.Group>
                         </Row>
 
-                        <div className="d-flex justify-content-end gap-2">
+                        <div className="d-flex justify-content-end gap-2 mt-3">
                             <Button
                                 variant="secondary"
-                                type="button"
                                 onClick={fecharModal}
                             >
                                 Cancelar
                             </Button>
 
                             <Button
-                                variant="success"
+                                variant="primary"
                                 type="submit"
                             >
                                 {modoEdicao
@@ -1282,20 +1185,18 @@ const Estoque = () => {
                 </Modal.Body>
             </Modal>
 
-            {/* =================================================
-                TABELA
-            ================================================== */}
-
+            {/* TABELA */}
             <div className="table-responsive">
-                <table className="estoque-table">
-                    <thead>
+                <table className="aplicacoes-table table table-striped table-hover">
+                    <thead className="table-dark table-header-primary">
                         <tr>
                             <th>Vacina</th>
                             <th>Lote</th>
                             <th>Data de Validade</th>
                             <th>Hora</th>
                             <th>Quantidade</th>
-                            <th>Preço</th>
+                            <th>Preço Unitário</th>
+                            <th>Valor Total</th>
                             <th>Temperatura</th>
                             <th className="text-center">
                                 Ações
@@ -1304,115 +1205,17 @@ const Estoque = () => {
                     </thead>
 
                     <tbody>
-                        {estoquesFiltrados.length > 0 ? (
-                            estoquesFiltrados.map((item) => (
-                                <tr
-                                    key={item.id}
-                                    className="estoque-row"
-                                >
-                                    <td>
-                                        {item.vacina?.nome ||
-                                            'N/A'}
-                                    </td>
-
-                                    <td>{item.lote}</td>
-
-                                    <td>
-                                        {new Date(
-                                            item.data_validade
-                                        ).toLocaleDateString(
-                                            'pt-BR',
-                                            {
-                                                timeZone:
-                                                    'UTC'
-                                            }
-                                        )}
-                                    </td>
-
-                                    {/* NOVO: HORA */}
-
-                                    <td>
-                                        {item.hora
-                                            ? item.hora
-                                                  .toString()
-                                                  .substring(
-                                                      0,
-                                                      5
-                                                  )
-                                            : '-'}
-                                    </td>
-
-                                    <td>
-                                        {
-                                            item.quantidade_estoque
-                                        }
-                                    </td>
-
-                                    <td>
-                                        {item.preco
-                                            ? `R$ ${parseFloat(
-                                                  item.preco
-                                              )
-                                                  .toFixed(2)
-                                                  .replace(
-                                                      '.',
-                                                      ','
-                                                  )}`
-                                            : '-'}
-                                    </td>
-
-                                    <td>
-                                        {item.temperatura_recebimento
-                                            ? `${parseFloat(
-                                                  item.temperatura_recebimento
-                                              )
-                                                  .toFixed(1)
-                                                  .replace(
-                                                      '.',
-                                                      ','
-                                                  )} °C`
-                                            : '-'}
-                                    </td>
-
-                                    <td className="actions-cell">
-                                        <Button
-                                            variant="info"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleEditarEstoque(
-                                                    item
-                                                )
-                                            }
-                                        >
-                                            Editar
-                                        </Button>
-
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            className="ms-2"
-                                            onClick={() =>
-                                                handleExcluirEstoque(
-                                                    item
-                                                )
-                                            }
-                                        >
-                                            Excluir
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
+                        {estoquesFiltrados.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan="8"
+                                    colSpan="9"
                                     className="text-center py-4"
                                 >
                                     <div className="text-muted">
                                         <p className="mb-1">
                                             {temFiltrosAtivos
-                                                ? 'Nenhum item encontrado com os filtros aplicados'
-                                                : 'Nenhum item encontrado'}
+                                                ? 'Nenhum item encontrado com os filtros aplicados.'
+                                                : 'Nenhum item de estoque cadastrado.'}
                                         </p>
 
                                         <small>
@@ -1422,6 +1225,139 @@ const Estoque = () => {
                                     </div>
                                 </td>
                             </tr>
+                        ) : (
+                            estoquesFiltrados.map((item) => (
+                                <tr key={item.id}>
+                                    <td>
+                                        {item.vacina?.nome ||
+                                            'Desconhecido'}
+                                    </td>
+
+                                    <td>
+                                        {item.lote}
+                                    </td>
+
+                                    <td>
+                                        {new Date(
+                                            item.data_validade
+                                        ).toLocaleDateString(
+                                            'pt-BR',
+                                            {
+                                                timeZone: 'UTC'
+                                            }
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        {item.hora
+                                            ? item.hora
+                                                .toString()
+                                                .substring(
+                                                    0,
+                                                    5
+                                                )
+                                            : '-'}
+                                    </td>
+
+                                    <td>
+                                        {item.quantidade_estoque}
+                                    </td>
+
+                                    <td>
+                                        {item.preco_unitario !==
+                                        null &&
+                                        item.preco_unitario !==
+                                        undefined
+                                            ? `R$ ${parseFloat(
+                                                item.preco_unitario
+                                            )
+                                                .toFixed(2)
+                                                .replace(
+                                                    '.',
+                                                    ','
+                                                )}`
+                                            : '-'}
+                                    </td>
+
+                                    <td>
+                                        {item.valor_total !==
+                                        null &&
+                                        item.valor_total !==
+                                        undefined
+                                            ? `R$ ${parseFloat(
+                                                item.valor_total
+                                            )
+                                                .toFixed(2)
+                                                .replace(
+                                                    '.',
+                                                    ','
+                                                )}`
+                                            : item.preco_unitario !==
+                                              null &&
+                                              item.preco_unitario !==
+                                              undefined
+                                                ? `R$ ${(
+                                                    parseFloat(
+                                                        item.preco_unitario
+                                                    ) *
+                                                    parseInt(
+                                                        item.quantidade_estoque
+                                                    )
+                                                )
+                                                    .toFixed(2)
+                                                    .replace(
+                                                        '.',
+                                                        ','
+                                                    )}`
+                                                : '-'}
+                                    </td>
+
+                                    <td>
+                                        {item.temperatura_recebimento
+                                            ? `${parseFloat(
+                                                item.temperatura_recebimento
+                                            )
+                                                .toFixed(1)
+                                                .replace(
+                                                    '.',
+                                                    ','
+                                                )} °C`
+                                            : '-'}
+                                    </td>
+
+                                    <td className="actions-cell">
+                                        <div className="linha-acoes">
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-editar"
+                                                onClick={() =>
+                                                    handleEditarEstoque(
+                                                        item
+                                                    )
+                                                }
+                                                title="Editar item"
+                                            >
+                                                <FiEdit2 size={14} />
+                                                Editar
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-excluir"
+                                                onClick={() =>
+                                                    handleExcluirEstoque(
+                                                        item
+                                                    )
+                                                }
+                                                title="Excluir item"
+                                            >
+                                                <FiTrash2 />
+                                                Excluir
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
                         )}
                     </tbody>
                 </table>

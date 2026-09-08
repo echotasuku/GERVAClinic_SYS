@@ -135,7 +135,7 @@
 }
 
 /* ==========================================
-   BOTÃO LIMPAR FILTROS (estático)
+   BOTÃO LIMPAR FILTROS
 ========================================== */
 .filtro-limpar-btn {
     width: 100%;
@@ -162,7 +162,7 @@
 }
 
 /* ==========================================
-   BADGES (classes exclusivas — à prova de conflito)
+   BADGES
 ========================================== */
 .filtros-badges {
     display: flex;
@@ -181,7 +181,6 @@
     font-weight: 600 !important;
     color: #fff !important;
     background-color: #6c757d !important;
-    /* fallback: nunca sem fundo */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
@@ -233,7 +232,7 @@
 }
 
 /* ==========================================
-   TABELA
+   TABELA — PADRONIZADA
 ========================================== */
 .fornecedores-table {
     background-color: #fff;
@@ -242,13 +241,36 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.fornecedores-table thead th {
+/* ==========================================
+   CABEÇALHO DA TABELA — AZUL #0D6EFD
+========================================== */
+.fornecedores-table thead,
+.fornecedores-table thead.table-header-primary,
+.fornecedores-table.table>thead {
+    background-color: #0d6efd !important;
+}
+
+.fornecedores-table thead tr,
+.fornecedores-table thead.table-header-primary tr {
+    background-color: #0d6efd !important;
+}
+
+.fornecedores-table thead th,
+.fornecedores-table thead.table-header-primary th,
+.fornecedores-table.table>thead>tr>th {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
     font-weight: 600;
     font-size: 0.9rem;
     padding: 12px;
     white-space: nowrap;
+    border: none !important;
+    vertical-align: middle;
 }
 
+/* ==========================================
+   CORPO DA TABELA
+========================================== */
 .fornecedores-table tbody td {
     padding: 12px;
     vertical-align: middle;
@@ -257,11 +279,11 @@
 }
 
 .fornecedores-table tbody tr:hover {
-    background-color: #f1f3f5;
+    background-color: #E6F0FA !important;
 }
 
 /* ==========================================
-   BOTÕES DE AÇÃO (quadrados)
+   BOTÕES DE AÇÃO
 ========================================== */
 .actions-cell {
     white-space: nowrap;

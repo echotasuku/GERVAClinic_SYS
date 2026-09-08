@@ -1,32 +1,42 @@
-/* ===== CONTAINER PRINCIPAL ===== */
-
+/* ==========================================
+   CONTAINER GERAL
+========================================== */
 .estoque-container {
-    padding: 20px;
-    max-width: 900px;
-    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* ===== NOTIFICAÇÃO ===== */
-
+/* ==========================================
+   NOTIFICAÇÃO
+========================================== */
 .notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 15px 25px;
-    border-radius: 5px;
-    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: #fff;
     font-weight: 500;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     z-index: 9999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease;
+    max-width: 400px;
+    word-break: break-word;
+    animation: slideIn 0.3s ease-out;
 }
 
 .notification.success {
-    background-color: #28a745;
+    background-color: #2E8B57;
 }
 
 .notification.error {
-    background-color: #dc3545;
+    background-color: #CC3333;
+}
+
+.notification.warning {
+    background-color: #E68A00;
+    color: #212529;
 }
 
 @keyframes slideIn {
@@ -41,394 +51,418 @@
     }
 }
 
-/* ===== TÍTULO ===== */
-
-.estoque-container h2 {
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: #212529;
+/* ==========================================
+   CABEÇALHO
+========================================== */
+.header-aplicacoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
 }
 
-/* =====================================================
-   BARRA DE FILTROS
-===================================================== */
+.header-aplicacoes h2 {
+    margin: 0;
+    color: #334455;
+    font-weight: 700;
+}
 
+/* ==========================================
+   BOTÃO PRINCIPAL — AZUL PRINCIPAL
+========================================== */
+.btn-primary {
+    background-color: #0066B3 !important;
+    border-color: #0066B3 !important;
+}
+
+.btn-primary:hover {
+    background-color: #005599 !important;
+    border-color: #005599 !important;
+}
+
+/* ==========================================
+   FILTROS
+========================================== */
 .filtros-container {
-    width: 100%;
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
 }
 
 .filtro-row {
-    display: flex;
-    align-items: center !important;
+    margin-bottom: 0.5rem;
 }
 
-/* Garante que as colunas não tenham espaçamento vertical */
-.filtro-row>[class*='col-'] {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* Campo de busca */
-.filtro-row .input-group {
-    height: 38px;
-}
-
-.filtro-row .input-group-text {
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f9fa;
-    border-color: #ced4da;
-}
-
-.filtro-row .input-busca {
-    height: 38px;
-    font-size: 14px;
-}
-
-/* Coluna do botão */
 .filtro-botao-col {
     display: flex;
-    align-items: center !important;
+    align-items: flex-start;
 }
 
-/* Botão corrigido */
+.filtros-container .input-group-text,
+.filtros-container .input-busca {
+    height: 42px;
+}
+
+.input-busca {
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+    border-color: #BFD2E8 !important;
+}
+
+.input-group-text {
+    background-color: #E6F0FA;
+    border-right: none;
+    color: #0066B3;
+    border-color: #BFD2E8;
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* ==========================================
+   BOTÃO LIMPAR FILTROS
+========================================== */
 .filtro-limpar-btn {
-    height: 38px !important;
-    min-height: 38px !important;
-    margin: 0 !important;
-    padding: 6px 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    white-space: nowrap;
-}
-
-/* =====================================================
-   REACT SELECT DO FILTRO
-===================================================== */
-
-.filtro-row .react-select__control {
-    height: 38px !important;
-    min-height: 38px !important;
-    overflow: hidden;
-}
-
-.filtro-row .react-select__value-container {
-    height: 38px !important;
-    min-height: 38px !important;
-    padding: 0 8px !important;
-    display: flex;
+    width: 100%;
+    height: 42px;
+    display: inline-flex;
     align-items: center;
-    flex-wrap: nowrap;
-    overflow: hidden;
-}
-
-.filtro-row .react-select__indicators {
-    height: 38px !important;
-}
-
-.filtro-row .react-select__indicator {
-    padding: 6px 8px;
-}
-
-.filtro-row .react-select__placeholder {
-    margin: 0;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 600;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.filtro-row .react-select__input-container {
-    margin: 0;
-    padding: 0;
-}
-
-.filtro-row .react-select__multi-value {
-    max-width: 125px;
-    margin: 2px 4px 2px 0;
-    overflow: hidden;
-}
-
-.filtro-row .react-select__multi-value__label {
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 12px;
-    padding: 2px 5px;
-}
-
-.filtro-row .react-select__multi-value__remove {
     cursor: pointer;
-    padding: 0 3px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.filtro-row .react-select__menu {
-    z-index: 1050;
+.filtro-limpar-btn:hover {
+    background-color: #E6F0FA;
+    border-color: #BFD2E8;
+    color: #0066B3;
 }
 
-.filtro-row .react-select__menu-portal {
-    z-index: 9999;
+/* ==========================================
+   REACT-SELECT — CORES AZUIS
+========================================== */
+.react-select__control {
+    background-color: #fff !important;
+    border-color: #BFD2E8 !important;
 }
 
-/* =====================================================
-   INSÍGNIAS DOS FILTROS
-===================================================== */
+.react-select__control--is-focused {
+    border-color: #4A90E2 !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 102, 179, 0.15) !important;
+}
 
+.react-select__single-value {
+    color: #334455 !important;
+}
+
+.react-select__input {
+    color: #334455 !important;
+}
+
+.react-select__placeholder {
+    color: #6c757d !important;
+}
+
+.react-select__option {
+    color: #334455;
+}
+
+.react-select__option--is-selected {
+    background-color: #0066B3 !important;
+    color: #fff !important;
+}
+
+.react-select__option--is-focused {
+    background-color: #E6F0FA !important;
+}
+
+.react-select__menu {
+    background-color: #fff !important;
+}
+
+/* ==========================================
+   BADGES DOS FILTROS
+========================================== */
 .filtros-badges {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 1rem;
 }
 
 .badge-filtro {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    min-height: 26px;
-    padding: 4px 8px;
-    border-radius: 5px;
-    font-size: 12px;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: 500;
-    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.2s ease-out;
 }
 
-/* Insígnia da busca */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .badge-busca {
-    color: #084298;
-    background-color: #cfe2ff;
-    border: 1px solid #b6d4fe;
+    background-color: #E9ECEF;
+    color: #495057;
 }
 
-/* Insígnia da vacina */
 .badge-vacina {
-    color: #0f5132;
-    background-color: #d1e7dd;
-    border: 1px solid #badbcc;
+    background-color: #E6F0FA;
+    color: #0066B3;
+    border: 1px solid #BFD2E8;
 }
 
-/* Texto "Busca:" e "Vacina:" */
-.badge-filtro .badge-tipo {
-    color: inherit;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    font-weight: 700;
+.badge-tipo {
+    opacity: 0.85;
+    font-weight: 600;
 }
 
-/* Valor do filtro */
 .badge-valor {
-    max-width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: 500;
 }
 
-/* Botão X da insígnia */
 .badge-remover {
-    width: 20px;
-    height: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    margin-left: 3px;
+    background: transparent;
     border: none;
-    border-radius: 50%;
-    background-color: transparent;
     color: inherit;
     cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 0;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: background 0.2s;
 }
 
 .badge-remover:hover {
-    background-color: rgba(0, 0, 0, 0.15);
-    transform: scale(1.1);
+    background-color: rgba(0, 0, 0, 0.12);
 }
 
-/* =====================================================
-   MODAL
-===================================================== */
-
-.estoque-modal-theme .form-control,
-.estoque-modal-theme .form-select {
-    max-width: 220px;
-    font-size: 14px;
-    padding: 6px 10px;
-    display: inline-block;
+/* ==========================================
+   TABELA — PADRÃO DO SISTEMA
+========================================== */
+.aplicacoes-table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.estoque-modal-theme .form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+/* ==========================================
+   HEADER DA TABELA — AZUL PRIMÁRIO
+========================================== */
+.aplicacoes-table thead.table-header-primary {
+    background-color: #0d6efd !important;
 }
 
-.estoque-modal-theme .row {
-    margin-right: -5px;
-    margin-left: -5px;
+.aplicacoes-table thead.table-header-primary th {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px;
+    white-space: nowrap;
+    color: #fff !important;
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
 }
 
-.estoque-modal-theme .row>[class*='col-'] {
-    padding-right: 5px;
-    padding-left: 5px;
-}
-
-.custom-modal-width {
-    max-width: 650px;
-    width: 90%;
-}
-
-.estoque-modal-theme .modal-header {
-    background-color: #212529;
-    color: white;
-    border-bottom: 1px solid #000;
-    border-radius: 0;
-}
-
-.estoque-modal-theme .modal-title {
-    color: white;
-}
-
-.estoque-modal-theme .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
-}
-
-.estoque-modal-theme .modal-content {
-    border-radius: 0;
-    border: none;
-    padding-top: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.estoque-modal-theme .modal-body {
-    padding: 1.2rem;
-}
-
-/* Select do modal */
-.estoque-modal-theme .react-select__control {
-    max-width: 220px;
-}
-
-/* =====================================================
-   TABELA
-===================================================== */
-
-.estoque-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.estoque-table th,
-.estoque-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+.aplicacoes-table tbody td {
+    padding: 12px;
     vertical-align: middle;
-    font-size: 14px;
+    font-size: 0.9rem;
+    color: #495057;
 }
 
-.estoque-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+.aplicacoes-table tbody tr:hover {
+    background-color: #f1f3f5;
 }
 
-.estoque-row:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.estoque-row:hover {
-    background-color: #f1f1f1;
-}
-
-.estoque-table .actions-cell {
-    text-align: center;
+/* ==========================================
+   VALORES FINANCEIROS
+========================================== */
+.aplicacoes-table tbody td:nth-child(6),
+.aplicacoes-table tbody td:nth-child(7) {
     white-space: nowrap;
 }
 
-/* ===== COLUNAS ESPECÍFICAS ===== */
+.aplicacoes-table tbody td:nth-child(7) {
+    font-weight: 600;
+    color: #0066B3;
+}
 
-.estoque-table td:nth-child(2),
-.estoque-table td:nth-child(4),
-.estoque-table td:nth-child(5),
-.estoque-table td:nth-child(6) {
-    text-align: center;
+/* ==========================================
+   VALOR TOTAL NO MODAL
+========================================== */
+.aplicacoes-modal-theme #formValorTotal .form-control {
+    background-color: #f8f9fa;
+    color: #0066B3;
+    font-weight: 600;
+}
+
+.aplicacoes-modal-theme #formValorTotal .form-control:disabled {
+    background-color: #f8f9fa;
+    color: #0066B3;
+    opacity: 1;
+    cursor: default;
+}
+
+.aplicacoes-modal-theme #formValorTotal .text-muted {
+    font-size: 0.78rem;
+}
+
+/* ==========================================
+   BOTÕES DE AÇÃO
+========================================== */
+.linha-acoes {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-acao {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    padding: 7px 14px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.83rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-acao-editar {
+    background-color: #E6F0FA !important;
+    color: #0066B3 !important;
+}
+
+.btn-acao-editar:hover {
+    background-color: #0066B3 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(0, 102, 179, 0.25);
+}
+
+.btn-acao-excluir {
+    background-color: #FDECEE !important;
+    color: #CC3333 !important;
+}
+
+.btn-acao-excluir:hover {
+    background-color: #CC3333 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(204, 51, 51, 0.25);
+}
+
+/* ==========================================
+   MODAL — PADRONIZADO
+========================================== */
+.custom-modal-width {
+    max-width: 800px;
+}
+
+.aplicacoes-modal-theme .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.aplicacoes-modal-theme .modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    background-color: #F8F9FA;
+    border-radius: 12px 12px 0 0;
+}
+
+.aplicacoes-modal-theme .modal-title {
+    font-weight: 600;
+    color: #334455;
+}
+
+.aplicacoes-modal-theme .modal-body {
+    padding: 1.5rem;
+}
+
+.aplicacoes-modal-theme .form-label {
     font-weight: 500;
-    font-size: 13px;
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.35rem;
 }
 
-.estoque-table td:nth-child(5) {
-    color: #198754;
+.aplicacoes-modal-theme .form-control {
+    border-radius: 0.375rem;
+    color: #334455;
+    background-color: #fff;
+    border-color: #BFD2E8;
 }
 
-.estoque-table td:nth-child(6) {
-    color: #0d6efd;
+.aplicacoes-modal-theme .form-control:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 0.25rem rgba(0, 102, 179, 0.15);
 }
 
-/* =====================================================
-   BOTÕES
-===================================================== */
-
-.estoque-container .btn {
-    font-size: 13px;
-    padding: 6px 14px;
+.aplicacoes-modal-theme .btn-success {
+    background-color: #2E8B57;
+    border-color: #2E8B57;
 }
 
-.estoque-container .btn-primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+.aplicacoes-modal-theme .btn-success:hover {
+    background-color: #277A4B;
+    border-color: #277A4B;
 }
 
-.estoque-container .btn-primary:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
-}
-
-/* =====================================================
+/* ==========================================
    RESPONSIVIDADE
-===================================================== */
-
+========================================== */
 @media (max-width: 768px) {
     .estoque-container {
-        padding: 15px;
+        padding: 1rem;
     }
 
-    .filtro-row>[class*='col-'] {
-        margin-bottom: 8px !important;
+    .header-aplicacoes {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
     }
 
-    .filtro-botao-col {
-        width: 100%;
+    .header-aplicacoes h2 {
+        text-align: center;
     }
 
-    .filtro-limpar-btn {
-        width: 100%;
-    }
-
-    .badge-valor {
-        max-width: 140px;
-    }
-}
-
-@media (max-width: 576px) {
-    .estoque-container {
-        padding: 10px;
-    }
-
-    .filtros-badges {
-        gap: 5px;
-    }
-
-    .badge-filtro {
-        max-width: 100%;
-    }
-
-    .badge-valor {
-        max-width: 120px;
+    .custom-modal-width {
+        max-width: 95% !important;
     }
 }

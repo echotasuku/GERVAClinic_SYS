@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AplicacaoController extends Controller
 {
-    // =========================================================
-    // LISTAR APLICAÇÕES
-    // =========================================================
-
     public function index()
     {
         return Aplicacao::with([
@@ -21,11 +17,6 @@ class AplicacaoController extends Controller
             'estoque.vacina'
         ])->get();
     }
-
-
-    // =========================================================
-    // REGISTRAR APLICAÇÃO
-    // =========================================================
 
     public function store(Request $request)
     {
@@ -36,6 +27,8 @@ class AplicacaoController extends Controller
             'observacoes' => 'nullable|string',
             'data_aplicacao' => 'required|date',
             'hora_aplicacao' => 'required|date_format:H:i',
+            'desconto_percentual' => 'nullable|numeric|min:0|max:100',
+            'desconto_valor' => 'nullable|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -45,38 +38,74 @@ class AplicacaoController extends Controller
             );
         }
 
+        if (
+            $request->filled('desconto_percentual') &&
+            $request->filled('desconto_valor')
+        ) {
+            return response()->json([
+                'message' =>
+                    'Informe o desconto em percentual ou em reais, não os dois.'
+            ], 422);
+        }
 
         try {
-
-            /*
-             * Transação:
-             * aplicação e alteração do estoque acontecem juntas.
-             */
             $aplicacao = DB::transaction(function () use ($request) {
-
-                // Busca o lote escolhido
                 $estoque = Estoque::lockForUpdate()
                     ->findOrFail($request->estoque_id);
 
-
-                // Verifica se ainda existe estoque disponível
                 if ($estoque->quantidade_estoque <= 0) {
-
                     throw new \Exception(
                         'Não há doses disponíveis deste lote.'
                     );
-
                 }
 
+                if ($estoque->preco_unitario === null) {
+                    throw new \Exception(
+                        'Este lote não possui preço unitário cadastrado.'
+                    );
+                }
 
-                // Diminui uma dose do estoque
+                $precoUnitario = (float) $estoque->preco_unitario;
+
+                $descontoPercentual = null;
+                $descontoValor = 0;
+                $valorFinal = $precoUnitario;
+
+                if ($request->filled('desconto_percentual')) {
+                    $descontoPercentual =
+                        (float) $request->desconto_percentual;
+
+                    $descontoValor =
+                        $precoUnitario *
+                        ($descontoPercentual / 100);
+
+                    $valorFinal =
+                        $precoUnitario -
+                        $descontoValor;
+                } elseif ($request->filled('desconto_valor')) {
+                    $descontoValor =
+                        (float) $request->desconto_valor;
+
+                    if ($descontoValor > $precoUnitario) {
+                        throw new \Exception(
+                            'O desconto em reais não pode ser maior que o preço unitário.'
+                        );
+                    }
+
+                    $valorFinal =
+                        $precoUnitario -
+                        $descontoValor;
+                }
+
+                if ($valorFinal < 0) {
+                    $valorFinal = 0;
+                }
+
                 $estoque->decrement(
                     'quantidade_estoque',
                     1
                 );
 
-
-                // Registra a aplicação
                 return Aplicacao::create([
                     'id_profissional' =>
                         $request->id_profissional,
@@ -87,6 +116,20 @@ class AplicacaoController extends Controller
                     'estoque_id' =>
                         $request->estoque_id,
 
+                    'preco_unitario' =>
+                        round($precoUnitario, 2),
+
+                    'desconto_percentual' =>
+                        $descontoPercentual !== null
+                            ? round($descontoPercentual, 2)
+                            : null,
+
+                    'desconto_valor' =>
+                        round($descontoValor, 2),
+
+                    'valor_final' =>
+                        round($valorFinal, 2),
+
                     'observacoes' =>
                         $request->observacoes,
 
@@ -96,37 +139,24 @@ class AplicacaoController extends Controller
                     'hora_aplicacao' =>
                         $request->hora_aplicacao,
                 ]);
-
             });
 
-
-            // Retorna a aplicação já com os relacionamentos
             $aplicacao->load([
                 'profissional',
                 'paciente',
                 'estoque.vacina'
             ]);
 
-
             return response()->json(
                 $aplicacao,
                 201
             );
-
-
         } catch (\Exception $e) {
-
             return response()->json([
                 'message' => $e->getMessage()
             ], 422);
-
         }
     }
-
-
-    // =========================================================
-    // MOSTRAR APLICAÇÃO
-    // =========================================================
 
     public function show($id)
     {
@@ -136,11 +166,6 @@ class AplicacaoController extends Controller
             'estoque.vacina'
         ])->findOrFail($id);
     }
-
-
-    // =========================================================
-    // ATUALIZAR APLICAÇÃO
-    // =========================================================
 
     public function update(Request $request, $id)
     {
@@ -153,6 +178,8 @@ class AplicacaoController extends Controller
             'observacoes' => 'nullable|string',
             'data_aplicacao' => 'required|date',
             'hora_aplicacao' => 'required|date_format:H:i',
+            'desconto_percentual' => 'nullable|numeric|min:0|max:100',
+            'desconto_valor' => 'nullable|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -162,19 +189,74 @@ class AplicacaoController extends Controller
             );
         }
 
+        if (
+            $request->filled('desconto_percentual') &&
+            $request->filled('desconto_valor')
+        ) {
+            return response()->json([
+                'message' =>
+                    'Informe o desconto em percentual ou em reais, não os dois.'
+            ], 422);
+        }
 
         try {
-
             DB::transaction(function () use ($request, $aplicacao) {
-
-                /*
-                 * Se o lote da aplicação não mudou,
-                 * não precisamos alterar o estoque.
-                 */
                 if (
                     $aplicacao->estoque_id ==
                     $request->estoque_id
                 ) {
+                    $precoUnitario =
+                        $aplicacao->preco_unitario !== null
+                            ? (float) $aplicacao->preco_unitario
+                            : null;
+
+                    if ($precoUnitario === null) {
+                        $estoqueAtual = Estoque::lockForUpdate()
+                            ->findOrFail($request->estoque_id);
+
+                        if ($estoqueAtual->preco_unitario === null) {
+                            throw new \Exception(
+                                'Este lote não possui preço unitário cadastrado.'
+                            );
+                        }
+
+                        $precoUnitario =
+                            (float) $estoqueAtual->preco_unitario;
+                    }
+
+                    $descontoPercentual = null;
+                    $descontoValor = 0;
+                    $valorFinal = $precoUnitario;
+
+                    if ($request->filled('desconto_percentual')) {
+                        $descontoPercentual =
+                            (float) $request->desconto_percentual;
+
+                        $descontoValor =
+                            $precoUnitario *
+                            ($descontoPercentual / 100);
+
+                        $valorFinal =
+                            $precoUnitario -
+                            $descontoValor;
+                    } elseif ($request->filled('desconto_valor')) {
+                        $descontoValor =
+                            (float) $request->desconto_valor;
+
+                        if ($descontoValor > $precoUnitario) {
+                            throw new \Exception(
+                                'O desconto em reais não pode ser maior que o preço unitário.'
+                            );
+                        }
+
+                        $valorFinal =
+                            $precoUnitario -
+                            $descontoValor;
+                    }
+
+                    if ($valorFinal < 0) {
+                        $valorFinal = 0;
+                    }
 
                     $aplicacao->update([
                         'id_profissional' =>
@@ -182,6 +264,20 @@ class AplicacaoController extends Controller
 
                         'paciente_id' =>
                             $request->paciente_id,
+
+                        'preco_unitario' =>
+                            round($precoUnitario, 2),
+
+                        'desconto_percentual' =>
+                            $descontoPercentual !== null
+                                ? round($descontoPercentual, 2)
+                                : null,
+
+                        'desconto_valor' =>
+                            round($descontoValor, 2),
+
+                        'valor_final' =>
+                            round($valorFinal, 2),
 
                         'observacoes' =>
                             $request->observacoes,
@@ -196,12 +292,6 @@ class AplicacaoController extends Controller
                     return;
                 }
 
-
-                /*
-                 * A aplicação mudou de lote.
-                 *
-                 * Devolve a dose para o lote antigo.
-                 */
                 $estoqueAntigo = Estoque::lockForUpdate()
                     ->findOrFail($aplicacao->estoque_id);
 
@@ -210,32 +300,63 @@ class AplicacaoController extends Controller
                     1
                 );
 
-
-                /*
-                 * Retira uma dose do novo lote.
-                 */
                 $estoqueNovo = Estoque::lockForUpdate()
                     ->findOrFail($request->estoque_id);
 
-
                 if ($estoqueNovo->quantidade_estoque <= 0) {
-
                     throw new \Exception(
                         'Não há doses disponíveis no novo lote.'
                     );
-
                 }
 
+                if ($estoqueNovo->preco_unitario === null) {
+                    throw new \Exception(
+                        'O novo lote não possui preço unitário cadastrado.'
+                    );
+                }
+
+                $precoUnitario =
+                    (float) $estoqueNovo->preco_unitario;
+
+                $descontoPercentual = null;
+                $descontoValor = 0;
+                $valorFinal = $precoUnitario;
+
+                if ($request->filled('desconto_percentual')) {
+                    $descontoPercentual =
+                        (float) $request->desconto_percentual;
+
+                    $descontoValor =
+                        $precoUnitario *
+                        ($descontoPercentual / 100);
+
+                    $valorFinal =
+                        $precoUnitario -
+                        $descontoValor;
+                } elseif ($request->filled('desconto_valor')) {
+                    $descontoValor =
+                        (float) $request->desconto_valor;
+
+                    if ($descontoValor > $precoUnitario) {
+                        throw new \Exception(
+                            'O desconto em reais não pode ser maior que o preço unitário.'
+                        );
+                    }
+
+                    $valorFinal =
+                        $precoUnitario -
+                        $descontoValor;
+                }
+
+                if ($valorFinal < 0) {
+                    $valorFinal = 0;
+                }
 
                 $estoqueNovo->decrement(
                     'quantidade_estoque',
                     1
                 );
 
-
-                /*
-                 * Atualiza a aplicação.
-                 */
                 $aplicacao->update([
                     'id_profissional' =>
                         $request->id_profissional,
@@ -246,6 +367,20 @@ class AplicacaoController extends Controller
                     'estoque_id' =>
                         $request->estoque_id,
 
+                    'preco_unitario' =>
+                        round($precoUnitario, 2),
+
+                    'desconto_percentual' =>
+                        $descontoPercentual !== null
+                            ? round($descontoPercentual, 2)
+                            : null,
+
+                    'desconto_valor' =>
+                        round($descontoValor, 2),
+
+                    'valor_final' =>
+                        round($valorFinal, 2),
+
                     'observacoes' =>
                         $request->observacoes,
 
@@ -255,9 +390,7 @@ class AplicacaoController extends Controller
                     'hora_aplicacao' =>
                         $request->hora_aplicacao,
                 ]);
-
             });
-
 
             $aplicacao->load([
                 'profissional',
@@ -265,75 +398,44 @@ class AplicacaoController extends Controller
                 'estoque.vacina'
             ]);
 
-
             return response()->json(
                 $aplicacao
             );
-
-
         } catch (\Exception $e) {
-
             return response()->json([
                 'message' => $e->getMessage()
             ], 422);
-
         }
     }
-
-
-    // =========================================================
-    // EXCLUIR APLICAÇÃO
-    // =========================================================
 
     public function destroy($id)
     {
         try {
-
             DB::transaction(function () use ($id) {
-
                 $aplicacao = Aplicacao::findOrFail($id);
 
-
-                /*
-                 * Recupera o lote usado na vacinação.
-                 */
                 $estoque = Estoque::lockForUpdate()
                     ->findOrFail($aplicacao->estoque_id);
 
-
-                /*
-                 * Devolve a dose ao estoque.
-                 */
                 $estoque->increment(
                     'quantidade_estoque',
                     1
                 );
 
-
-                /*
-                 * Remove a aplicação.
-                 */
                 $aplicacao->delete();
-
             });
-
 
             return response()->json([
                 'message' =>
                     'Vacinação excluída e estoque atualizado com sucesso.'
             ]);
-
-
         } catch (\Exception $e) {
-
             return response()->json([
                 'message' =>
                     'Erro ao excluir vacinação.',
                 'error' =>
                     $e->getMessage()
             ], 422);
-
         }
     }
 }
-

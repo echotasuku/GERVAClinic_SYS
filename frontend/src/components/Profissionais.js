@@ -2,10 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import InputMask from 'react-input-mask';
-import { FiSearch } from 'react-icons/fi';
+import {
+    FiSearch, FiX, FiEdit2, FiTrash2, FiRotateCcw
+} from 'react-icons/fi';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Profissionais.css';
-
 
 const Profissionais = () => {
     const [profissionais, setProfissionais] = useState([]);
@@ -34,7 +35,10 @@ const Profissionais = () => {
     // Estado para busca
     const [termoBusca, setTermoBusca] = useState('');
 
-    // ===== NOTIFICAÇÕES =====
+    // ==========================================
+    // NOTIFICAÇÕES
+    // ==========================================
+
     const showNotification = useCallback((message, type = 'success') => {
         setNotification({
             show: true,
@@ -50,7 +54,10 @@ const Profissionais = () => {
         }, 5000);
     }, []);
 
-    // ===== REQUISIÇÕES API =====
+    // ==========================================
+    // REQUISIÇÕES API
+    // ==========================================
+
     const fetchProfissionais = useCallback(async () => {
         try {
             const token = localStorage.getItem('auth_token');
@@ -67,12 +74,18 @@ const Profissionais = () => {
         }
     }, [showNotification]);
 
-    // ===== EFFECTS =====
+    // ==========================================
+    // EFFECTS
+    // ==========================================
+
     useEffect(() => {
         fetchProfissionais();
     }, [fetchProfissionais]);
 
-    // ===== FUNÇÃO DE BUSCA =====
+    // ==========================================
+    // FUNÇÃO DE BUSCA
+    // ==========================================
+
     const filtrarProfissionais = useCallback(() => {
         let filtrados = [...profissionais];
 
@@ -92,17 +105,26 @@ const Profissionais = () => {
         setProfissionaisFiltrados(filtrados);
     }, [profissionais, termoBusca]);
 
-    // ===== EFETUAR BUSCA QUANDO O TERMO MUDAR =====
+    // ==========================================
+    // EFETUAR BUSCA QUANDO O TERMO MUDAR
+    // ==========================================
+
     useEffect(() => {
         filtrarProfissionais();
     }, [filtrarProfissionais]);
 
-    // ===== LIMPAR BUSCA =====
+    // ==========================================
+    // LIMPAR BUSCA
+    // ==========================================
+
     const limparBusca = () => {
         setTermoBusca('');
     };
 
-    // ===== HANDLERS =====
+    // ==========================================
+    // HANDLERS
+    // ==========================================
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNovoProfissional(prev => ({ ...prev, [name]: value }));
@@ -111,6 +133,10 @@ const Profissionais = () => {
             setErrors(prev => ({ ...prev, [name]: null }));
         }
     };
+
+    // ==========================================
+    // VALIDAR FORMULÁRIO
+    // ==========================================
 
     const validateForm = () => {
         const { id_func, nome, registro_profissional } = novoProfissional;
@@ -125,6 +151,10 @@ const Profissionais = () => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
+    // ==========================================
+    // ENVIAR FORMULÁRIO
+    // ==========================================
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
@@ -175,6 +205,10 @@ const Profissionais = () => {
         }
     };
 
+    // ==========================================
+    // ABRIR / FECHAR MODAL
+    // ==========================================
+
     const abrirModal = () => {
         setShowModal(true);
         setModoEdicao(false);
@@ -191,6 +225,10 @@ const Profissionais = () => {
         setErrors({});
     };
 
+    // ==========================================
+    // EDITAR
+    // ==========================================
+
     const handleEditarProfissional = (profissional) => {
         setNovoProfissional({
             id_func: profissional.id_func,
@@ -203,6 +241,10 @@ const Profissionais = () => {
         setErrors({});
     };
 
+    // ==========================================
+    // MODAL EXCLUSÃO
+    // ==========================================
+
     const abrirModalExcluir = (profissional) => {
         setProfissionalParaExcluir(profissional);
         setShowDeleteModal(true);
@@ -212,6 +254,10 @@ const Profissionais = () => {
         setShowDeleteModal(false);
         setProfissionalParaExcluir(null);
     };
+
+    // ==========================================
+    // EXCLUIR
+    // ==========================================
 
     const handleExcluirProfissional = async () => {
         try {
@@ -229,63 +275,197 @@ const Profissionais = () => {
         }
     };
 
+    // ==========================================
+    // RENDER
+    // ==========================================
+
     if (loading) return <div className="loading">Carregando...</div>;
     if (error) return <div className="error">Erro: {error}</div>;
 
     return (
         <div className="profissionais-container">
+
+            {/* NOTIFICAÇÃO */}
             {notification.show && (
                 <div className={`notification ${notification.type}`}>
                     {notification.message}
                 </div>
             )}
 
-            <header className="header d-flex justify-content-between align-items-center mb-4">
-                <h1>Profissionais</h1>
+            {/* CABEÇALHO */}
+            <div className="header-profissionais">
+                <h2>Profissionais</h2>
                 <Button variant="primary" onClick={abrirModal}>
                     Adicionar Profissional
                 </Button>
-            </header>
+            </div>
 
-            {/* Barra de Busca */}
-            <div className="filtros-container mb-4">
-                <Row className="align-items-center g-2">
+            {/* FILTROS */}
+            <div className="filtros-container">
+
+                <Row className="filtro-row g-2">
+
+                    {/* BUSCA */}
                     <Col md={9}>
-                        <div className="input-group filtro-input-group">
-                            <span className="input-group-text filtro-icone">
-                                <FiSearch size={16} />
+                        <div className="input-group">
+                            <span className="input-group-text">
+                                <FiSearch size={18} />
                             </span>
                             <Form.Control
                                 type="text"
                                 placeholder="Buscar por ID, nome ou registro profissional..."
                                 value={termoBusca}
                                 onChange={(e) => setTermoBusca(e.target.value)}
-                                className="filtro-input"
+                                className="input-busca"
                             />
                         </div>
                     </Col>
-                    <Col md={3}>
-                        <Button 
-                            variant="outline-secondary" 
+
+                    {/* LIMPAR */}
+                    <Col md={3} className="filtro-botao-col">
+                        <button
+                            type="button"
+                            className="filtro-limpar-btn"
                             onClick={limparBusca}
-                            className="w-100 filtro-botao"
+                            title="Limpar busca"
                         >
-                            Limpar
-                        </Button>
+                            <FiRotateCcw size={15} />
+                            <span>Limpar</span>
+                        </button>
                     </Col>
+
                 </Row>
+
+                {/* BADGES */}
+                {termoBusca && (
+                    <div className="filtros-badges">
+                        <div className="badge-filtro badge-busca">
+                            <span className="badge-tipo">Busca:</span>
+                            <span className="badge-valor">{termoBusca}</span>
+                            <button
+                                type="button"
+                                className="badge-remover"
+                                onClick={() => setTermoBusca('')}
+                                title="Remover busca"
+                            >
+                                <FiX size={12} />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* CONTADOR */}
                 <div className="mt-2">
                     <small className="text-muted">
                         {profissionaisFiltrados.length} profissional(is) encontrado(s)
                         {termoBusca && ` - Busca: "${termoBusca}"`}
                     </small>
                 </div>
+
             </div>
 
-            {/* Tabela de Profissionais */}
+            {/* MODAL CADASTRO / EDIÇÃO */}
+            <Modal
+                show={showModal}
+                onHide={fecharModal}
+                centered
+                dialogClassName="custom-modal-width"
+                className="profissionais-modal-theme"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {modoEdicao ? 'Editar Profissional' : 'Adicionar Profissional'}
+                    </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <Form noValidate onSubmit={handleFormSubmit}>
+
+                        {/* ID + NOME + REGISTRO */}
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="formIdFunc">
+                                <Form.Label>ID do Funcionário</Form.Label>
+                                <Form.Control
+                                    name="id_func"
+                                    value={novoProfissional.id_func}
+                                    onChange={handleInputChange}
+                                    isInvalid={!!errors.id_func}
+                                    disabled={modoEdicao}
+                                    placeholder="Ex: FUNC001"
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.id_func}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Form.Group as={Col} md="4" controlId="formNome">
+                                <Form.Label>Nome</Form.Label>
+                                <Form.Control
+                                    name="nome"
+                                    value={novoProfissional.nome}
+                                    onChange={handleInputChange}
+                                    isInvalid={!!errors.nome}
+                                    placeholder="Nome completo"
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.nome}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Form.Group as={Col} md="4" controlId="formRegistro">
+                                <Form.Label>Registro Profissional</Form.Label>
+                                <InputMask
+                                    mask="999999-aa/aa"
+                                    name="registro_profissional"
+                                    value={novoProfissional.registro_profissional}
+                                    onChange={handleInputChange}
+                                >
+                                    {(inputProps) => (
+                                        <Form.Control
+                                            {...inputProps}
+                                            isInvalid={!!errors.registro_profissional}
+                                            placeholder="Ex: 123456-SP/01"
+                                        />
+                                    )}
+                                </InputMask>
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.registro_profissional}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+
+                        {/* BOTÕES */}
+                        <div className="d-flex justify-content-end gap-2 mt-3">
+                            <Button variant="secondary" onClick={fecharModal}>
+                                Cancelar
+                            </Button>
+                            <Button variant="success" type="submit">
+                                {modoEdicao ? 'Atualizar' : 'Salvar'}
+                            </Button>
+                        </div>
+
+                    </Form>
+                </Modal.Body>
+            </Modal>
+
+            {/* MODAL EXCLUSÃO */}
+            <Modal show={showDeleteModal} onHide={fecharModalExcluir} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Exclusão</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Tem certeza que deseja excluir o profissional <strong>{profissionalParaExcluir?.nome}</strong>?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={fecharModalExcluir}>Cancelar</Button>
+                    <Button variant="danger" onClick={handleExcluirProfissional}>Excluir</Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* TABELA */}
             <div className="table-responsive">
-                <table className="profissionais-table">
-                    <thead>
+                <table className="profissionais-table table table-striped table-hover">
+                    <thead className="table-header-primary">
                         <tr>
                             <th>ID do Funcionário</th>
                             <th>Nome</th>
@@ -293,6 +473,7 @@ const Profissionais = () => {
                             <th className="text-center">Ações</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {profissionaisFiltrados.length === 0 ? (
                             <tr>
@@ -314,21 +495,27 @@ const Profissionais = () => {
                                     <td>{profissional.nome}</td>
                                     <td>{profissional.registro_profissional}</td>
                                     <td className="actions-cell">
-                                        <Button 
-                                            size="sm" 
-                                            variant="info" 
-                                            onClick={() => handleEditarProfissional(profissional)}
-                                        >
-                                            Editar
-                                        </Button>
-                                        <Button 
-                                            size="sm" 
-                                            variant="danger" 
-                                            className="ms-2" 
-                                            onClick={() => abrirModalExcluir(profissional)}
-                                        >
-                                            Excluir
-                                        </Button>
+                                        <div className="linha-acoes">
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-editar"
+                                                onClick={() => handleEditarProfissional(profissional)}
+                                                title="Editar profissional"
+                                            >
+                                                <FiEdit2 size={14} />
+                                                <span>Editar</span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="btn-acao btn-acao-excluir"
+                                                onClick={() => abrirModalExcluir(profissional)}
+                                                title="Excluir profissional"
+                                            >
+                                                <FiTrash2 size={14} />
+                                                <span>Excluir</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -337,99 +524,6 @@ const Profissionais = () => {
                 </table>
             </div>
 
-            {/* ===== MODAL CADASTRO / EDIÇÃO ===== */}
-            <Modal show={showModal} onHide={fecharModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        {modoEdicao ? 'Editar Profissional' : 'Adicionar Profissional'}
-                    </Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <Form onSubmit={handleFormSubmit} noValidate>
-                        <Row>
-                            <Col md={4}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>ID do Funcionário</Form.Label>
-                                    <Form.Control
-                                        name="id_func"
-                                        value={novoProfissional.id_func}
-                                        onChange={handleInputChange}
-                                        isInvalid={!!errors.id_func}
-                                        disabled={modoEdicao}
-                                        placeholder="Ex: FUNC001"
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.id_func}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-
-                            <Col md={4}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nome</Form.Label>
-                                    <Form.Control
-                                        name="nome"
-                                        value={novoProfissional.nome}
-                                        onChange={handleInputChange}
-                                        isInvalid={!!errors.nome}
-                                        placeholder="Nome completo"
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.nome}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-
-                            <Col md={4}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Registro Profissional</Form.Label>
-                                    <InputMask
-                                        mask="999999-aa/aa"
-                                        name="registro_profissional"
-                                        value={novoProfissional.registro_profissional}
-                                        onChange={handleInputChange}
-                                    >
-                                        {(inputProps) => (
-                                            <Form.Control
-                                                {...inputProps}
-                                                isInvalid={!!errors.registro_profissional}
-                                                placeholder="Ex: 123456-SP/01"
-                                            />
-                                        )}
-                                    </InputMask>
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.registro_profissional}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-
-                        <div className="d-flex justify-content-end gap-2 mt-3">
-                            <Button variant="secondary" onClick={fecharModal}>
-                                Cancelar
-                            </Button>
-                            <Button variant="success" type="submit">
-                                {modoEdicao ? 'Atualizar' : 'Salvar'}
-                            </Button>
-                        </div>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* ===== MODAL EXCLUSÃO ===== */}
-            <Modal show={showDeleteModal} onHide={fecharModalExcluir} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmar Exclusão</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Tem certeza que deseja excluir o profissional <strong>{profissionalParaExcluir?.nome}</strong>?
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={fecharModalExcluir}>Cancelar</Button>
-                    <Button variant="danger" onClick={handleExcluirProfissional}>Excluir</Button>
-                </Modal.Footer>
-            </Modal>
         </div>
     );
 };
