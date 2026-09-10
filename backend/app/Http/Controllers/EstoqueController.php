@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estoque;
-use App\Models\User;
 use App\Models\Vacina;
-use App\Notifications\AlertaSistema;
-use App\Notifications\AlertaSistemaEmail;
-use App\Events\NovoAlerta;
+use App\Jobs\VerificarAlertasEstoqueJob; // ✅ Importando o Job
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,20 +42,16 @@ class EstoqueController extends Controller
             'vacina_id' => $request->vacina_id,
         ];
 
-        if (
-            $request->filled('preco_unitario') &&
-            $request->preco_unitario !== null
-        ) {
-            $dados['valor_total'] =
-                (float) $request->quantidade_estoque *
-                (float) $request->preco_unitario;
+        if ($request->filled('preco_unitario') && $request->preco_unitario !== null) {
+            $dados['valor_total'] = (float) $request->quantidade_estoque * (float) $request->preco_unitario;
         } else {
             $dados['valor_total'] = null;
         }
 
         $estoque = Estoque::create($dados);
 
-        $this->verificarEDispararAlertas();
+        // ✅ ENVIA A TAREFA PESADA PARA OS BASTIDORES (FILA)
+        VerificarAlertasEstoqueJob::dispatch();
 
         return response()->json($estoque, 201);
     }
@@ -97,20 +90,16 @@ class EstoqueController extends Controller
             'vacina_id' => $request->vacina_id,
         ];
 
-        if (
-            $request->filled('preco_unitario') &&
-            $request->preco_unitario !== null
-        ) {
-            $dados['valor_total'] =
-                (float) $request->quantidade_estoque *
-                (float) $request->preco_unitario;
+        if ($request->filled('preco_unitario') && $request->preco_unitario !== null) {
+            $dados['valor_total'] = (float) $request->quantidade_estoque * (float) $request->preco_unitario;
         } else {
             $dados['valor_total'] = null;
         }
 
         $estoque->update($dados);
 
-        $this->verificarEDispararAlertas();
+        // ✅ ENVIA A TAREFA PESADA PARA OS BASTIDORES (FILA)
+        VerificarAlertasEstoqueJob::dispatch();
 
         return response()->json($estoque);
     }
@@ -119,66 +108,14 @@ class EstoqueController extends Controller
     {
         $estoque = Estoque::findOrFail($id);
         $estoque->delete();
-        $this->verificarEDispararAlertas();
+        
+        // ✅ ENVIA A TAREFA PESADA PARA OS BASTIDORES (FILA)
+        VerificarAlertasEstoqueJob::dispatch();
 
         return response()->noContent();
     }
 
-    private function verificarEDispararAlertas()
-    {
-        $usuarios = User::where('role', 'admin')->get();
-        $todosAlertas = [];
-
-        // ALERTA: ESTOQUE BAIXO
-        $estoqueBaixo = Estoque::with('vacina')
-            ->where('quantidade_estoque', '<', 10)
-            ->get();
-
-        foreach ($estoqueBaixo as $item) {
-            $alerta = [
-                'tipo'       => 'estoque_baixo',
-                'mensagem'   => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades",
-                'link'       => '/estoque',
-                'recurso_id' => $item->id,
-            ];
-
-            $todosAlertas[] = $alerta;
-
-            foreach ($usuarios as $usuario) {
-                $usuario->notify(new AlertaSistema($alerta));
-                $usuario->notify(new AlertaSistemaEmail($alerta));
-            }
-        }
-
-        // ALERTA: VALIDADE PRÓXIMA
-        $validadeProxima = Estoque::with('vacina')
-            ->whereDate('data_validade', '<=', now()->addDays(30))
-            ->get();
-
-        foreach ($validadeProxima as $item) {
-            $dias = now()->diffInDays($item->data_validade);
-
-            $alerta = [
-                'tipo'       => 'validade_proxima',
-                'mensagem'   => "Validade próxima: {$item->vacina->nome} - vence em {$dias} dias",
-                'link'       => '/estoque',
-                'recurso_id' => $item->id,
-            ];
-
-            $todosAlertas[] = $alerta;
-
-            foreach ($usuarios as $usuario) {
-                $usuario->notify(new AlertaSistema($alerta));
-                $usuario->notify(new AlertaSistemaEmail($alerta));
-            }
-        }
-
-        if (count($todosAlertas) > 0) {
-            event(new NovoAlerta($todosAlertas, count($todosAlertas)));
-        }
-    }
-
-    // Rota: /api/alertas — Lista apenas leitura
+    // Rota: /api/alertas — Lista apenas leitura (Mantida para o Frontend)
     public function verificarAlertas()
     {
         $alertas = [];
@@ -190,7 +127,7 @@ class EstoqueController extends Controller
         foreach ($estoqueBaixo as $item) {
             $alertas[] = [
                 'tipo'       => 'estoque_baixo',
-                'mensagem'   => "Estoque baixo: {$item->vacina->nome} - {$item->quantidade_estoque} unidades",
+                'mensagem'   => "Estoque baixo: {$item->vacina->nome} - Lote {$item->lote} - {$item->quantidade_estoque} unidades",
                 'link'       => '/estoque',
                 'recurso_id' => $item->id,
             ];
@@ -201,9 +138,10 @@ class EstoqueController extends Controller
             ->get();
 
         foreach ($validadeProxima as $item) {
+            $dias = now()->diffInDays($item->data_validade);
             $alertas[] = [
                 'tipo'       => 'validade_proxima',
-                'mensagem'   => "Validade próxima: {$item->vacina->nome}",
+                'mensagem'   => "Validade próxima: {$item->vacina->nome} - Lote {$item->lote} - vence em {$dias} dias",
                 'link'       => '/estoque',
                 'recurso_id' => $item->id,
             ];

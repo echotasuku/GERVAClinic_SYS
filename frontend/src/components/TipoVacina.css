@@ -311,7 +311,7 @@
 }
 
 /* ==========================================
-   MODAL
+   MODAL - FORÇAR COR AZUL (PALETA DO SISTEMA)
 ========================================== */
 .custom-modal-width {
     max-width: 800px;
@@ -323,16 +323,28 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
+/* ✅ ALTERADO: Fundo azul da paleta do sistema */
 .tipovacina-modal-theme .modal-header {
-    border-bottom: 1px solid #e9ecef;
+    background-color: #0d6efd !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
     padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
     border-radius: 12px 12px 0 0;
 }
 
-.tipovacina-modal-theme .modal-title {
+/* ✅ ALTERADO: Título em branco para contrastar com o fundo azul */
+.tipovacina-modal-theme .modal-header .modal-title {
     font-weight: 600;
-    color: #212529;
+    color: #ffffff !important;
+}
+
+/* ✅ ADICIONADO: Garante que o "X" de fechar fique branco no fundo azul */
+.tipovacina-modal-theme .modal-header .btn-close {
+    filter: brightness(0) invert(1) !important;
+    opacity: 1 !important;
+}
+
+.tipovacina-modal-theme .modal-header .btn-close:hover {
+    opacity: 0.8 !important;
 }
 
 .tipovacina-modal-theme .modal-body {

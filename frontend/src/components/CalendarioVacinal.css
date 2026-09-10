@@ -1,10 +1,11 @@
-
+/* ===== CONTAINER PRINCIPAL ===== */
 .calendario-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* ===== NOTIFICAÇÕES ===== */
 .notification {
     position: fixed;
     top: 20px;
@@ -79,7 +80,7 @@
     box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
-
+/* ===== FILTROS ===== */
 .filtros-container {
     display: flex;
     gap: 20px;
@@ -119,14 +120,305 @@
     border-radius: 20px;
 }
 
+/* =========================================================
+   CALENDÁRIO MURAL GIGANTE
+========================================================= */
+.calendario-mural-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin-bottom: 32px;
+    overflow: hidden;
+}
 
-.calendario-grid {
+.calendario-mural-card .card-body {
+    padding: 24px;
+}
+
+/* Navegação do Mês */
+.calendario-navegacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.mes-ano-titulo {
+    margin: 0;
+    color: #1E3A8A;
+    font-weight: 700;
+    font-size: 1.8rem;
+    text-transform: capitalize;
+}
+
+.navegacao-botoes {
+    display: flex;
+    gap: 8px;
+}
+
+/* Grid do Calendário */
+.calendario-grid-mural {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dias-semana-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #1E3A8A;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.dia-semana {
+    padding: 12px;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dia-semana:last-child {
+    border-right: none;
+}
+
+.dias-mes-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: #ffffff;
+}
+
+.dia-celula {
+    min-height: 100px;
+    padding: 8px;
+    border-right: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.dia-celula:nth-child(7n) {
+    border-right: none;
+}
+
+.dia-celula.vazio {
+    background-color: #f8f9fa;
+    cursor: default;
+}
+
+.dia-celula:hover:not(.vazio) {
+    background-color: #f0f7ff;
+}
+
+.dia-celula.hoje {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+}
+
+.dia-celula.selecionado {
+    background-color: #e7f1ff;
+    border: 2px solid #0d6efd;
+}
+
+.dia-numero {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 14px;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.dia-celula.hoje .dia-numero {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.dia-celula.selecionado .dia-numero {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Vacinas do dia */
+.vacinas-do-dia {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 4px;
+}
+
+.vacina-mini-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid #b6d4fe;
+}
+
+.vacina-mini-badge:hover {
+    background-color: #cfe2ff;
+}
+
+.vacina-mini-badge svg {
+    flex-shrink: 0;
+}
+
+.mais-vacinas {
+    font-size: 10px;
+    color: #6c757d;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Info do dia selecionado */
+.dia-selecionado-info {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border-left: 5px solid #0d6efd;
+}
+
+.dia-selecionado-info h5 {
+    margin: 0 0 16px 0;
+    color: #1E3A8A;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 12px;
+}
+
+.texto-quantidade {
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.texto-quantidade svg {
+    color: #0d6efd;
+}
+
+/* Lista de vacinas do dia */
+.vacinas-dia-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.vacina-dia-item {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: box-shadow 0.2s;
+}
+
+.vacina-dia-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.vacina-dia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #e9ecef;
+}
+
+.vacina-dia-nome {
+    display: flex;
+    align-items: center;
+    color: #1E3A8A;
+    font-size: 15px;
+}
+
+.vacina-dia-nome svg {
+    color: #0d6efd;
+}
+
+.vacina-dia-dose {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.vacina-dia-detalhes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vacina-dia-detalhe {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #495057;
+    padding: 4px 0;
+}
+
+.vacina-dia-detalhe svg {
+    color: #6c757d;
+    min-width: 16px;
+}
+
+.vacina-dia-detalhe strong {
+    color: #212529;
+    margin-right: 4px;
+}
+
+.vacina-dia-detalhe.observacao {
+    background-color: #f0f7ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #0dcaf0;
+    margin-top: 4px;
+}
+
+.vacina-dia-acoes {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+    justify-content: flex-end;
+}
+
+.vacina-dia-acoes .btn {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   CARDS INFERIORES (REGISTROS DO CALENDÁRIO)
+========================================================= */
+.calendario-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
     margin-top: 10px;
 }
-
 
 .calendario-card {
     border: none;
@@ -140,7 +432,6 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
-
 
 .calendario-card-header {
     display: flex;
@@ -233,7 +524,6 @@
     font-size: 13px;
 }
 
-
 .calendario-card-footer {
     display: flex;
     gap: 8px;
@@ -283,32 +573,39 @@
     color: #adb5bd;
 }
 
-/* ===== MODAL ===== */
+/* ===== MODAL - FORÇAR COR AZUL (PALETA DO SISTEMA) ===== */
 .custom-modal-widthcal {
     max-width: 600px;
     width: 90%;
 }
 
-.calendario-modal-theme .modal-header {
-    background-color: #212529;
-    color: white;
-    border-bottom: 1px solid #000;
-    border-radius: 0;
+.calendario-modal-theme .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.calendario-modal-theme .modal-title {
-    color: white;
+/* ✅ ALTERADO: Fundo azul da paleta do sistema */
+.calendario-modal-theme .modal-header {
+    background-color: #0d6efd !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px 12px 0 0;
+}
+
+/* ✅ ALTERADO: Título em branco para contrastar com o fundo azul */
+.calendario-modal-theme .modal-header .modal-title {
+    color: #ffffff !important;
     font-weight: 600;
 }
 
-.calendario-modal-theme .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
+/* ✅ ADICIONADO: Garante que o "X" de fechar fique branco no fundo azul */
+.calendario-modal-theme .modal-header .btn-close {
+    filter: brightness(0) invert(1) !important;
+    opacity: 1 !important;
 }
 
-.calendario-modal-theme .modal-content {
-    border-radius: 0;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.calendario-modal-theme .modal-header .btn-close:hover {
+    opacity: 0.8 !important;
 }
 
 .calendario-modal-theme .modal-body {
@@ -342,7 +639,7 @@
     font-size: 12px;
 }
 
-
+/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     .calendario-container {
         padding: 12px;
@@ -377,7 +674,7 @@
         min-width: 100%;
     }
 
-    .calendario-grid {
+    .calendario-cards-grid {
         grid-template-columns: 1fr;
         gap: 15px;
     }
@@ -395,6 +692,33 @@
     .custom-modal-widthcal {
         max-width: 95%;
         width: 95%;
+    }
+
+    /* Calendário Mural Responsivo */
+    .calendario-navegacao {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .mes-ano-titulo {
+        font-size: 1.4rem;
+    }
+
+    .dia-celula {
+        min-height: 70px;
+        padding: 4px;
+    }
+
+    .dia-numero {
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        font-size: 11px;
+    }
+
+    .vacina-mini-badge {
+        font-size: 8px;
+        padding: 2px 4px;
     }
 }
 
@@ -426,5 +750,19 @@
 
     .info-item .info-value {
         font-size: 13px;
+    }
+
+    /* Calendário Mural em telas muito pequenas */
+    .dia-semana {
+        padding: 8px;
+        font-size: 11px;
+    }
+
+    .dia-celula {
+        min-height: 60px;
+    }
+
+    .vacinas-do-dia {
+        display: none;
     }
 }

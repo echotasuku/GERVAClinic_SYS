@@ -303,6 +303,31 @@
 }
 
 /* ==========================================
+   DESTAQUE DA LINHA (VINDO DA NOTIFICAÇÃO)
+========================================== */
+.aplicacoes-table tbody tr.linha-destacada {
+    background-color: #fff3cd !important;
+    /* Amarelo claro de alerta */
+    animation: pulseHighlight 3s ease-out forwards;
+}
+
+@keyframes pulseHighlight {
+    0% {
+        background-color: #ffe69c;
+    }
+
+    30% {
+        background-color: #fff3cd;
+    }
+
+    100% {
+        background-color: #fff;
+    }
+
+    /* Volta ao normal suavemente */
+}
+
+/* ==========================================
    VALORES FINANCEIROS
 ========================================== */
 .aplicacoes-table tbody td:nth-child(6),
@@ -465,4 +490,26 @@
     .custom-modal-width {
         max-width: 95% !important;
     }
+
+        /* ==========================================
+       DESTAQUE DA LINHA (VINDO DA NOTIFICAÇÃO)
+    ========================================== */
+        .aplicacoes-table tbody tr.linha-destacada {
+            background-color: #fff3cd !important;
+            animation: pulseHighlight 3s ease-out forwards;
+        }
+    
+        @keyframes pulseHighlight {
+            0% {
+                background-color: #ffe69c;
+            }
+    
+            30% {
+                background-color: #fff3cd;
+            }
+    
+            100% {
+                background-color: #fff;
+            }
+        }
 }

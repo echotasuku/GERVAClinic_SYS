@@ -281,56 +281,56 @@
 }
 
 /* ==========================================
- /* ==========================================
    TABELA — PADRONIZADA
 ========================================== */
- .recomendacaovacina-table {
-     background-color: #fff;
-     border-radius: 10px;
-     overflow: hidden;
-     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
- }
+.recomendacaovacina-table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
 
- /* ==========================================
+/* ==========================================
    CABEÇALHO DA TABELA — AZUL #0D6EFD
 ========================================== */
- .recomendacaovacina-table thead,
- .recomendacaovacina-table thead.table-header-primary,
- .recomendacaovacina-table.table>thead {
-     background-color: #0d6efd !important;
- }
+.recomendacaovacina-table thead,
+.recomendacaovacina-table thead.table-header-primary,
+.recomendacaovacina-table.table>thead {
+    background-color: #0d6efd !important;
+}
 
- .recomendacaovacina-table thead tr,
- .recomendacaovacina-table thead.table-header-primary tr {
-     background-color: #0d6efd !important;
- }
+.recomendacaovacina-table thead tr,
+.recomendacaovacina-table thead.table-header-primary tr {
+    background-color: #0d6efd !important;
+}
 
- .recomendacaovacina-table thead th,
- .recomendacaovacina-table thead.table-header-primary th,
- .recomendacaovacina-table.table>thead>tr>th {
-     background-color: #0d6efd !important;
-     color: #ffffff !important;
-     font-weight: 600;
-     font-size: 0.9rem;
-     padding: 12px;
-     white-space: nowrap;
-     border: none !important;
-     vertical-align: middle;
- }
+.recomendacaovacina-table thead th,
+.recomendacaovacina-table thead.table-header-primary th,
+.recomendacaovacina-table.table>thead>tr>th {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px;
+    white-space: nowrap;
+    border: none !important;
+    vertical-align: middle;
+}
 
- /* ==========================================
+/* ==========================================
    CORPO DA TABELA
 ========================================== */
- .recomendacaovacina-table tbody td {
-     padding: 12px;
-     vertical-align: middle;
-     font-size: 0.9rem;
-     color: #495057;
- }
+.recomendacaovacina-table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #495057;
+}
 
- .recomendacaovacina-table tbody tr:hover {
-     background-color: #E6F0FA !important;
- }
+.recomendacaovacina-table tbody tr:hover {
+    background-color: #E6F0FA !important;
+}
+
 /* ==========================================
    STATUS BADGES
 ========================================== */
@@ -414,7 +414,7 @@
 }
 
 /* ==========================================
-   MODAL
+   MODAL - FORÇAR COR AZUL (PALETA DO SISTEMA)
 ========================================== */
 .custom-modal-width {
     max-width: 800px;
@@ -426,16 +426,28 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
+/* ✅ ALTERADO: Fundo azul da paleta do sistema */
 .recomendacaovacina-modal-theme .modal-header {
-    border-bottom: 1px solid #e9ecef;
+    background-color: #0d6efd !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
     padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
     border-radius: 12px 12px 0 0;
 }
 
-.recomendacaovacina-modal-theme .modal-title {
+/* ✅ ALTERADO: Título em branco para contrastar com o fundo azul */
+.recomendacaovacina-modal-theme .modal-header .modal-title {
     font-weight: 600;
-    color: #212529;
+    color: #ffffff !important;
+}
+
+/* ✅ ADICIONADO: Garante que o "X" de fechar fique branco no fundo azul */
+.recomendacaovacina-modal-theme .modal-header .btn-close {
+    filter: brightness(0) invert(1) !important;
+    opacity: 1 !important;
+}
+
+.recomendacaovacina-modal-theme .modal-header .btn-close:hover {
+    opacity: 0.8 !important;
 }
 
 .recomendacaovacina-modal-theme .modal-body {

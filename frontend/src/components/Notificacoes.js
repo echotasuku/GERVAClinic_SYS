@@ -20,17 +20,14 @@ const Notificacoes = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('auth_token');
 
-  // ✅ useCallback → resolve o aviso do ESLint
   const buscarNotificacoes = useCallback(async () => {
     try {
       setLoading(true);
-      
       let response = await axios.get(`${API_BASE}/notificacoes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
       let dados = response.data;
-      
       if (!dados || dados.length === 0) {
         const alt = await axios.get(`${API_BASE}/alertas`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -39,11 +36,10 @@ const Notificacoes = () => {
       }
       
       dados = dados.map((item, i) => {
-        // ✅ LINK SIMPLES → só "/estoque", SEM ID
         return {
           ...item,
           id: item.id || `alerta-${i}`,
-          link: '/estoque', // ✅ PÁGINA GERAL DE ESTOQUE!
+          link: '/estoque',
           ignorada: isNotificacaoIgnorada(item.mensagem),
         };
       });
@@ -64,8 +60,28 @@ const Notificacoes = () => {
     }
   };
 
+  // ✅ CORREÇÃO DEFINITIVA: Extrai APENAS o número do LOTE
   const irParaEstoque = () => {
-    navigate('/estoque'); // ✅ VAI DIRETO PARA /estoque (página geral)
+    const params = new URLSearchParams();
+    const mensagem = modal.notif?.mensagem || '';
+
+    // Tenta extrair o LOTE (Ex: "Lote 011", "Lote A-123", "Lote 2024/1234-01")
+    const matchLote = mensagem.match(/Lote\s+([A-Za-z0-9\-\/]+)/i);
+
+    if (matchLote && matchLote[1]) {
+      const numeroLote = matchLote[1].trim();
+      
+      // ✅ ENVIA APENAS O NÚMERO DO LOTE
+      params.set('busca', numeroLote);
+      params.set('lote', numeroLote);
+    } else {
+      // Se não tiver "Lote" na mensagem (notificações antigas), 
+      // não envia nada para não poluir a busca
+      console.warn('Notificação sem número de lote:', mensagem);
+      params.set('busca', '');
+    }
+
+    navigate(`/estoque?${params.toString()}`);
     fecharModal();
   };
 
@@ -217,8 +233,8 @@ const Notificacoes = () => {
               {modal.notif.tipo === 'validade_proxima' 
                 ? '⚠️ Validade Próxima' 
                 : modal.notif.tipo === 'estoque_baixo'
-                  ? '⚠️ Estoque Baixo'
-                  : 'ℹ️ Alerta do Sistema'}
+                  ? '️ Estoque Baixo'
+                  : '️ Alerta do Sistema'}
             </h3>
 
             <p style={{ textAlign: 'center', fontSize: '15px', color: '#4b5563', margin: '0 0 20px 0', lineHeight: '1.5' }}>

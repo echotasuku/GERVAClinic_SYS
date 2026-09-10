@@ -18,6 +18,7 @@ use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CalendarioVacinalController;
 use App\Http\Controllers\CarteiraVacinalController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PlanejamentoVacinalController;
 use Illuminate\Support\Facades\Broadcast;
 
 // =====================================================
@@ -149,6 +150,12 @@ Route::middleware([
     Route::get(
         '/planejamento',
         [VacinaController::class, 'planejamento']
+    );
+    
+    // ✅ NOVA ROTA: Planejamento Vacinal com cálculo automático
+    Route::get(
+        '/planejamento-vacinal/{pacienteId}',
+        [PlanejamentoVacinalController::class, 'gerarRecomendacoes']
     );
 
     // =================================================
